@@ -1,6 +1,6 @@
 # pylint: disable=unused-wildcard-import
 
-from .defaults import *  # NOQA  # pylint: disable=wildcard-import
+from .base import *  # NOQA  # pylint: disable=wildcard-import
 
 ENVIRONMENT = 'production'
 
