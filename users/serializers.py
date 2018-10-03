@@ -12,9 +12,12 @@ class UserSerializer(CountryFieldMixin, serializers.ModelSerializer):
 
 
 class UserListSerializer(UserSerializer):
+    url = serializers.HyperlinkedIdentityField(
+            view_name="users-detail",
+    )
     class Meta:
         model = CustomUser
-        fields = ('email', 'first_name', 'last_name')
+        fields = ('url', 'email', 'first_name', 'last_name')
 
 
 class UserDetailSerializer(UserSerializer):
