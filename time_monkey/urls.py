@@ -12,10 +12,11 @@ Class-based views
 """
 from django.conf.urls import url
 from django.contrib import admin
-from django.conf.urls import include
+from django.urls import include, path
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('users.urls')),
-    url(r'^api-auth/', include('rest_framework.urls')),
+    path('rest-auth/', include('rest_framework.urls')),
+    path('rest-auth/registration/', include('rest_auth.registration.urls')),
 ]
