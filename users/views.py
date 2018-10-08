@@ -4,6 +4,23 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from users.permissions import IsAdminUser, IsOwnerOrAdmin
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+
+
+@api_view(['GET'])
+def api_root(request, format=None):
+    if not request.user.is_authenticated:
+        return Response({
+                'users': reverse('users-list', request=request, format=format),
+            })
+    else:
+        return Response({
+                'users': reverse('users-list', request=request, format=format),
+                'account': reverse('user-detail', args=(request.user.pk,), request=request, format=format)
+            })
+
 
 class UsersViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
