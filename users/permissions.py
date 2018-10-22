@@ -14,4 +14,8 @@ class IsOwnerOrAdmin(permissions.BasePermission):
             return True
         return request.user and request.user.is_authenticated and request.user.user_type == 'Admin'
     def has_object_permission(self, request, view, obj):
-        return obj == request.user or request.user.user_type == 'Admin'
+        if request.user:
+            if request.user.user_type == 'Admin':
+                return True
+            return obj == request.user
+        #return obj == request.user or request.user.user_type == 'Admin'
