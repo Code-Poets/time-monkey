@@ -1,8 +1,13 @@
 from users.models import CustomUser
-from users.serializers import UserDetailSerializer, UserListSerializer, UserCreateSerializer, UserUpdateSerializer, UserSerializer
+from users.serializers import UserDetailSerializer
+from users.serializers import UserListSerializer
+from users.serializers import UserCreateSerializer
+from users.serializers import UserUpdateSerializer
+from users.serializers import UserSerializer
 from rest_framework import viewsets
 from rest_framework import permissions
-from users.permissions import IsAdminUser, IsOwnerOrAdmin
+from users.permissions import IsAdminUser
+from users.permissions import IsOwnerOrAdmin
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -13,12 +18,25 @@ from rest_framework.reverse import reverse
 def api_root(request, format=None):
     if not request.user.is_authenticated:
         return Response({
-                'users': reverse('users-list', request=request, format=format),
+                'users': reverse(
+                    'users-list',
+                    request=request,
+                    format=format,
+                ),
             })
     else:
         return Response({
-                'users': reverse('users-list', request=request, format=format),
-                'account': reverse('user-detail', args=(request.user.pk,), request=request, format=format)
+                'users': reverse(
+                    'users-list',
+                    request=request,
+                    format=format,
+                ),
+                'account': reverse(
+                    'user-detail',
+                    args=(request.user.pk,),
+                    request=request,
+                    format=format,
+                ),
             })
 
 
