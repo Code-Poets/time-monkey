@@ -18,8 +18,8 @@ from rest_framework.reverse import reverse
 def api_root(request, format=None):
     if not request.user.is_authenticated:
         return Response({
-                'users': reverse(
-                    'users-list',
+                'registration': reverse(
+                    'rest_register',
                     request=request,
                     format=format,
                 ),
