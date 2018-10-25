@@ -19,6 +19,7 @@ class TestCustomUserLogin(TestCase):
             "testuserpasswd",
             False,
             False,
+            CustomUser.UserType.EMPLOYEE.name,
         )
 
     def test_user_should_login_correctly(self):
@@ -63,14 +64,14 @@ class TestCustomUserModel(TestCase):
             CustomValidationError,
             CustomValidationErrorText.VALIDATION_ERROR_EMAIL_MESSAGE,
         ):
-            CustomUser.objects._create_user(None,"testuserpasswd",False,False)
+            CustomUser.objects._create_user(None,"testuserpasswd",False,False,CustomUser.UserType.EMPLOYEE.name,)
 
     def test_user_should_hold_password(self):
         with self.assertRaisesRegexp(
             CustomValidationError,
             CustomValidationErrorText.VALIDATION_ERROR_PASSWORD_MESSAGE,
         ):
-            CustomUser.objects._create_user("testuser@example.com",None,False,False)
+            CustomUser.objects._create_user("testuser@example.com",None,False,False,CustomUser.UserType.EMPLOYEE.name,)
 
     def test_user_should_not_hold_same_email_as_another_user(self):
         old_user = CustomUser.objects.create(
