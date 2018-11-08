@@ -116,10 +116,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         CustomUserModelText.UPDATED_AT,
         auto_now=True,
     )
-    phone_regex = RegexValidator(
-        regex=r'^\d{9,15}$',
-        message=CustomUserModelText.PHONE_REGEX_MESSAGE,
-    )
     phone_number = models.CharField(
         validators=[PhoneRegexValidator],
         max_length=constants.PHONE_NUMBER_MAX_LENGTH,
