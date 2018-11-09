@@ -133,3 +133,9 @@ AUTH_USER_MODEL = 'users.CustomUser'
 FIXTURE_DIRS = [
   'users/fixtures/',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.AdminRenderer',
+    )
+}
