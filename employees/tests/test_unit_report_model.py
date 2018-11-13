@@ -39,6 +39,7 @@ class TestReportModel(BaseModelTestCase):
             password='newuserpasswd',
             first_name='John',
             last_name='Doe',
+            country='PL',
         )
         self.author.full_clean()
         self.author.save()
@@ -64,34 +65,34 @@ class TestReportModel(BaseModelTestCase):
     ])
     """
     # PARAM
-    def test_report_model_should_save_date(self):
-        self.data_should_be_stored('date', datetime.datetime.now().date())
+    def test_report_model_save_date_field_should_accept_correct_input(self):
+        self.field_should_accept_input('date', datetime.datetime.now().date())
 
     # PARAM
-    def test_report_model_should_save_description(self):
-        self.data_should_be_stored('description', 'Example')
+    def test_report_model_description_field_should_accept_correct_input(self):
+        self.field_should_accept_input('description', 'Example')
 
     # PARAM
-    def test_report_model_should_save_creation_date(self):
+    def test_report_model_creation_date_field_should_be_filled_on_save(self):
         self.field_should_have_non_null_default('creation_date')
 
     # PARAM
-    def test_report_model_should_save_last_update(self):
+    def test_report_model_last_update_field_should_be_filled_on_save(self):
         self.field_should_have_non_null_default('last_update')
 
     # PARAM
-    def test_report_model_should_save_author(self):
-        self.data_should_be_stored('author', self.author)
+    def test_report_model_author_field_should_accept_correct_input(self):
+        self.field_should_accept_input('author', self.author)
 
     # PARAM
-    def test_report_model_should_save_project(self):
-        self.data_should_be_stored('project', self.project)
+    def test_report_model_project_field_should_accept_correct_input(self):
+        self.field_should_accept_input('project', self.project)
 
     # PARAM
-    def test_report_model_should_save_work_hours(self):
-        self.data_should_be_stored('work_hours', Decimal('8.00'))
+    def test_report_model_work_hours_field_should_accept_correct_input(self):
+        self.field_should_accept_input('work_hours', Decimal('8.00'))
 
-    def test_report_model_should_be_editable_by_default(self):
+    def test_report_model_editable_field_should_have_default_value(self):
         self.field_should_have_non_null_default(field='editable', value=True)
 
     def test_report_model_last_update_field_should_be_changed_on_update(self):
