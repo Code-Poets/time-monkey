@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block content %}
+{% load rest_framework %}
+
+<h1>{{ UI_text.PAGE_TITLE.value }}</h1>
+
+<div class="modal-dialog" style="margin-bottom:0">
+    <form action="{% url 'custom-report-list' %}" method="POST">
+        {% csrf_token %}
+        {% render_form serializer template_pack='rest_framework/vertical' %}
+        <input type="submit" value="{{ UI_text.CREATE_REPORT_BUTTON.value }}">
+    </form>
+</div>
+</br>
+<div class="container">
+    <div class="table-responsive">
+        <table class="table">
+            <tr>
+                <th>{{ UI_text.DATE_COLUMN_HEADER.value }}</th>
+                <th>{{ UI_text.PROJECT_COLUMN_HEADER.value }}</th>
+                <th>{{ UI_text.WORK_HOURS_COLUMN_HEADER.value }}</th>
+                <th>{{ UI_text.DESCRIPTION_COLUMN_HEADER.value }}</th>
+                <td class=Invisible></td>
+            </tr>
+            {% for date, reports in reports_dict.items %}
+            <tr>
+                <td style="width:128px" rowspan={{ reports|length }}>
+                    {{ date }}
+                </td>
+                {% for report in reports %}
+                    {% if forloop.counter > 1 %}
+                    <tr>
+                    {% endif %}
+                <td style="width:230px">
+                    {{ report.project }}
+                </td>
+                <td style="width:93px" align="right">
+                    {{ report.work_hours }}
+                </td>
+                <td>
+                    {{ report.description }}
+                </td>
+                <td style="width:100px" align="right" class=Invisible>
+                    {% if report.editable %}
+                    <a href="{% url 'custom-report-detail' pk=report.id %}" class="btn btn-info">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+                {% endfor %}
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
