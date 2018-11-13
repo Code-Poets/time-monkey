@@ -47,6 +47,7 @@ class ReportSerializerTests(BaseSerializerTestCase):
             password='newuserpasswd',
             first_name='John',
             last_name='Doe',
+            country='PL',
         )
         author.full_clean()
         author.save()
