@@ -1,8 +1,8 @@
-from django.test import TestCase
-from managers.commons.constants import *
-from managers.models import Project
 from django.core.exceptions import ValidationError
+from django.test import TestCase
 from django.utils import timezone
+from managers.commons.constants import MAX_NAME_LENGTH
+from managers.models import Project
 
 
 class TestProjectModel(TestCase):
@@ -26,7 +26,7 @@ class TestProjectModel(TestCase):
         ):
             project.full_clean()
 
-    def test_that_project_name_should_not_be_longer_than_MAX_NAME_LENGTH(self):
+    def test_that_project_name_should_not_be_longer_than_set_max_length(self):
         project = Project(
             start_date=timezone.now(),
             name='X'*(MAX_NAME_LENGTH+1),
@@ -37,7 +37,7 @@ class TestProjectModel(TestCase):
         ):
             project.full_clean()
 
-    def test_that_project_name_should_be_longer_than_MAX_NAME_LENGTH(self):
+    def test_that_project_name_should_be_shorter_than_or_equal_set_max_length(self):
         project = Project(
             start_date=timezone.now(),
             name='X'*MAX_NAME_LENGTH,
