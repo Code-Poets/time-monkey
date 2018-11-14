@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Report
+
+from employees.models import Report
 from managers.models import Project
 
 
