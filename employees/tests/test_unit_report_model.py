@@ -21,18 +21,18 @@ class TestReportModel(BaseModelTestCase):
         'work_hours': Decimal('8.00'),
     }
 
-    WORK_HOURS_ERROR_MARGIN = Decimal(10 ** -ReportModelConstants.DECIMAL_PLACES)
+    WORK_HOURS_ERROR_MARGIN = Decimal(10 ** -ReportModelConstants.DECIMAL_PLACES.value)
     SAMPLE_STRING_FOR_TYPE_VALIDATION_TESTS = 'This is a string'
-    DESCRIPTION_DATA_EXCEEDING_LIMIT = 'a' * (ReportModelConstants.MAX_DESCRIPTION_LENGTH + 1)
-    WORK_HOURS_DATA_EXCEEDING_MAX_VALUE = ReportModelConstants.MAX_WORK_HOURS + WORK_HOURS_ERROR_MARGIN
-    WORK_HOURS_DATA_EXCEEDING_MIN_VALUE = ReportModelConstants.MIN_WORK_HOURS - WORK_HOURS_ERROR_MARGIN
+    DESCRIPTION_DATA_EXCEEDING_LIMIT = 'a' * (ReportModelConstants.MAX_DESCRIPTION_LENGTH.value + 1)
+    WORK_HOURS_DATA_EXCEEDING_MAX_VALUE = ReportModelConstants.MAX_WORK_HOURS.value + WORK_HOURS_ERROR_MARGIN
+    WORK_HOURS_DATA_EXCEEDING_MIN_VALUE = ReportModelConstants.MIN_WORK_HOURS.value - WORK_HOURS_ERROR_MARGIN
 
-    WORK_HOURS_DATA_EXCEEDING_DECIMAL_MAX_VALUE = ReportModelConstants.MAX_WORK_HOURS - 1 + \
-                                                    ReportModelConstants.MAX_WORK_HOURS_DECIMAL_VALUE + \
+    WORK_HOURS_DATA_EXCEEDING_DECIMAL_MAX_VALUE = ReportModelConstants.MAX_WORK_HOURS.value - 1 + \
+                                                    ReportModelConstants.MAX_WORK_HOURS_DECIMAL_VALUE.value + \
                                                     WORK_HOURS_ERROR_MARGIN
-    WORK_HOURS_DATA_EXCEEDING_DIGITS_NUMBER = generate_too_many_digits(ReportModelConstants.MAX_DIGITS)
+    WORK_HOURS_DATA_EXCEEDING_DIGITS_NUMBER = generate_too_many_digits(ReportModelConstants.MAX_DIGITS.value)
     WORK_HOURS_DATA_EXCEEDING_DECIMAL_PLACES = generate_too_many_decimal_places(
-                                                    ReportModelConstants.DECIMAL_PLACES)
+                                                    ReportModelConstants.DECIMAL_PLACES.value)
 
     def setUp(self):
         self.author = CustomUser(
