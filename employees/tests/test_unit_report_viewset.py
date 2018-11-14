@@ -85,7 +85,7 @@ class ReportViewSetTests(TestCase):
         self.assertNotContains(response, other_report.description)
 
     def test_that_report_list_view_should_add_new_report_on_post(self):
-        request = APIRequestFactory().post(
+        request = APIRequestFactory().put(
             path=reverse('report-list'),
             data={
                 'date': datetime.datetime.now().date(),
@@ -95,8 +95,8 @@ class ReportViewSetTests(TestCase):
             }
         )
         request.user = self.user
-        response = ReportViewSet.as_view({'post': 'list'})(request, pk=self.report.pk)
-        self.assertEqual(response.status_code, 200)
+        response = ReportViewSet.as_view({'put': 'create'})(request, pk=self.report.pk)
+        self.assertEqual(response.status_code, 201)
 
     """
     -------------
@@ -133,11 +133,11 @@ class ReportViewSetTests(TestCase):
             }
         )
         request.user = self.user
-        response = ReportViewSet.as_view({'put': 'retrieve'})(request, pk=self.report.pk)
+        response = ReportViewSet.as_view({'put': 'update'})(request, pk=self.report.pk)
         self.assertEqual(response.status_code, 200)
 
     def test_report_detail_view_should_delete_report_on_delete(self):
         request = APIRequestFactory().delete(path=reverse('report-detail', args=(self.report.pk,)))
         request.user = self.user
-        response = ReportViewSet.as_view({'delete': 'retrieve'})(request, pk=self.report.pk)
-        self.assertEqual(response.status_code, 200)
+        response = ReportViewSet.as_view({'delete': 'destroy'})(request, pk=self.report.pk)
+        self.assertEqual(response.status_code, 204)
