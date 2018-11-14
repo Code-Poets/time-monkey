@@ -1,22 +1,10 @@
 from django.db import models
-from django.core.validators import BaseValidator
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 
 from employees.common.constants import ReportModelConstants
 from managers.models import Project
 from users.models import CustomUser
-
-
-class MaxDecimalValueValidator(BaseValidator):
-    message = ReportModelConstants.MAX_DECIMAL_VALUE_VALIDATOR_MESSAGE + '%(limit_value)s.'
-    code = 'max_decimal_value'
-
-    def compare(self, a, b):
-        return a > b
-
-    def clean(self, x):
-        return x % 1
 
 
 class Report(models.Model):
