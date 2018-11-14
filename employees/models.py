@@ -1,10 +1,11 @@
 from django.db import models
-from users.models import CustomUser
-from managers.models import Project
+from django.core.validators import BaseValidator
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
-from django.core.validators import BaseValidator
+
 from employees.common.constants import ReportModelConstants
+from managers.models import Project
+from users.models import CustomUser
 
 
 class MaxDecimalValueValidator(BaseValidator):
