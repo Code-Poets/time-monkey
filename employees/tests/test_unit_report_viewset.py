@@ -1,13 +1,16 @@
-from django.test import TestCase
-from rest_framework.reverse import reverse
-from employees.models import Report
-from users.models import CustomUser
-from managers.models import Project
 import datetime
 from decimal import Decimal
-from employees.views import ReportViewSet
-from rest_framework.test import APIRequestFactory
+
 from django.contrib.auth.models import AnonymousUser
+from django.test import TestCase
+from rest_framework.reverse import reverse
+from rest_framework.test import APIRequestFactory
+
+from employees.models import Report
+from employees.views import ReportViewSet
+from managers.models import Project
+from users.models import CustomUser
+
 
 
 class ReportViewSetTests(TestCase):
