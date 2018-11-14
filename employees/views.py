@@ -1,7 +1,8 @@
-from employees.models import Report
-from employees.serializers import ReportSerializer
 from rest_framework import permissions
 from rest_framework import viewsets
+
+from employees.models import Report
+from employees.serializers import ReportSerializer
 
 
 class ReportViewSet(viewsets.ModelViewSet):
