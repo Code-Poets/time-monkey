@@ -1,7 +1,8 @@
 from decimal import Decimal
+from enum import Enum
 
 
-class ReportModelConstants:
+class ReportModelConstants(Enum):
     MAX_DESCRIPTION_LENGTH = 256
     MAX_DIGITS = 4
     DECIMAL_PLACES = 2
