@@ -1,9 +1,9 @@
-from django.utils.translation import ugettext_lazy
 from decimal import Decimal
+
+from django.utils.translation import ugettext_lazy
 
 
 class ReportModelConstants:
-
     MAX_DESCRIPTION_LENGTH = 256
     MAX_DIGITS = 4
     DECIMAL_PLACES = 2
