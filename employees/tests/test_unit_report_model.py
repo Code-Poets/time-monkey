@@ -1,9 +1,10 @@
+import datetime
+from decimal import Decimal
+
+from employees.common.constants import ReportModelConstants
 from employees.models import Report
 from managers.models import Project
 from users.models import CustomUser
-import datetime
-from decimal import Decimal
-from employees.common.constants import ReportModelConstants
 from utils.base_tests import BaseModelTestCase
 from utils.base_tests import generate_too_many_decimal_places
 from utils.base_tests import generate_too_many_digits
