@@ -1,10 +1,11 @@
 import datetime
 import math
 import decimal
-from managers.models import Project
-from users.models import CustomUser
+
 from employees.serializers import ReportSerializer
 from employees.common.constants import ReportModelConstants
+from managers.models import Project
+from users.models import CustomUser
 from utils.base_tests import BaseSerializerTestCase
 
 
