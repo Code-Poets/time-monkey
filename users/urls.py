@@ -25,7 +25,7 @@ user_detail = UserViewSet.as_view({
 })
 
 urlpatterns = format_suffix_patterns([
-    url(r'^$', api_root),
+    url(r'^', api_root),
     url(r'^users/$', users_list, name='users-list'),
     url(r'^users/(?P<pk>[0-9]+)/$', users_detail, name='users-detail'),
     url(r'^account/(?P<pk>[0-9]+)/$', user_detail, name='user-detail'),

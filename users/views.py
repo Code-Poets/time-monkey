@@ -17,15 +17,7 @@ from users.serializers import UserUpdateSerializer
 
 @api_view()
 def api_root(request, format=None):
-    if not request.user.is_authenticated:
-        return Response({
-                'users': reverse(
-                    'users-list',
-                    request=request,
-                    format=format,
-                ),
-            })
-    else:
+    if request.user.is_authenticated and request.user.user_type == CustomUser.UserType.ADMIN.name:
         return Response({
                 'users': reverse(
                     'users-list',
@@ -38,6 +30,18 @@ def api_root(request, format=None):
                     request=request,
                     format=format,
                 ),
+            })
+    elif request.user.is_authenticated:
+        return Response({
+                'account': reverse(
+                    'user-detail',
+                    args=(request.user.pk,),
+                    request=request,
+                    format=format,
+                ),
+            })
+    else:
+        return Response({
             })
 
 
