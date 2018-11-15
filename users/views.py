@@ -25,7 +25,7 @@ def api_root(request, format=None):
                     format=format,
                 ),
                 'account': reverse(
-                    'user-detail',
+                    'user-account-detail',
                     args=(request.user.pk,),
                     request=request,
                     format=format,
@@ -34,7 +34,7 @@ def api_root(request, format=None):
     elif request.user.is_authenticated:
         return Response({
                 'account': reverse(
-                    'user-detail',
+                    'user-account-detail',
                     args=(request.user.pk,),
                     request=request,
                     format=format,
