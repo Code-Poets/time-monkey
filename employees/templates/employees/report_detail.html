@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block content %}
+{% load rest_framework %}
+
+<head>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+
+<h1>{{ UI_text.PAGE_TITLE.value }}{{ report.project }} ({{ report.date }})</h1>
+</br>
+<div class="modal-dialog" style="margin-bottom:0">
+    <form action="{% url 'custom-report-detail' pk=report.pk %}" method="POST">
+        {% csrf_token %}
+        {% render_form serializer template_pack='rest_framework/vertical' %}
+        <input type="submit" value="{{ UI_text.UPDATE_REPORT_BUTTON.value }}">
+        <input type="submit" name="discard" value="{{ UI_text.DISCARD_CHANGES_BUTTON.value }}">
+        <input type="button" id="opener" value="{{ UI_text.DELETE_REPORT_BUTTON.value }}">
+    </form>
+</div>
+<div id="dialog" style="display: none" title="{{ UI_text.DELETE_POPUP_TITLE.value }}" align="center">
+    {{ UI_text.DELETE_POPUP_MESSAGE.value }}
+</div>
+
+<script>
+$(function () {
+    $("#dialog").dialog ({
+        modal: true,
+        autoOpen: false,
+        buttons : [
+            {
+                text: "No",//{{ UI_text.DELETE_REPORT_NO.value }}",
+                click: function () {
+                    $(this).dialog('close');
+                }
+            },
+            {
+                text: "Yes",//"{{ UI_text.DELETE_REPORT_YES.value }}",
+                click: function () {
+                    window.location.href = "{% url 'custom-report-delete' pk=report.pk %}";
+                }
+            }
+        ]
+    }).prev().find(".ui-dialog-titlebar-close").hide ();
+
+    $("#opener").click(function () {
+        $('#dialog').dialog('open');
+    });
+});
+</script>
+{% endblock %}
