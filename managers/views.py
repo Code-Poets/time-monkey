@@ -6,6 +6,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from users.models import CustomUser
 from managers.models import Project
 from managers.serializers import ProjectSerializer
 from managers.serializers import ProjectCreateSerializer
@@ -92,3 +93,11 @@ class ProjectUpdate(APIView):
         project_serializer.save()
         return redirect('custom-project-detail', pk=pk)
 
+
+def delete_project(request, pk):
+    if request.user.user_type == CustomUser.UserType.ADMIN.name:
+        project = get_object_or_404(Project, pk=pk)
+        project.delete()
+        return redirect('custom-projects-list')
+    else:
+        return redirect('home')

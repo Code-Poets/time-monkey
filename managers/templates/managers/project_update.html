@@ -5,6 +5,9 @@
 {% load static %}
 <head>
   <link rel="stylesheet" type="text/css" href="{% static 'managers/tooltip.css' %}" />
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 
 <h2>
@@ -25,8 +28,47 @@
             <span class="tooltip_text">Select by CTRL + click</span>
           </div>
       <br/><br/><br/>
-      <button type="submit" class="btn btn-default">Update</button>
+      <button type="submit" class="btn btn-success">
+        <span class="glyphicon glyphicon-ok"></span> Update
+      </button>
   </form>
 </div>
+
+<br/>
+<button type="button" id="opener" class="btn btn btn-danger">
+  <span class="glyphicon glyphicon-remove"></span> Delete
+</button>
+
+<div id="dialog" style="display: none" title="{% trans 'Are you sure' %}?" align="center">
+  {% trans 'Do you want to delete' %} <br/>
+  <b>{{project.name}}</b> {% trans 'project' %}?
+</div>
+
+<script>
+$(function () {
+    $("#dialog").dialog ({
+        modal: true,
+        autoOpen: false,
+        buttons : [
+          {
+            text: "No",
+            click: function () {
+              $(this).dialog('close');
+            }
+          },
+          {
+            text: "Yes",
+            click: function () {
+              window.location.href = "{% url 'custom-project-delete' pk=project.pk %}";
+            }
+          }
+        ]
+    }).prev().find(".ui-dialog-titlebar-close").hide ();
+
+    $("#opener").click(function () {
+        $('#dialog').dialog('open');
+    });
+});
+</script>
 
 {% endblock %}

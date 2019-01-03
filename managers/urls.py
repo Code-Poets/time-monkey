@@ -12,5 +12,6 @@ urlpatterns = [
     path('projects/create/', views.ProjectCreate.as_view(), name='custom-project-create'),
     path('projects/<int:pk>/', views.ProjectDetail.as_view(), name='custom-project-detail'),
     path('projects/<int:pk>/update', views.ProjectUpdate.as_view(), name='custom-project-update'),
+    path('projects/<int:pk>/delete', views.delete_project, name='custom-project-delete'),
     path('api/', include(router.urls)),
 ]
