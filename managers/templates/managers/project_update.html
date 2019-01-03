@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load i18n %}
+{% load rest_framework %}
+{% load static %}
+<head>
+  <link rel="stylesheet" type="text/css" href="{% static 'managers/tooltip.css' %}" />
+</head>
+
+<h2>
+  <small>
+    <a href="{% url 'custom-project-detail' pk=project.id %}">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+    </a>
+  </small>
+  &nbsp;{{project.name}}&nbsp;
+</h2>
+
+<div class="modal-dialog" style="margin-bottom:0">
+  <form action="{% url 'custom-project-update' pk=project.id %}" method="post">
+      {% csrf_token %}
+      {% render_form serializer template_pack='rest_framework/vertical' %}
+          <div class="tool_tip">
+            <font color="grey">How to add more employees?</font>
+            <span class="tooltip_text">Select by CTRL + click</span>
+          </div>
+      <br/><br/><br/>
+      <button type="submit" class="btn btn-default">Update</button>
+  </form>
+</div>
+
+{% endblock %}

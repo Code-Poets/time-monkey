@@ -61,5 +61,34 @@ class ProjectDetail(APIView):
 
     def get(self, request, pk):
         project = get_object_or_404(Project, pk=pk)
-        serializer = ProjectSerializer(project, context={'request': request})
-        return Response({'serializer': serializer, 'project': project})
+        return Response({'project': project})
+
+
+class ProjectUpdate(APIView):
+    renderer_classes = [renderers.TemplateHTMLRenderer]
+    template_name = 'managers/project_update.html'
+
+    def get(self, request, pk):
+        project = get_object_or_404(Project, pk=pk)
+        project_serializer = ProjectSerializer(
+            project,
+            context={'request': request},
+        )
+        return Response({'serializer': project_serializer, 'project': project})
+
+    def post(self, request, pk):
+        project = get_object_or_404(Project, pk=pk)
+        project_serializer = ProjectSerializer(
+            project,
+            data=request.data,
+            context={'request': request},
+        )
+        if not project_serializer.is_valid():
+            return Response({
+                'serializer': project_serializer,
+                'project': project,
+                'errors': project_serializer.errors,
+            })
+        project_serializer.save()
+        return redirect('custom-project-detail', pk=pk)
+
