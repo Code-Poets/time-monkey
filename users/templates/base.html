@@ -32,6 +32,7 @@
              {% if user.user_type == "MANAGER" %}
              <td style="padding:0 15px 0 15px;"><a href="{% url 'custom-projects-list' %}">{% trans 'Projects list' %}</a></td>
              {% endif %}
+             <td style="padding:0 15px 0 15px;"><a href="{% url 'custom-report-list' %}">{% trans 'Reports' %}</a></td>
              <td style="padding:0 15px 0 15px;"><a href="{% url 'logout' %}">{% trans 'Logout' %}</a></td>
         </tr>
       </table>
