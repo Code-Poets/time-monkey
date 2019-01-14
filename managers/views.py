@@ -26,6 +26,8 @@ class ProjectsList(APIView):
 
     def get(self, request):
         projects_queryset = self.get_queryset()
+        if request.user.user_type == CustomUser.UserType.MANAGER.name:
+            projects_queryset = Project.objects.filter(managers__id=request.user.pk)
         if request.GET.get('sort'):
             if 'members' in request.GET.get('sort'):
                 projects_queryset = Project.objects.annotate(members_count=Count('members')) \

@@ -9,9 +9,11 @@
     <span class="glyphicon glyphicon-th-list"></span>
   </button>
   &nbsp; Projects list &nbsp;
-  <a href="{% url 'custom-project-create' %}" class="btn btn-default btn-sm">
-    <span class="glyphicon glyphicon-plus"></span>
-  </a>
+  {% if user.is_authenticated and user.user_type == 'ADMIN' %}
+    <a href="{% url 'custom-project-create' %}" class="btn btn-default btn-sm">
+      <span class="glyphicon glyphicon-plus"></span>
+    </a>
+  {% endif %}
 </h1>
 
 <div class="collapse" id="collapseSort">
