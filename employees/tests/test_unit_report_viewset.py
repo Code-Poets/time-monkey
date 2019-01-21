@@ -8,6 +8,7 @@ from rest_framework.test import APIRequestFactory
 
 from employees.models import Report
 from employees.views import delete_report
+from employees.views import query_as_dict
 from employees.views import ReportDetail
 from employees.views import ReportList
 from employees.views import ReportViewSet
@@ -314,6 +315,78 @@ class ReportListTests(TestCase):
         self.assertEqual(queryset[0], other_report_1)
         self.assertEqual(queryset[1], self.report)
         self.assertEqual(queryset[2], other_report_2)
+
+    def test_custom_report_list_add_project_method_should_register_current_user_as_project_member(self):
+        new_project = Project(
+            name="New Project",
+            start_date=datetime.datetime.now(),
+        )
+        new_project.full_clean()
+        new_project.save()
+        request = APIRequestFactory().get(path=self.url)
+        request.user = self.user
+        view = ReportList()
+        view.request = request
+        serializer = view._create_serializer()
+        view._add_project(serializer, new_project)
+        self.assertTrue(self.user in new_project.members.all())
+        self.assertEqual(serializer.fields['project'].initial, new_project)
+
+    def test_custom_report_list_create_serializer_method_should_return_serializer_with_project_field_options_containing_only_projects_to_which_current_user_belongs(self):
+        new_project = Project(
+            name="New Project",
+            start_date=datetime.datetime.now(),
+        )
+        new_project.full_clean()
+        new_project.save()
+        new_project.members.add(self.user)
+        new_project.full_clean()
+        new_project.save()
+        request = APIRequestFactory().get(path=self.url)
+        request.user = self.user
+        view = ReportList()
+        view.request = request
+        serializer = view._create_serializer()
+        self.assertTrue(new_project in serializer.fields['project'].queryset)
+        self.assertTrue(self.project not in serializer.fields['project'].queryset)
+
+    def test_custom_report_list_view_should_add_user_to_project_selected_in_project_join_form_on_join(self):
+        new_project = Project(
+            name="New Project",
+            start_date=datetime.datetime.now(),
+        )
+        new_project.full_clean()
+        new_project.save()
+        request = APIRequestFactory().post(
+            path=self.url,
+            data={
+                'projects': new_project.id,
+                'join': "join",
+            }
+        )
+        request.user = self.user
+        response = ReportList.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(self.user in new_project.members.all())
+        self.assertEqual(response.data['serializer'].fields['project'].initial, new_project)
+
+    def test_custom_report_list_view_should_not_add_user_to_project_selected_in_project_join_form_on_post(self):
+        new_project = Project(
+            name="New Project",
+            start_date=datetime.datetime.now(),
+        )
+        new_project.full_clean()
+        new_project.save()
+        request = APIRequestFactory().post(
+            path=self.url,
+            data={
+                'projects': new_project.id,
+            }
+        )
+        request.user = self.user
+        response = ReportList.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(self.user in new_project.members.all())
 
 
 class ReportDetailTests(TestCase):
