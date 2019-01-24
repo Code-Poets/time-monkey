@@ -566,7 +566,7 @@ class ProjectReportListTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.report.description)
         dictionary = response.data['reports_dict']
-        reports = list(dictionary.values())[0]
+        reports = list(dictionary[self.user.email].values())[0]
         self.assertTrue(self.report in reports)
 
     def test_project_report_list_view_should_not_be_accessible_for_unauthenticated_user(self):
@@ -673,9 +673,75 @@ class ProjectReportListTests(TestCase):
         request.user = self.user
         view = ProjectReportList()
         view.request = request
-        queryset = view.get_queryset(self.project.pk)
+        queryset = view.get_queryset(project_pk=self.project.pk, author_pk=self.user)
         self.assertIsNotNone(queryset)
-        self.assertEqual(len(queryset), 3)
+        self.assertEqual(len(queryset), 2)
         self.assertFalse(other_project_report in queryset)
-        self.assertEqual(queryset[0], other_report_1)
-        self.assertEqual(queryset[1], self.report)
+        self.assertEqual(queryset[0], self.report)
+        self.assertEqual(queryset[1], other_report_2)
+
+    def test_project_report_list_include_users_in_reports_dict_method_should_return_dictionary_where_project_reports_are_grouped_by_members_and_dates(
+            self):
+        other_user = CustomUser(
+            email="otheruser@codepoets.it",
+            password='otheruserpasswd',
+            first_name='Jane',
+            last_name='Doe',
+            country='PL',
+        )
+        other_user.full_clean()
+        other_user.save()
+        self.project.members.add(other_user)
+
+        other_project = Project(
+            name="Project test",
+            start_date=datetime.datetime.now(),
+        )
+        other_project.full_clean()
+        other_project.save()
+        other_project.members.add(self.user)
+        other_project.members.add(other_user)
+
+        other_project_report = Report(
+            date=datetime.datetime.now().date(),
+            description='Some other description',
+            author=self.user,
+            project=other_project,
+            work_hours=Decimal('8.00'),
+        )
+        other_project_report.full_clean()
+        other_project_report.save()
+
+        other_report_1 = Report(
+            date=datetime.datetime.now().date(),
+            description='Some other description',
+            author=other_user,
+            project=self.project,
+            work_hours=Decimal('8.00'),
+        )
+        other_report_1.full_clean()
+        other_report_1.save()
+
+        other_report_2 = Report(
+            date=datetime.date(2001, 1, 1),
+            description='Some other description',
+            author=self.user,
+            project=self.project,
+            work_hours=Decimal('8.00'),
+        )
+        other_report_2.full_clean()
+        other_report_2.save()
+
+        request = APIRequestFactory().get(path=reverse('project-report-list', args=(self.project.pk,)))
+        request.user = self.user
+        view = ProjectReportList()
+        view.request = request
+        dictionary = view.include_users_in_reports_dict(self.project)
+        self.assertEqual(len(dictionary.items()), 2)
+        self.assertEqual(len(list(dictionary.values())[0]), 2)
+        self.assertEqual(len(list(dictionary.values())[1]), 1)
+        self.assertTrue(isinstance(list(dictionary.keys())[0], str))
+        self.assertTrue(isinstance(list(dictionary.keys())[1], str))
+        self.assertTrue(isinstance(list(dictionary[self.user.email].values())[0][0], Report))
+        self.assertTrue(isinstance(list(dictionary[self.user.email].values())[1][0], Report))
+        self.assertTrue(isinstance(list(dictionary[other_user.email].values())[0][0], Report))
