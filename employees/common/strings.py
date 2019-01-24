@@ -35,3 +35,17 @@ class ReportDetailStrings(Enum):
     DELETE_POPUP_TITLE = ugettext_lazy("Delete report")
     DELETE_POPUP_YES = ugettext_lazy("Yes")
     DELETE_POPUP_NO = ugettext_lazy("No")
+
+
+@notCallable
+class ProjectReportListStrings(Enum):
+    PAGE_TITLE = ugettext_lazy(": Reports")
+    DATE_COLUMN_HEADER = ugettext_lazy("Date")
+    PROJECT_COLUMN_HEADER = ugettext_lazy("Project")
+    AUTHOR_COLUMN_HEADER = ugettext_lazy("Author")
+    WORK_HOURS_COLUMN_HEADER = ugettext_lazy("Work hours")
+    DESCRIPTION_COLUMN_HEADER = ugettext_lazy("Description")
+    CREATION_DATE_COLUMN_HEADER = ugettext_lazy("Created")
+    LAST_UPDATE_COLUMN_HEADER = ugettext_lazy("Last update")
+    EDITED_COLUMN_HEADER = ugettext_lazy("Edited")
+    NO_REPORTS_MESSAGE = ugettext_lazy("There are no reports for this project to display.")
