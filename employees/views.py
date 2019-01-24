@@ -6,6 +6,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from employees.common.strings import ProjectReportListStrings
 from employees.common.strings import ReportDetailStrings
 from employees.common.strings import ReportListStrings
 from employees.forms import ProjectJoinForm
@@ -158,3 +159,26 @@ def delete_report(_request, pk):
     report = get_object_or_404(Report, pk=pk)
     report.delete()
     return redirect('custom-report-list')
+
+
+class ProjectReportList(APIView):
+    serializer_class = ReportSerializer
+    renderer_classes = [renderers.TemplateHTMLRenderer]
+    template_name = 'employees/project_report_list.html'
+    user_interface_text = ProjectReportListStrings
+    permission_classes = (
+        permissions.IsAuthenticated,
+    )
+
+    def get_queryset(self, pk):
+        return Report.objects.filter(project=pk).order_by('-date')
+
+    def get(self, _request, pk):
+        project = get_object_or_404(Project, pk=pk)
+        queryset = self.get_queryset(project.pk)
+        reports_dict = query_as_dict(queryset)
+        return Response({
+            'project_name': project.name,
+            'reports_dict': reports_dict,
+            'UI_text': self.user_interface_text,
+        })
