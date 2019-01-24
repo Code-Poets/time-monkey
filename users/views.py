@@ -229,15 +229,6 @@ class UserDetail(APIView):
         return redirect('custom-users-detail', pk=pk)
 
 
-def delete_user(request, pk):
-    if request.user.user_type == CustomUser.UserType.ADMIN.name:
-        user = get_object_or_404(CustomUser, pk=pk)
-        user.delete()
-        return redirect('custom-users-list')
-    else:
-        return redirect('home')
-
-
 def query_as_dict(query_set):
     dictionary = {}
     for record in query_set:
