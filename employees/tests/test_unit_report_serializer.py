@@ -1,7 +1,13 @@
 import datetime
 from decimal import Decimal
 
+from django.test import TestCase
+from rest_framework.reverse import reverse
+from rest_framework.test import APIRequestFactory
+
 from employees.common.constants import ReportModelConstants
+from employees.models import Report
+from employees.serializers import HoursField
 from employees.serializers import ReportSerializer
 from managers.models import Project
 from users.models import CustomUser
@@ -101,3 +107,25 @@ class ReportSerializerTests(BaseSerializerTestCase):
 
     def test_report_serializer_work_hours_field_should_not_be_empty(self):
         self.field_should_not_accept_null(field='work_hours')
+
+    def test_report_serializer_to_representation_method_should_replace_work_hours_with_string_containing_colon_instead_of_dot(self):
+        report = Report(
+            date=datetime.datetime.now().date(),
+            description='Some description',
+            author=self.required_input['author'],
+            project=self.required_input['project'],
+            work_hours=Decimal('8.00'),
+        )
+        report.full_clean()
+        report.save()
+        request = APIRequestFactory().get(path=reverse('custom-report-detail', args=(report.pk,)))
+        serializer = ReportSerializer(report, context={'request': request})
+        data = serializer.to_representation(report)
+        self.assertEqual(data['work_hours'], '8:00')
+
+
+class HoursFieldTests(TestCase):
+    def test_to_internal_value_should_change_string_with_colon_representing_hour_to_numeric_value_with_dot_separator(self):
+        hours_field = HoursField()
+        data = hours_field.to_internal_value('8:00')
+        self.assertEqual(data, Decimal('8.00'))
