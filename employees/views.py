@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from rest_framework import permissions
@@ -34,7 +36,30 @@ def query_as_dict(query_set):
         key = record.date
         dictionary.setdefault(key, [])
         dictionary[key].append(record)
+    for key in dictionary.keys():
+        hours_per_day = hours_per_day_counter(dictionary[key])
+        dictionary[key].append(decimal_to_hours_string(hours_per_day))
     return dictionary
+
+
+def hours_to_minutes(work_hours):
+    return (work_hours % 1 + Decimal('0.60') * (work_hours // 1)) * 100
+
+
+def minutes_to_hours(minutes):
+    return (minutes / 100) // Decimal('0.60') + (minutes / 100) % Decimal('0.60')
+
+
+def hours_per_day_counter(reports):
+    minutes_sum = 0
+    for report in reports:
+        minutes_sum = minutes_sum + hours_to_minutes(report.work_hours)
+    hours_sum = minutes_to_hours(minutes_sum)
+    return hours_sum
+
+
+def decimal_to_hours_string(decimal):
+    return decimal.to_eng_string().replace('.', ':')
 
 
 class ReportList(APIView):
