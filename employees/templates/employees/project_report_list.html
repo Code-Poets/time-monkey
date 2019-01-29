@@ -9,12 +9,14 @@
 <h1>{{ project_name }}{{ UI_text.PAGE_TITLE.value }}</h1>
 <div class="container">
     <div class="table-responsive">
+        {% regroup object_list by author as reports_by_author %}
+        {% for author in reports_by_author %}
         <table class="table">
+            <tr><th>{{ author.grouper.email }}</th></tr>
             <tr>
                 <th class="project-reports-date-header">{{ UI_text.DATE_COLUMN_HEADER.value }}</th>
                 <th class="project-reports-project-header">{{ UI_text.PROJECT_COLUMN_HEADER.value }}</th>
                 <th class="project-reports-task-activity-header">{{ UI_text.TASK_ACTIVITY_HEADER.value }}</th>
-                <th class="project-reports-author-header">{{ UI_text.AUTHOR_COLUMN_HEADER.value }}</th>
                 <th class="project-reports-work-hours-header">{{ UI_text.WORK_HOURS_COLUMN_HEADER.value }}</th>
                 <th class="project-reports-description-header">{{ UI_text.DESCRIPTION_COLUMN_HEADER.value }}</th>
                 <th class="project-reports-creation-date-header">{{ UI_text.CREATION_DATE_COLUMN_HEADER.value }}</th>
@@ -23,7 +25,7 @@
                 <td class="project-reports-edit-button-header Invisible"></td>
             </tr>
             <tbody>
-                {% regroup object_list by date as reports_by_date %}
+                {% regroup author.list by date as reports_by_date %}
                 {% for date in reports_by_date %}
                 {% for report in date.list %}
                     {% if forloop.first %}
@@ -35,7 +37,6 @@
                     {% endif %}
                     <td class="project-reports-project-column" >{{ report.project.name }}</td>
                     <td class="project-reports-task-activity-column">{{ report.task_activities }}</td>
-                    <td class="project-reports-author-column">{{ report.author }}</td>
                     <td class="project-reports-work-hours-column">{{ report.work_hours_str }}</td>
                     <td class="project-reports-description-column">{{ report.markdown_description|safe }}</td>
                     <td class="project-reports-creation-date-column">{{ report.creation_date }}</td>
@@ -51,6 +52,7 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% endfor %}
         {% if object_list.count == 0 %}
             <strong>{{ UI_text.NO_REPORTS_MESSAGE.value }}</strong>
         {% endif %}
