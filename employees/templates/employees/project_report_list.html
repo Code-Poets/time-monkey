@@ -9,11 +9,12 @@
 <h1>{{ project_name }}{{ UI_text.PAGE_TITLE.value }}</h1>
 <div class="container">
     <div class="table-responsive">
+        {% for username, dictionary in reports_dict.items %}
         <table class="table">
+            <tr><th>{{ username }}</th></tr>
             <tr>
                 <th class="project-reports-date-header">{{ UI_text.DATE_COLUMN_HEADER.value }}</th>
                 <th class="project-reports-project-header">{{ UI_text.PROJECT_COLUMN_HEADER.value }}</th>
-                <th class="project-reports-author-header">{{ UI_text.AUTHOR_COLUMN_HEADER.value }}</th>
                 <th class="project-reports-work-hours-header">{{ UI_text.WORK_HOURS_COLUMN_HEADER.value }}</th>
                 <th class="project-reports-description-header">{{ UI_text.DESCRIPTION_COLUMN_HEADER.value }}</th>
                 <th class="project-reports-creation-date-header">{{ UI_text.CREATION_DATE_COLUMN_HEADER.value }}</th>
@@ -21,7 +22,7 @@
                 <th class="project-reports-editable-header">{{ UI_text.EDITED_COLUMN_HEADER.value }}</th>
                 <td class="project-reports-edit-button-header Invisible"></td>
             </tr>
-            {% for date, reports in reports_dict.items %}
+            {% for date, reports in dictionary.items %}
             <tr>
                 <td class="project-reports-date-column" rowspan={{ reports|length }}>
                     {{ date }}
@@ -31,7 +32,6 @@
                     <tr>
                     {% endif %}
                 <td class="project-reports-project-column" >{{ report.project }}</td>
-                <td class="project-reports-author-column">{{ report.author }}</td>
                 <td class="project-reports-work-hours-column">{{ report.work_hours_str }}</td>
                 <td class="project-reports-description-column">{{ report.description }}</td>
                 <td class="project-reports-creation-date-column">{{ report.creation_date }}</td>
@@ -46,6 +46,8 @@
                 {% endfor %}
             {% endfor %}
         </table>
+        </br>
+        {% endfor %}
         {% if not reports_dict.items %}
             <strong>{{ UI_text.NO_REPORTS_MESSAGE.value }}</strong>
         {% endif %}

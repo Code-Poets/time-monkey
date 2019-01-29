@@ -170,13 +170,21 @@ class ProjectReportList(APIView):
         permissions.IsAuthenticated,
     )
 
-    def get_queryset(self, pk):
-        return Report.objects.filter(project=pk).order_by('-date')
+    def get_queryset(self, project_pk, author_pk):
+        return Report.objects.filter(project=project_pk, author=author_pk).order_by('-date')
+
+    def include_users_in_reports_dict(self, project):
+        reports_dict = {}
+        for user in project.members.all():
+            queryset = self.get_queryset(project_pk=project.pk, author_pk=user.pk)
+            user_reports_dict = query_as_dict(queryset)
+            key = user.email
+            reports_dict[key] = user_reports_dict
+        return reports_dict
 
     def get(self, _request, pk):
         project = get_object_or_404(Project, pk=pk)
-        queryset = self.get_queryset(project.pk)
-        reports_dict = query_as_dict(queryset)
+        reports_dict = self.include_users_in_reports_dict(project)
         return Response({
             'project_name': project.name,
             'reports_dict': reports_dict,
