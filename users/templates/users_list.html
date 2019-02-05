@@ -44,14 +44,12 @@
                   {% endfor %}
                 </td>
                 <td class=Invisible align="center">
-                  <form action="{% url 'custom-user-detail' pk=user.id %}" method="GET">
-                      {% csrf_token %}
+                  <form action="{% url 'custom-users-detail' pk=user.id %}" method="GET">
                       <input type="submit" value="Edit account">
                   </form>
                 </td>
                 <td class=Invisible align="center">
-                  <form action="{% url 'custom-user-detail' pk=user.id %}" method="GET">
-                      {% csrf_token %}
+                  <form action="{% url 'custom-users-detail' pk=user.id %}" method="GET">
                       <input type="submit" value="See reports">
                   </form>
                 </td>
