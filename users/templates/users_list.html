@@ -3,9 +3,15 @@
 {% block content %}
 {% load rest_framework %}
 
-    <h1>Employees</h1>
-    <ul>
+<h1>
+  &nbsp; Employees list &nbsp;
+  <a href="{% url 'custom-user-create' %}" class="btn btn-default btn-sm">
+    <span class="glyphicon glyphicon-plus"></span>
+  </a>
+</h1>
+<br>
 
+  <ul>
     <div class="container">
       <div class="table-responsive">
         <table class="table">
@@ -44,14 +50,14 @@
                   {% endfor %}
                 </td>
                 <td class=Invisible align="center">
-                  <form action="{% url 'custom-users-detail' pk=user.id %}" method="GET">
-                      <input type="submit" value="Edit account">
-                  </form>
+                  <a href="{% url 'custom-users-detail' pk=user.id %}" class="btn btn-info">
+                      <span class="glyphicon glyphicon-pencil"></span>
+                  </a>
                 </td>
                 <td class=Invisible align="center">
-                  <form action="{% url 'custom-users-detail' pk=user.id %}" method="GET">
-                      <input type="submit" value="See reports">
-                  </form>
+                  <a href="{% url 'custom-users-detail' pk=user.id %}" class="btn btn-warning">
+                      <span class="glyphicon glyphicon-list-alt"></span>
+                  </a>
                 </td>
               </tr>
             {% endfor %}
@@ -59,23 +65,6 @@
         </table>
       </div>
     </div>
-    </ul>
+  </ul>
 
-    <hr>
-
-    <h2> Create user </h2>
-    {% if errors %}
-      {% for field, detail in errors.items %}
-        <p><strong>{{ detail.0 }}</strong></p>
-      {% endfor %}
-    {% endif %}
-    <div class="modal-dialog" style="margin-bottom:0">
-      <form action="{% url 'custom-users-list' %}" method="POST">
-          {% csrf_token %}
-          {% render_form serializer template_pack='rest_framework/vertical' %}
-          <input type="submit" value="Create">
-      </form>
-    </div>
-
-  </br>
 {% endblock %}

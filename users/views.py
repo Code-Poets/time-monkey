@@ -122,6 +122,26 @@ class SignUp(APIView):
         return redirect('login')
 
 
+class UserCreate(APIView):
+    renderer_classes = [renderers.TemplateHTMLRenderer]
+    template_name = 'user_create.html'
+
+    def get(self, request):
+        serializer = CustomRegisterSerializer(context={'request': request})
+        return Response({'serializer': serializer})
+
+    def post(self, request):
+        serializer = CustomRegisterSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response({
+                'serializer': serializer,
+                'errors': serializer.errors,
+            })
+        serializer.save(request)
+        return redirect('custom-users-list')
+
+
 class UserUpdate(APIView):
     renderer_classes = [renderers.TemplateHTMLRenderer]
     template_name = 'user_update.html'
@@ -217,21 +237,4 @@ class UserList(APIView):
         return Response({
             'serializer': users_serializer,
             'users_dict': users_dict,
-        })
-
-    def post(self, request):
-        users_queryset = self.get_queryset()
-        users_serializer = UserListSerializer(data=request.data, context={'request': request})
-        users_dict = query_as_dict(users_queryset)
-        if not users_serializer.is_valid():
-            return Response({
-                'serializer': users_serializer,
-                'users_dict': users_dict,
-                'errors': users_serializer.errors,
-            })
-        users_serializer.save()
-        users_dict = query_as_dict(self.get_queryset())
-        return Response({
-            'serializer': users_serializer,
-            'users_dict': users_dict
         })
