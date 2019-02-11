@@ -94,7 +94,8 @@ class ReportDetail(APIView):
         if "discard" not in request.POST:
             report = get_object_or_404(Report, pk=pk)
             serializer = ReportSerializer(
-                report, data=request.data,
+                report,
+                data=request.data,
                 context={'request': request}
             )
             if not serializer.is_valid():
