@@ -309,7 +309,6 @@ class ReportListTests(TestCase):
         view = ReportList()
         view.request = request
         queryset = view.get_queryset()
-        self.assertIsNotNone(queryset)
         self.assertTrue(len(queryset), 3)
         self.assertFalse(other_user_report in queryset)
         self.assertEqual(queryset[0], other_report_1)
@@ -380,10 +379,8 @@ class ReportDetailTests(TestCase):
         request.user = self.user
         response = ReportDetail.as_view()(request, pk=self.report.pk)
         self.report.refresh_from_db()
-        current_description = self.report.description
-        # SELF NOTE: It appears that save() does not override reference on model object (edit is unavailable)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(current_description, new_description)
+        self.assertEqual(self.report.description, new_description)
 
     def test_custom_report_detail_view_should_not_update_report_on_discard(self):
         new_description = 'Some other description'
@@ -400,10 +397,8 @@ class ReportDetailTests(TestCase):
         request.user = self.user
         response = ReportDetail.as_view()(request, pk=self.report.pk)
         self.report.refresh_from_db()
-        current_description = self.report.description
-        # SELF NOTE: It appears that save() does not override reference on model object (edit is unavailable)
         self.assertEqual(response.status_code, 302)
-        self.assertNotEqual(current_description, new_description)
+        self.assertNotEqual(self.report.description, new_description)
 
     def test_custom_report_detail_view_should_not_update_report_on_post_if_form_is_invalid(self):
         new_description = 'Some other description'
@@ -418,11 +413,9 @@ class ReportDetailTests(TestCase):
         request.user = self.user
         response = ReportDetail.as_view()(request, pk=self.report.pk)
         self.report.refresh_from_db()
-        current_description = self.report.description
-        # SELF NOTE: It appears that save() does not override reference on model object (edit is unavailable)
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.data['errors'])
-        self.assertNotEqual(new_description, current_description)
+        self.assertNotEqual(new_description, self.report.description)
 
 
 class DeleteReportTests(TestCase):
