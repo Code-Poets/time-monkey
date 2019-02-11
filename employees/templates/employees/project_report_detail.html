@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'employees/style.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>{{ UI_text.PAGE_TITLE.value }}{{ report.project }} ({{ report.date }})</h1>
+</br>
+<div class="modal-dialog">
+    <form action="{% url 'project-report-detail' pk=report.pk %}" method="POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" value="{{ UI_text.UPDATE_REPORT_BUTTON.value }}">
+        <input type="submit" name="discard" value="{{ UI_text.DISCARD_CHANGES_BUTTON.value }}">
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+{{ form.media }}
+{% endblock %}
