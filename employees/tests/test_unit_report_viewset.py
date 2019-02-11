@@ -309,7 +309,7 @@ class ReportListTests(TestCase):
         view = ReportList()
         view.request = request
         queryset = view.get_queryset()
-        self.assertTrue(len(queryset), 3)
+        self.assertEqual(len(queryset), 3)
         self.assertFalse(other_user_report in queryset)
         self.assertEqual(queryset[0], other_report_1)
         self.assertEqual(queryset[1], self.report)
