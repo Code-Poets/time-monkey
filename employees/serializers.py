@@ -10,7 +10,7 @@ from managers.models import Project
 
 class HoursField(serializers.DecimalField):
     def __init__(self, **kwargs):
-        super(HoursField, self).__init__(
+        super().__init__(
             max_value=ReportModelConstants.MAX_WORK_HOURS.value,
             min_value=ReportModelConstants.MIN_WORK_HOURS.value,
             max_digits=ReportModelConstants.MAX_DIGITS.value,
@@ -21,8 +21,8 @@ class HoursField(serializers.DecimalField):
     def to_internal_value(self, data):
         if isinstance(data, str) and ':' in data:
             converted = data.replace(':', '.')
-            return super(HoursField, self).to_internal_value(converted)
-        return super(HoursField, self).to_internal_value(data)
+            return super().to_internal_value(converted)
+        return super().to_internal_value(data)
 
 
 class ReportSerializer(serializers.HyperlinkedModelSerializer):
