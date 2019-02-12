@@ -52,7 +52,6 @@ class ReportList(APIView):
         project.members.add(self.request.user)
         project.full_clean()
         project.save()
-        project.refresh_from_db()
         serializer.fields['project'].initial = project
 
     def _create_serializer(self):
@@ -95,7 +94,7 @@ class ReportList(APIView):
                 'UI_text': ReportListStrings,
                 'project_form': self.project_form,
             })
-        
+
         elif not reports_serializer.is_valid():
             return Response({
                 'serializer': reports_serializer,
