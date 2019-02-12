@@ -5,6 +5,7 @@
 {% load static %}
 
 <head>
+    <link rel="stylesheet" type="text/css" href="{% static 'employees/style.css' %}">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="//code.jquery.com/jquery-1.12.4.js"></script>
     <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -18,7 +19,7 @@
 
 <h1>{{ UI_text.PAGE_TITLE.value }}{{ report.project }} ({{ report.date }})</h1>
 </br>
-<div class="modal-dialog" style="margin-bottom:0">
+<div class="modal-dialog">
     <form action="{% url 'custom-report-detail' pk=report.pk %}" method="POST">
         {% csrf_token %}
         {% render_form serializer template_pack='rest_framework/vertical' %}
