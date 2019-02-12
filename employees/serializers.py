@@ -52,8 +52,7 @@ class ReportSerializer(serializers.HyperlinkedModelSerializer):
         )
 
     def to_representation(self, instance):
-        data = super(ReportSerializer, self).to_representation(instance)
-        # SELF NOTE: For some reason, tests for list get methods got a Queryset as instance in serializer and I dunno why...
+        data = super().to_representation(instance)
         if type(self.instance) is Report:
             data['work_hours'] = self.instance.work_hours_str
         return data
