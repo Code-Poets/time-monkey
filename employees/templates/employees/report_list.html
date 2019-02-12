@@ -9,6 +9,12 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="//code.jquery.com/jquery-1.12.4.js"></script>
     <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript">
+        var join_discard_text = "{{ UI_text.JOIN_POPUP_NO.value }}";
+        var dialog_id = "#dialog";
+        var opener_id =﻿"#opener";
+    </script>
+    <script src="{% static 'employees/scripts/join_popup_window.js' %}"></script>
 </head>
 
 <h1>{{ UI_text.PAGE_TITLE.value }}</h1>
@@ -73,24 +79,4 @@
         </table>
     </div>
 </div>
-<script>
-$(function () {
-    $("#dialog").dialog ({
-        modal: true,
-        autoOpen: false,
-	    buttons : [
-	        {
-	            text: "{{ UI_text.JOIN_POPUP_NO.value }}",
-	            click: function () {
-	                $(this).dialog('close');
-	            }
-	        }
-	    ]
-	}).prev().find(".ui-dialog-titlebar-close").hide ();
-
-	$("#opener").click(function () {
-	    $('#dialog').dialog('open');
-	});
-});
-</script>
 {% endblock %}
