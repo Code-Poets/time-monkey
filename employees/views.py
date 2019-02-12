@@ -55,23 +55,20 @@ class ReportList(APIView):
 
     def post(self, request):
         reports_serializer = ReportSerializer(data=request.data, context={'request': request})
-        reports_dict = query_as_dict(self.get_queryset())
         if not reports_serializer.is_valid():
             return Response({
                 'serializer': reports_serializer,
-                'reports_dict': reports_dict,
+                'reports_dict': query_as_dict(self.get_queryset()),
                 'errors': reports_serializer.errors,
                 'UI_text': ReportListStrings,
             })
         reports_serializer.save(author=self.request.user)
-        reports_dict = query_as_dict(self.get_queryset())
         reports_serializer = ReportSerializer(context={'request': request})
         return Response({
             'serializer': reports_serializer,
-            'reports_dict': reports_dict,
+            'reports_dict': query_as_dict(self.get_queryset()),
             'UI_text': ReportListStrings,
         }, status=201)
-        # QUESTION: Should I use some sort of database verification prior to returning Response with status 201?
 
 
 class ReportDetail(APIView):
