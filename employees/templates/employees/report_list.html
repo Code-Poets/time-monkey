@@ -2,6 +2,9 @@
 {% load i18n %}
 {% block content %}
 {% load rest_framework %}
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'employees/style.css' %}">
 
 <h1>{{ UI_text.PAGE_TITLE.value }}</h1>
 
@@ -25,23 +28,23 @@
             </tr>
             {% for date, reports in reports_dict.items %}
             <tr>
-                <td style="width:128px" rowspan={{ reports|length }}>
+                <td class="date_column" rowspan={{ reports|length }}>
                     {{ date }}
                 </td>
                 {% for report in reports %}
                     {% if forloop.counter > 1 %}
                     <tr>
                     {% endif %}
-                <td style="width:230px">
+                <td class="project_column">
                     {{ report.project }}
                 </td>
-                <td style="width:93px" align="right">
+                <td class="work_hours_column">
                     {{ report.work_hours }}
                 </td>
                 <td>
                     {{ report.description }}
                 </td>
-                <td style="width:100px" align="right" class=Invisible>
+                <td class="edit_button_column Invisible">
                     {% if report.editable %}
                     <a href="{% url 'custom-report-detail' pk=report.id %}" class="btn btn-info">
                         <span class="glyphicon glyphicon-pencil"></span>
