@@ -1,5 +1,5 @@
 $(function () {
-    $(dialog_id).dialog ({
+    $("#dialog").dialog ({
         modal: true,
         autoOpen: false,
 	    buttons : [
@@ -12,7 +12,7 @@ $(function () {
 	    ]
 	}).prev().find(".ui-dialog-titlebar-close").hide ();
 
-	$(opener_id).click(function () {
-	    $(dialog_id).dialog('open');
+	$("#opener").click(function () {
+	    $("#dialog").dialog('open');
 	});
 });
