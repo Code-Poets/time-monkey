@@ -10,7 +10,7 @@ class ProjectJoinFormTests(TestCase):
         queryset_length = 10
         for i in range(queryset_length):
             self.project = Project(
-                name="Test Project %d" % i,
+                name=f"Test Project {i}",
                 start_date=datetime.datetime.now(),
             )
             self.project.full_clean()
