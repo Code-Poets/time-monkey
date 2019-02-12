@@ -95,8 +95,8 @@ class ReportList(APIView):
                 'UI_text': ReportListStrings,
                 'project_form': self.project_form,
             })
-
-        if not reports_serializer.is_valid():
+        
+        elif not reports_serializer.is_valid():
             return Response({
                 'serializer': reports_serializer,
                 'reports_dict': self.reports_dict,
