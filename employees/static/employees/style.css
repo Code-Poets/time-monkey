@@ -1,0 +1,26 @@
+div.dialog {
+    display: none;
+    text-align: center;
+}
+
+div.modal_dialog {
+    margin-bottom: 0;
+}
+
+td.date_column{
+    width: 128px;
+}
+
+td.project_column {
+    width: 230px;
+}
+
+td.work_hours_column {
+    width: 93px;
+    text-align: right;
+}
+
+td.edit_button_column {
+    width: 100px;
+    text-align: right;
+}
