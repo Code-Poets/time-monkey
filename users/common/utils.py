@@ -4,6 +4,23 @@ from users.common import constants
 from users.common.constants import ErrorCode
 from users.common.exceptions import CustomValidationError
 from users.common.strings import CustomValidationErrorText
+from users import models
+
+
+def user_full_clean_and_save(email, first_name, last_name, phone_number, password):
+    user = models.CustomUser(
+        email=email,
+        first_name=first_name,
+        last_name=last_name,
+        # date_of_birth=date_of_birth,
+        phone_number=phone_number,
+        # country=country,
+        # user_type=user_type,
+    )
+    user.set_password(password)
+    user.full_clean()
+    user.save()
+    return user
 
 
 def raise_serializer_exception(error_message):
