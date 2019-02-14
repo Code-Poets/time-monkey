@@ -11,60 +11,53 @@
 </h1>
 <br>
 
-  <ul>
-    <div class="container">
-      <div class="table-responsive">
-        <table class="table">
+<ul>
+  <div class="container">
+    <div class="table-responsive">
+      <table class="table">
+        <tr>
+          <th>Id</th>
+          <th>Email</th>
+          <th>Type</th>
+          <th>First name</th>
+          <th>Last name</th>
+          <th>Projects</th>
+          <td class=Invisible></td>
+          <td class=Invisible></td>
+        </tr>
           <tr>
-            <th>Id</th>
-            <th>Email</th>
-            <th>Type</th>
-            <th>First name</th>
-            <th>Last name</th>
-            <th>Projects</th>
-            <td class=Invisible></td>
-            <td class=Invisible></td>
-          </tr>
-          {% for id, users in users_dict.items %}
-            <tr>
-              <td rowspan={{ users|length }}>
-                {{ id }}
-              </td>
-              {% for user in users %}
-                {% if forloop.counter > 1 %}
-                  <tr>
-                {% endif %}
-                <td>{{ user.email }}</td>
-                <td>{{ user.user_type }}</td>
-                <td>{{ user.first_name }}</td>
-                <td>{{ user.last_name }}</td>
-                <td>
-                  {% for members in user.members.all %}
-                    {{ members.name }}
-                    {% for managers in members.managers.all %}
-                        {% if managers.email == user.email %}
-                        [M]
-                        {% endif %}
-                    {% endfor %}
-                    ,
+            {% for user in users_list %}
+              <td>{{forloop.counter}}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.user_type }}</td>
+              <td>{{ user.first_name }}</td>
+              <td>{{ user.last_name }}</td>
+              <td>
+                {% for members in user.members.all %}
+                  {{ members.name }}
+                  {% for managers in members.managers.all %}
+                      {% if managers.email == user.email %}
+                      [M]
+                      {% endif %}
                   {% endfor %}
-                </td>
-                <td class=Invisible align="center">
-                  <a href="{% url 'custom-user-update-by-admin' pk=user.id %}" class="btn btn-info">
-                      <span class="glyphicon glyphicon-pencil"></span>
-                  </a>
-                </td>
-                <td class=Invisible align="center">
-                  <a href="{% url 'custom-user-update-by-admin' pk=user.id %}" class="btn btn-warning">
-                      <span class="glyphicon glyphicon-list-alt"></span>
-                  </a>
-                </td>
-              </tr>
-            {% endfor %}
+                  ,
+                {% endfor %}
+              </td>
+              <td class=Invisible align="center">
+                <a href="{% url 'custom-user-update-by-admin' pk=user.id %}" class="btn btn-info">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+              </td>
+              <td class=Invisible align="center">
+                <a href="{% url 'custom-user-update-by-admin' pk=user.id %}" class="btn btn-warning">
+                    <span class="glyphicon glyphicon-list-alt"></span>
+                </a>
+              </td>
+            </tr>
           {% endfor %}
-        </table>
-      </div>
+      </table>
     </div>
-  </ul>
+  </div>
+</ul>
 
 {% endblock %}

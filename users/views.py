@@ -229,15 +229,6 @@ class UserUpdateByAdmin(APIView):
         return redirect('custom-user-update-by-admin', pk=pk)
 
 
-def query_as_dict(query_set):
-    dictionary = {}
-    for record in query_set:
-        key = record.id
-        dictionary.setdefault(key, [])
-        dictionary[key].append(record)
-    return dictionary
-
-
 class UserList(APIView):
     serializer_class = UserListSerializer
     renderer_classes = [renderers.TemplateHTMLRenderer]
@@ -254,8 +245,7 @@ class UserList(APIView):
     def get(cls, request):
         users_queryset = cls.get_queryset()
         users_serializer = UserListSerializer(context={'request': request})
-        users_dict = query_as_dict(users_queryset)
         return Response({
             'serializer': users_serializer,
-            'users_dict': users_dict,
+            'users_list': users_queryset,
         })
