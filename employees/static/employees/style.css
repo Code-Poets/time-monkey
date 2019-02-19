@@ -7,20 +7,20 @@
     margin-bottom: 0;
 }
 
-.date_column{
+.date-column{
     width: 128px;
 }
 
-.project_column {
+.project-column {
     width: 230px;
 }
 
-.work_hours_column {
+.work-hours-column {
     width: 93px;
     text-align: right;
 }
 
-.edit_button_column {
+.edit-button-column {
     width: 100px;
     text-align: right;
 }
