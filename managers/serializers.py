@@ -14,3 +14,11 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
             #  'managers',
             #  'members',
         )
+
+
+class ProjectsListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = {
+            'name',
+        }
