@@ -1,4 +1,5 @@
 from django.db.models import Count
+from django.shortcuts import get_object_or_404
 from rest_framework import renderers
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -34,3 +35,13 @@ class ProjectsList(APIView):
             'serializer': projects_serializer,
             'projects_queryset': projects_queryset,
         })
+
+
+class ProjectDetail(APIView):
+    renderer_classes = [renderers.TemplateHTMLRenderer]
+    template_name = 'managers/project_detail.html'
+
+    def get(self, request, pk):
+        project = get_object_or_404(Project, pk=pk)
+        serializer = ProjectSerializer(project, context={'request': request})
+        return Response({'serializer': serializer, 'project': project})
