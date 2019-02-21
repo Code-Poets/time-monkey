@@ -1,5 +1,6 @@
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
 from rest_framework import renderers
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -7,7 +8,7 @@ from rest_framework.views import APIView
 
 from managers.models import Project
 from managers.serializers import ProjectSerializer
-from managers.serializers import ProjectsListSerializer
+from managers.serializers import ProjectCreateSerializer
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -30,11 +31,28 @@ class ProjectsList(APIView):
                     .order_by(request.GET.get('sort'))
             else:
                 projects_queryset = projects_queryset.order_by(request.GET.get('sort'))
-        projects_serializer = ProjectsListSerializer(context={'request': request})
         return Response({
-            'serializer': projects_serializer,
             'projects_queryset': projects_queryset,
         })
+
+
+class ProjectCreate(APIView):
+    renderer_classes = [renderers.TemplateHTMLRenderer]
+    template_name = 'managers/project_create.html'
+
+    def get(self, request):
+        project_serializer = ProjectCreateSerializer(context={'request': request})
+        return Response({'serializer': project_serializer})
+
+    def post(self, request):
+        project_serializer = ProjectCreateSerializer(data=request.data, context={'request': request})
+        if not project_serializer.is_valid():
+            return Response({
+                'serializer': project_serializer,
+                'errors': project_serializer.errors,
+            })
+        project_serializer.save()
+        return redirect('custom-projects-list')
 
 
 class ProjectDetail(APIView):

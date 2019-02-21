@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block content %}
+{% load rest_framework %}
+
+<h2>
+  <small>
+    <a href="{% url 'custom-projects-list' %}">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+    </a>
+  </small>
+  &nbsp;Create new project&nbsp;
+</h2>
+
+<div class="modal-dialog" style="margin-bottom:0">
+  <form action="{% url 'custom-project-create' %}" method="post">
+      {% csrf_token %}
+      {% render_form serializer template_pack='rest_framework/vertical' %}
+
+      <button type="submit" class="btn btn-default">Create</button>
+  </form>
+</div>
+
+{% endblock %}
