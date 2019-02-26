@@ -59,7 +59,7 @@ class ReportList(APIView):
         reports_serializer.fields['project'].queryset = \
             Project.objects.filter(
                 members__id=self.request.user.id
-            ).order_by('name')
+        ).order_by('name')
         return reports_serializer
 
     def initial(self, request, *args, **kwargs):
@@ -69,7 +69,7 @@ class ReportList(APIView):
             queryset=Project.objects.exclude(members__id=self.request.user.id).order_by('name'),
         )
 
-    def get(self, request):
+    def get(self, _request):
         return Response({
             'serializer': self._create_serializer(),
             'reports_dict': self.reports_dict,
