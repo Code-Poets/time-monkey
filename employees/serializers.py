@@ -55,6 +55,6 @@ class ReportSerializer(serializers.HyperlinkedModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        if type(self.instance) is Report:
+        if isinstance(self.instance, Report):
             data['work_hours'] = self.instance.work_hours_str
         return data
