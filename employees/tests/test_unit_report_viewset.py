@@ -8,7 +8,6 @@ from rest_framework.test import APIRequestFactory
 
 from employees.models import Report
 from employees.views import delete_report
-from employees.views import query_as_dict
 from employees.views import ReportDetail
 from employees.views import ReportList
 from employees.views import ReportViewSet
