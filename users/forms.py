@@ -30,8 +30,8 @@ class CustomUserChangeForm(UserChangeForm):
 class LoginAuthentication(AuthenticationForm):
     def clean(self):
         username = self.cleaned_data.get('username')
-        if "@" not in str(username):
-            username = str(username) + "@codepoets.it"
+        if "@" not in username:
+            username = username + "@codepoets.it"
         password = self.cleaned_data.get('password')
 
         if username is not None and password:
