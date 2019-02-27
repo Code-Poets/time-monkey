@@ -1,6 +1,8 @@
+from django.urls import include
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from django.conf.urls import url
+from django.urls import path
 from django.contrib.auth import views as django_views
 from users import views
 
@@ -33,14 +35,7 @@ urlpatterns = format_suffix_patterns([
     #Override login view
     url('login/', views.CustomUserLoginView.as_view(), name='login'),
     #Use django login system
-    url('logout/', django_views.LogoutView.as_view(), name='logout'),
-    url('password_change/', django_views.PasswordChangeView.as_view(), name='password_change'),
-    url('password_change/done/', django_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
-    url('password_reset/', django_views.PasswordResetView.as_view(), name='password_reset'),
-    url('password_reset/done/', django_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-    url('reset/<uidb64>/<token>/', django_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    url('reset/done/', django_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-
+    path('accounts/', include('django.contrib.auth.urls')),
     url(r'^signup/$', views.SignUp.as_view(), name='signup'),
     url(r'^user/(?P<pk>[0-9]+)/$', views.UserUpdate.as_view(), name='custom-user-update'),
     url(r'^user/create/$', views.UserCreate.as_view(), name='custom-user-create'),
