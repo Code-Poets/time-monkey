@@ -1,3 +1,4 @@
+from django.contrib.auth.views import LoginView
 from rest_framework import permissions
 from rest_framework import renderers
 from rest_framework import viewsets
@@ -14,6 +15,7 @@ from django.shortcuts import render
 
 from users.common.fields import Action
 from users.common.strings import ConfirmationMessages
+from users.forms import LoginAuthentication
 from users.models import CustomUser
 from users.permissions import AuthenticatedAdmin
 from users.permissions import AuthenticatedAdminOrOwnerUser
@@ -249,3 +251,11 @@ class UserList(APIView):
             'serializer': users_serializer,
             'users_list': users_queryset,
         })
+
+
+class CustomUserLoginView(LoginView):
+    """
+       Use Django LoginView with diffrent form_class
+       """
+    form_class = LoginAuthentication
+
