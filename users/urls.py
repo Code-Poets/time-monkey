@@ -3,7 +3,6 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from django.conf.urls import url
 from django.urls import path
-from django.contrib.auth import views as django_views
 from users import views
 
 
