@@ -1,7 +1,10 @@
 from django.contrib.auth import authenticate
-from django.contrib.auth.forms import UserChangeForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.forms import UserCreationForm
 from django_countries.widgets import CountrySelectWidget
+
+from users.common.constants import VALID_EMAIL_DOMAIN_LIST
 from users.models import CustomUser
 
 
@@ -28,15 +31,21 @@ class CustomUserChangeForm(UserChangeForm):
 
 
 class LoginAuthentication(AuthenticationForm):
+
     def clean(self):
         username = self.cleaned_data.get('username')
-        if "@" not in username:
-            username = username + "@codepoets.it"
         password = self.cleaned_data.get('password')
+        domain_list_size = len(VALID_EMAIL_DOMAIN_LIST) - 1
 
         if username is not None and password:
             self.user_cache = authenticate(self.request, username=username, password=password)
+
+            while self.user_cache is None and domain_list_size >= 0:
+                username_temp = username + VALID_EMAIL_DOMAIN_LIST[domain_list_size]
+                self.user_cache = authenticate(self.request, username=username_temp, password=password)
+                domain_list_size -= 1
+
             if self.user_cache is None:
                 raise self.get_invalid_login_error()
-            else:
-                self.confirm_login_allowed(self.user_cache)
+
+        return self.cleaned_data
