@@ -41,7 +41,7 @@ class LoginAuthentication(AuthenticationForm):
             self.user_cache = authenticate(self.request, username=username, password=password)
 
             while self.user_cache is None and domain_list_size >= 0:
-                username_temp = username + VALID_EMAIL_DOMAIN_LIST[domain_list_size]
+                username_temp = username + '@' + VALID_EMAIL_DOMAIN_LIST[domain_list_size]
                 self.user_cache = authenticate(self.request, username=username_temp, password=password)
                 domain_list_size -= 1
 
