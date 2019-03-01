@@ -3,6 +3,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from django.conf.urls import url
 from django.urls import path
+
 from users import views
 
 
@@ -31,9 +32,9 @@ urlpatterns = format_suffix_patterns([
     url(r'^api/users/(?P<pk>[0-9]+)/$', users_detail, name='users-detail'),
     url(r'^api/account/(?P<pk>[0-9]+)/$', user_account_detail, name='user-account-detail'),
     url(r'^$', views.index, name='home'),
-    #Override login view
+    # Override login view.
     url('login/', views.CustomUserLoginView.as_view(), name='login'),
-    #Use django login system
+    # Use django login system.
     path('accounts/', include('django.contrib.auth.urls')),
     url(r'^signup/$', views.SignUp.as_view(), name='signup'),
     url(r'^user/(?P<pk>[0-9]+)/$', views.UserUpdate.as_view(), name='custom-user-update'),
