@@ -254,8 +254,6 @@ class UserList(APIView):
 
 
 class CustomUserLoginView(LoginView):
-    """
-       Use Django LoginView with diffrent form_class
-       """
+    # Use Django LoginView with different form_class.
     form_class = LoginAuthentication
 
