@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIRequestFactory
 
+from users.forms import LoginAuthentication
 from users.models import CustomUser
 from users.views import CustomUserLoginView
 
@@ -72,3 +73,30 @@ class TestLoginAuthentication(TestCase):
             }
         )
         self.assertNotEqual(302, response.status_code)
+
+
+class TestLoginAuthenticationForm(TestCase):
+    def setUp(self):
+        self.user = CustomUser.objects._create_user(
+            "testuser@codepoets.it",
+            "testuserpasswd",
+            False,
+            False,
+            CustomUser.UserType.EMPLOYEE.name,
+        )
+
+    def test_form_authentication_should_be_valid_with_existing_user_data(self):
+        self.clean_data = {
+            'username': 'testuser',
+            'password': 'testuserpasswd'
+        }
+        form = LoginAuthentication(data=self.clean_data)
+        self.assertTrue(form.is_valid())
+
+    def test_form_authentication_should_be_not_valid_with_existing_user_data(self):
+        self.clean_data = {
+            'username': 'wrongtestuser',
+            'password': 'wrongtestuserpasswd'
+        }
+        form = LoginAuthentication(data=self.clean_data)
+        self.assertFalse(form.is_valid())
