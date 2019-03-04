@@ -104,9 +104,8 @@ class ReportList(APIView):
                 'project_form': self.project_form,
             })
         reports_serializer.save(author=self.request.user)
-        reports_serializer = ReportSerializer(context={'request': request})
         return Response({
-            'serializer': reports_serializer,
+            'serializer': self._create_serializer(),
             'reports_dict': query_as_dict(self.get_queryset()),
             'UI_text': ReportListStrings,
             'project_form': self.project_form,
