@@ -1,6 +1,9 @@
 from django.test import TestCase
+from django.urls import reverse
+from rest_framework.test import APIRequestFactory
 
 from users.models import CustomUser
+from users.views import CustomUserLoginView
 
 
 class TestCustomUserLogin(TestCase):
@@ -37,3 +40,35 @@ class TestCustomUserLogin(TestCase):
         self.assertFalse(
             self.client.login(email="testuser@codepoets.it", password=None)
         )
+
+
+class TestLoginAuthentication(TestCase):
+    def setUp(self):
+        self.user = CustomUser.objects._create_user(
+            "testuser@codepoets.it",
+            "testuserpasswd",
+            False,
+            False,
+            CustomUser.UserType.EMPLOYEE.name,
+        )
+
+    def test_user_should_log_in_without_domain(self):
+        response = self.client.post(
+            path=reverse('login'),
+            data={
+                'username': 'testuser',
+                'password': 'testuserpasswd'
+            }
+        )
+        self.assertEqual(302, response.status_code)
+        self.assertEqual('/', response.url)
+
+    def test_user_should_not_log_in_with_wrong_username(self):
+        response = self.client.post(
+            path=reverse('login'),
+            data={
+                'username': 'wronguser',
+                'password': 'wronguserpasswd'
+            }
+        )
+        self.assertNotEqual(302, response.status_code)
