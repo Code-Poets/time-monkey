@@ -35,15 +35,17 @@ class LoginAuthentication(AuthenticationForm):
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
-        domain_list_size = len(VALID_EMAIL_DOMAIN_LIST) - 1
 
         if username is not None and password:
             self.user_cache = authenticate(self.request, username=username, password=password)
-
-            while self.user_cache is None and domain_list_size >= 0:
-                username_temp = username + '@' + VALID_EMAIL_DOMAIN_LIST[domain_list_size]
-                self.user_cache = authenticate(self.request, username=username_temp, password=password)
-                domain_list_size -= 1
+            for domain in VALID_EMAIL_DOMAIN_LIST:
+                if self.user_cache is not None:
+                    break
+                self.user_cache = authenticate(
+                    self.request,
+                    username=username + '@' + domain,
+                    password=password,
+                )
 
             if self.user_cache is None:
                 raise self.get_invalid_login_error()
