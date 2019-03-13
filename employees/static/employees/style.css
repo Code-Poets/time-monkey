@@ -7,20 +7,38 @@
     margin-bottom: 0;
 }
 
-.date-column{
-    width: 128px;
+.date-header {
+    width: 11.23%;
+}
+
+.project-header {
+    width: 20.18%;
+}
+
+.work-hours-header {
+    width: 8.16%;
+}
+
+.edit-button-header {
+    width: 8.77%;
+}
+
+.date-column {
+    text-align: left;
 }
 
 .project-column {
-    width: 230px;
+    text-align: left;
+}
+
+.description-column {
+    text-align: left;
 }
 
 .work-hours-column {
-    width: 93px;
     text-align: right;
 }
 
 .edit-button-column {
-    width: 100px;
     text-align: right;
 }
