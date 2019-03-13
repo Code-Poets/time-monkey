@@ -2,15 +2,18 @@ from decimal import Decimal
 
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
+from django.urls import reverse
 from rest_framework import permissions
 from rest_framework import renderers
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from employees.common.strings import MonthNavigationText
 from employees.common.strings import ProjectReportListStrings
 from employees.common.strings import ReportDetailStrings
 from employees.common.strings import ReportListStrings
+from employees.forms import MonthSwitchForm
 from employees.forms import ProjectJoinForm
 from employees.models import Report
 from employees.serializers import ReportSerializer
@@ -60,6 +63,16 @@ def hours_per_day_counter(reports):
 
 def decimal_to_hours_string(decimal):
     return decimal.to_eng_string().replace('.', ':')
+
+
+def parse_month_to_string(month):
+    if int(month) < 10:
+        return f'0{month}'
+    return str(month)
+
+
+def get_title_date(year, month):
+    return f'{parse_month_to_string(month)}/{year}'
 
 
 class ReportList(APIView):
@@ -195,23 +208,35 @@ class ProjectReportList(APIView):
         permissions.IsAuthenticated,
     )
 
-    def get_queryset(self, project_pk, author_pk):
-        return Report.objects.filter(project=project_pk, author=author_pk).order_by('-date')
+    def get_queryset(self, project_pk, author_pk, year, month):
+        return Report.objects.filter(
+            project=project_pk,
+            author=author_pk,
+            date__year=year,
+            date__month=month,
+        ).order_by('-date')
 
-    def include_users_in_reports_dict(self, project):
+    def include_users_in_reports_dict(self, project, year, month):
         reports_dict = {}
         for user in project.members.all():
-            queryset = self.get_queryset(project_pk=project.pk, author_pk=user.pk)
+            queryset = self.get_queryset(project_pk=project.pk, author_pk=user.pk, year=year, month=month)
             user_reports_dict = query_as_dict(queryset)
             key = user.email
             reports_dict[key] = user_reports_dict
         return reports_dict
 
-    def get(self, _request, pk):
+    def get(self, _request, pk, year, month):
         project = get_object_or_404(Project, pk=pk)
-        reports_dict = self.include_users_in_reports_dict(project)
+        reports_dict = self.include_users_in_reports_dict(project, year, month)
         return Response({
             'project_name': project.name,
             'reports_dict': reports_dict,
             'UI_text': self.user_interface_text,
+            'title_date': get_title_date(year, month),
+            'month_navigator_params': ['project-report-list', int(year), int(month), pk],
         })
+
+    def post(self, request, pk, year, month):
+        year = request.POST['year']
+        month = request.POST['month']
+        return redirect('project-report-list', pk, year, month)

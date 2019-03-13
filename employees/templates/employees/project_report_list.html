@@ -3,10 +3,12 @@
 {% block content %}
 {% load rest_framework %}
 {% load static %}
+{% load inclusion_tags %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'employees/style.css' %}">
 
-<h1>{{ project_name }}{{ UI_text.PAGE_TITLE.value }}</h1>
+{% month_navigator month_navigator_params.0 month_navigator_params.1 month_navigator_params.2 month_navigator_params.3 %}
+<h1>{{ project_name }} {{ title_date }}{{ UI_text.PAGE_TITLE.value }}</h1>
 <div class="container">
     <div class="table-responsive">
         {% for username, dictionary in reports_dict.items %}
