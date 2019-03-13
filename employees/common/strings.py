@@ -51,3 +51,8 @@ class ProjectReportListStrings(Enum):
     EDITED_COLUMN_HEADER = ugettext_lazy("Edited")
     HOURS_PER_DAY_LABEL = ugettext_lazy("Total hours")
     NO_REPORTS_MESSAGE = ugettext_lazy("There are no reports for this project to display.")
+
+
+@notCallable
+class MonthNavigationText(Enum):
+    SWITCH_MONTH = ugettext_lazy("Go")
