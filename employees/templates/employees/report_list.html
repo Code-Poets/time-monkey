@@ -20,11 +20,11 @@
     <div class="table-responsive">
         <table class="table">
             <tr>
-                <th>{{ UI_text.DATE_COLUMN_HEADER.value }}</th>
-                <th>{{ UI_text.PROJECT_COLUMN_HEADER.value }}</th>
-                <th>{{ UI_text.WORK_HOURS_COLUMN_HEADER.value }}</th>
+                <th class="date-header">{{ UI_text.DATE_COLUMN_HEADER.value }}</th>
+                <th class="project-header">{{ UI_text.PROJECT_COLUMN_HEADER.value }}</th>
+                <th class="work-hours-header">{{ UI_text.WORK_HOURS_COLUMN_HEADER.value }}</th>
                 <th>{{ UI_text.DESCRIPTION_COLUMN_HEADER.value }}</th>
-                <td class=Invisible></td>
+                <td class="edit-button-header Invisible"></td>
             </tr>
             {% for date, reports in reports_dict.items %}
             <tr>
@@ -41,7 +41,7 @@
                 <td class="work-hours-column">
                     {{ report.work_hours }}
                 </td>
-                <td>
+                <td class="description-column">
                     {{ report.description }}
                 </td>
                 <td class="edit-button-column Invisible">
