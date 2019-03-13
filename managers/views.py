@@ -1,6 +1,7 @@
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
+from django.utils import timezone
 from rest_framework import renderers
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -64,7 +65,11 @@ class ProjectDetail(APIView):
 
     def get(self, request, pk):
         project = get_object_or_404(Project, pk=pk)
-        return Response({'project': project})
+        return Response({
+            'project': project,
+            'year': timezone.now().year,
+            'month': timezone.now().month,
+        })
 
 
 class ProjectUpdate(APIView):
