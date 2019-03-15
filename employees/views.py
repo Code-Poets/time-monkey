@@ -58,8 +58,20 @@ def hours_per_day_counter(reports):
     return hours_sum
 
 
+def hours_per_month_counter(dictionary):
+    minutes_sum = Decimal(0)
+    for reports in dictionary.values():
+        minutes_sum = minutes_sum + hours_to_minutes(hours_string_to_decimal(reports[-1]))
+    hours_sum = minutes_to_hours(minutes_sum)
+    return hours_sum
+
+
 def decimal_to_hours_string(decimal):
     return decimal.to_eng_string().replace('.', ':')
+
+
+def hours_string_to_decimal(hours_string):
+    return Decimal(hours_string.replace(':', '.'))
 
 
 def parse_month_to_string(month):
@@ -111,6 +123,7 @@ class ReportList(APIView):
             'reports_dict': self.reports_dict,
             'UI_text': ReportListStrings,
             'project_form': self.project_form,
+            'monthly_hours': decimal_to_hours_string(hours_per_month_counter(self.reports_dict)),
         })
 
     def post(self, request):
@@ -129,6 +142,7 @@ class ReportList(APIView):
                 'reports_dict': self.reports_dict,
                 'UI_text': ReportListStrings,
                 'project_form': self.project_form,
+                'monthly_hours': decimal_to_hours_string(hours_per_month_counter(self.reports_dict)),
             })
 
         elif not reports_serializer.is_valid():
@@ -138,6 +152,7 @@ class ReportList(APIView):
                 'errors': reports_serializer.errors,
                 'UI_text': ReportListStrings,
                 'project_form': self.project_form,
+                'monthly_hours': decimal_to_hours_string(hours_per_month_counter(self.reports_dict)),
             })
         reports_serializer.save(author=self.request.user)
         return Response({
@@ -145,6 +160,7 @@ class ReportList(APIView):
             'reports_dict': query_as_dict(self.get_queryset()),
             'UI_text': ReportListStrings,
             'project_form': self.project_form,
+            'monthly_hours': decimal_to_hours_string(hours_per_month_counter(self.reports_dict)),
         }, status=201)
 
 
@@ -219,7 +235,7 @@ class ProjectReportList(APIView):
             queryset = self.get_queryset(project_pk=project.pk, author_pk=user.pk, year=year, month=month)
             user_reports_dict = query_as_dict(queryset)
             key = user.email
-            reports_dict[key] = user_reports_dict
+            reports_dict[key] = [user_reports_dict, decimal_to_hours_string(hours_per_month_counter(user_reports_dict))]
         return reports_dict
 
     def get(self, _request, pk, year, month):
