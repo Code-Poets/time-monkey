@@ -22,7 +22,8 @@ class ReportListStrings(Enum):
     PROJECT_COLUMN_HEADER = ugettext_lazy("Project")
     WORK_HOURS_COLUMN_HEADER = ugettext_lazy("Work hours")
     DESCRIPTION_COLUMN_HEADER = ugettext_lazy("Description")
-    HOURS_PER_DAY_LABEL = ugettext_lazy("Total hours")
+    HOURS_PER_DAY_LABEL = ugettext_lazy("Daily hours")
+    HOURS_PER_MONTH_LABEL = ugettext_lazy("Monthly hours")
     EDIT_REPORT_BUTTON = ugettext_lazy("Edit")
 
 
@@ -49,7 +50,8 @@ class ProjectReportListStrings(Enum):
     CREATION_DATE_COLUMN_HEADER = ugettext_lazy("Created")
     LAST_UPDATE_COLUMN_HEADER = ugettext_lazy("Last update")
     EDITED_COLUMN_HEADER = ugettext_lazy("Edited")
-    HOURS_PER_DAY_LABEL = ugettext_lazy("Total hours")
+    HOURS_PER_DAY_LABEL = ugettext_lazy("Daily hours")
+    HOURS_PER_MONTH_LABEL = ugettext_lazy("Monthly hours")
     NO_REPORTS_MESSAGE = ugettext_lazy("There are no reports for this project to display.")
 
 

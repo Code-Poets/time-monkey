@@ -11,7 +11,7 @@
 <h1>{{ project_name }} {{ title_date }}{{ UI_text.PAGE_TITLE.value }}</h1>
 <div class="container">
     <div class="table-responsive">
-        {% for username, dictionary in reports_dict.items %}
+        {% for username, pair in reports_dict.items %}
         <table class="table">
             <tr><th>{{ username }}</th></tr>
             <tr>
@@ -24,7 +24,7 @@
                 <th class="project-reports-editable-header hidden-print">{{ UI_text.EDITED_COLUMN_HEADER.value }}</th>
                 <td class="project-reports-edit-button-header hidden-print Invisible"></td>
             </tr>
-            {% for date, reports in dictionary.items %}
+            {% for date, reports in pair.0.items %}
             <tr>
                 <td class="project-reports-date-column" rowspan={{ reports|length|add:"-1" }}>
                     {{ date }}
@@ -49,6 +49,10 @@
                     {% endif %}
                 {% endfor %}
             {% endfor %}
+            <tr>
+                <td colspan="2"><strong>{{ UI_text.HOURS_PER_MONTH_LABEL.value }}</strong></td>
+                <td class="project-reports-work-hours-column"><strong>{{ pair.1 }}</strong></td>
+            </tr>
         </table>
         </br>
         {% endfor %}
