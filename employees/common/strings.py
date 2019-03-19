@@ -56,3 +56,4 @@ class ProjectReportListStrings(Enum):
 @notCallable
 class MonthNavigationText(Enum):
     SWITCH_MONTH = ugettext_lazy("Go")
+    RECENT_MONTH = ugettext_lazy("Recent month")
