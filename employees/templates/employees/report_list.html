@@ -17,7 +17,7 @@
 
 <h1>{{ UI_text.PAGE_TITLE.value }}</h1>
 
-<input type="button" id="opener" value="{{ UI_text.JOIN_PROJECT_BUTTON.value }}"/>
+<input class="hidden-print" type="button" id="opener" value="{{ UI_text.JOIN_PROJECT_BUTTON.value }}"/>
 
 <div class="modal-dialog">
     <form action="{% url 'custom-report-list' %}" method="POST">
@@ -27,7 +27,7 @@
     </form>
 </div>
 
-<div id="dialog" style="display: none" title="{{ UI_text.JOIN_POPUP_HEADER.value }}" align="center">
+<div class="hidden-print" id="dialog" style="display: none" title="{{ UI_text.JOIN_POPUP_HEADER.value }}" align="center">
     <form action="{% url 'custom-report-list' %}" method="POST">
         {% csrf_token %}
         {{ project_form }}
@@ -64,7 +64,7 @@
                 <td class="description-column">
                     {{ report.description }}
                 </td>
-                <td class="edit-button-column Invisible">
+                <td class="edit-button-column Invisible hidden-print">
                     {% if report.editable %}
                     <a href="{% url 'custom-report-detail' pk=report.id %}" class="btn btn-info">
                         <span class="glyphicon glyphicon-pencil"></span>
