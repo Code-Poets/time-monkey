@@ -52,26 +52,35 @@
                     {{ date }}
                 </td>
                 {% for report in reports %}
-                    {% if forloop.counter > 1 %}
-                    <tr>
+                    {% if not forloop.last %}
+                        {% if forloop.counter > 1 %}
+                        <tr>
+                        {% endif %}
+                        <td class="project-column">
+                            {{ report.project }}
+                        </td>
+                        <td class="work-hours-column">
+                            {{ report.work_hours_str }}
+                        </td>
+                        <td class="description-column">
+                            {{ report.description }}
+                        </td>
+                        <td class="edit-button-column Invisible hidden-print">
+                            {% if report.editable %}
+                            <a href="{% url 'custom-report-detail' pk=report.id %}" class="btn btn-info">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                <tr>
+                    <td style="width:230px"><strong>{{ UI_text.HOURS_PER_DAY_LABEL.value }}</strong></td>
+                    <td style="width:93px" align="right"><strong>{{ report }}</strong></td>
+                    <td></td>
+                    <td class="edit_button_column Invisible hidden-print"></td>
+                </tr>
                     {% endif %}
-                <td class="project-column">
-                    {{ report.project }}
-                </td>
-                <td class="work-hours-column">
-                    {{ report.work_hours_str }}
-                </td>
-                <td class="description-column">
-                    {{ report.description }}
-                </td>
-                <td class="edit-button-column Invisible hidden-print">
-                    {% if report.editable %}
-                    <a href="{% url 'custom-report-detail' pk=report.id %}" class="btn btn-info">
-                        <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
-                    {% endif %}
-                </td>
-            </tr>
                 {% endfor %}
             {% endfor %}
         </table>

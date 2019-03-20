@@ -22,6 +22,7 @@ class ReportListStrings(Enum):
     PROJECT_COLUMN_HEADER = ugettext_lazy("Project")
     WORK_HOURS_COLUMN_HEADER = ugettext_lazy("Work hours")
     DESCRIPTION_COLUMN_HEADER = ugettext_lazy("Description")
+    HOURS_PER_DAY_LABEL = ugettext_lazy("Total hours")
     EDIT_REPORT_BUTTON = ugettext_lazy("Edit")
 
 
