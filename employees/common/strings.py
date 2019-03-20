@@ -49,4 +49,5 @@ class ProjectReportListStrings(Enum):
     CREATION_DATE_COLUMN_HEADER = ugettext_lazy("Created")
     LAST_UPDATE_COLUMN_HEADER = ugettext_lazy("Last update")
     EDITED_COLUMN_HEADER = ugettext_lazy("Edited")
+    HOURS_PER_DAY_LABEL = ugettext_lazy("Total hours")
     NO_REPORTS_MESSAGE = ugettext_lazy("There are no reports for this project to display.")

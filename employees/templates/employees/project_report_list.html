@@ -24,25 +24,27 @@
             </tr>
             {% for date, reports in dictionary.items %}
             <tr>
-                <td class="project-reports-date-column" rowspan={{ reports|length }}>
+                <td class="project-reports-date-column" rowspan={{ reports|length|add:"-1" }}>
                     {{ date }}
                 </td>
                 {% for report in reports %}
-                    {% if forloop.counter > 1 %}
-                    <tr>
+                    {% if not forloop.last %}
+                        {% if forloop.counter > 1 %}
+                        <tr>
+                        {% endif %}
+                    <td class="visible-print-block project-reports-project-column">{{ report.project }}</td>
+                    <td class="project-reports-work-hours-column">{{ report.work_hours_str }}</td>
+                    <td class="project-reports-description-column">{{ report.description }}</td>
+                    <td class="project-reports-creation-date-column hidden-print">{{ report.creation_date }}</td>
+                    <td class="project-reports-last-update-column hidden-print">{{ report.last_update }}</td>
+                    <td class="project-reports-editable-column hidden-print">{{ report.editable|yesno:"False,True" }}</td>
+                    <td class="project-reports-edit-button-column hidden-print Invisible">
+                        <a class="btn btn-info">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                    </td>
+                </tr>
                     {% endif %}
-                <td class="visible-print-block project-reports-project-column">{{ report.project }}</td>
-                <td class="project-reports-work-hours-column">{{ report.work_hours_str }}</td>
-                <td class="project-reports-description-column">{{ report.description }}</td>
-                <td class="project-reports-creation-date-column hidden-print">{{ report.creation_date }}</td>
-                <td class="project-reports-last-update-column hidden-print">{{ report.last_update }}</td>
-                <td class="project-reports-editable-column hidden-print">{{ report.editable|yesno:"False,True" }}</td>
-                <td class="project-reports-edit-button-column hidden-print Invisible">
-                    <a class="btn btn-info">
-                        <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
-                </td>
-            </tr>
                 {% endfor %}
             {% endfor %}
         </table>
