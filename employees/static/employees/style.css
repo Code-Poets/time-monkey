@@ -48,8 +48,7 @@
 }
 
 .project-reports-project-header {
-    width:1%;
-    white-space:nowrap;
+    width: 20.18%;
 }
 
 .project-reports-author-header {
@@ -82,8 +81,7 @@
 }
 
 .project-reports-project-column {
-    width:1%;
-    white-space:nowrap;
+    text-align: left;
 }
 
 .project-reports-author-column {
