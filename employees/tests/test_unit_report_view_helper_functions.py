@@ -6,6 +6,8 @@ from employees.models import Report
 from employees.views import decimal_to_hours_string
 from employees.views import hours_per_day_counter
 from employees.views import hours_to_minutes
+from employees.views import hours_per_month_counter
+from employees.views import hours_string_to_decimal
 from employees.views import minutes_to_hours
 from employees.views import query_as_dict
 from managers.models import Project
@@ -77,8 +79,11 @@ class TestListHelpers(TestCase):
     def test_minutes_to_hours_should_return_amount_of_hours_representing_amount_of_given_minutes(self):
         self.assertEqual(minutes_to_hours(Decimal('190')), Decimal('3.10'))
 
-    def test_decimal_to_hours_str_should_return_string_with_accurate_hour_formatting_from_given_decimal(self):
+    def test_decimal_to_hours_string_should_return_string_with_accurate_hour_formatting_from_given_decimal(self):
         self.assertEqual(decimal_to_hours_string(Decimal('8.30')), '8:30')
+
+    def test_hours_string_to_decimal_should_return_string_with_accurate_hour_formatting_from_given_decimal(self):
+        self.assertEqual(hours_string_to_decimal('8:30'), Decimal('8.30'))
 
     def test_hours_per_day_counter_should_return_decimal_representing_total_work_hours_sum_from_given_list_of_reports(self):
         user = CustomUser(
@@ -129,3 +134,11 @@ class TestListHelpers(TestCase):
         report_3.save()
 
         self.assertEqual(hours_per_day_counter([report_1, report_2, report_3]), Decimal('24.00'))
+
+    def test_hours_per_month_counter_should_return_decimal_representing_total_work_hours_sum_from_given_dictionary_where_values_are_lists_containing_work_hours_string_at_the_end(self):
+        dictionary = {
+            0: ['reports', '8:00'],
+            1: [5, None, '4:00'],
+            2: ['6:00'],
+        }
+        self.assertEqual(hours_per_month_counter(dictionary), Decimal('18.00'))

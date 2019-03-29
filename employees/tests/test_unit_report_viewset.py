@@ -9,7 +9,7 @@ from rest_framework.test import APIRequestFactory
 
 from employees.common.strings import ProjectReportListStrings
 from employees.models import Report
-from employees.views import delete_report
+from employees.views import delete_report, hours_per_month_counter, decimal_to_hours_string
 from employees.views import query_as_dict
 from employees.views import ProjectReportList
 from employees.views import ReportDetail
@@ -570,7 +570,8 @@ class ProjectReportListTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.report.description)
         dictionary = response.data['reports_dict']
-        reports = list(dictionary[self.user.email].values())[0]
+        # from ipdb import set_trace; set_trace()
+        reports = dictionary[self.user.email][0][datetime.datetime.now().date()]
         self.assertTrue(self.report in reports)
 
     def test_project_report_list_view_should_not_be_accessible_for_unauthenticated_user(self):
@@ -741,11 +742,13 @@ class ProjectReportListTests(TestCase):
         dictionary = view.include_users_in_reports_dict(self.project, year=self.year, month=self.month)
         user_queryset = view.get_queryset(project_pk=self.project.pk, author_pk=self.user, year=self.year, month=self.month)
         other_user_queryset = view.get_queryset(project_pk=self.project.pk, author_pk=other_user, year=self.year, month=self.month)
+        user_month_hours = decimal_to_hours_string(hours_per_month_counter(query_as_dict(user_queryset)))
+        other_user_month_hours = decimal_to_hours_string(hours_per_month_counter(query_as_dict(other_user_queryset)))
         self.assertEqual(len(dictionary.items()), 2)
         self.assertEqual(list(dictionary.keys())[0], self.user.email)
         self.assertEqual(list(dictionary.keys())[1], other_user.email)
-        self.assertEqual(dictionary[self.user.email], query_as_dict(user_queryset))
-        self.assertEqual(dictionary[other_user.email], query_as_dict(other_user_queryset))
+        self.assertEqual(dictionary[self.user.email], [query_as_dict(user_queryset), user_month_hours])
+        self.assertEqual(dictionary[other_user.email], [query_as_dict(other_user_queryset), other_user_month_hours])
 
     def test_project_report_list_view_should_redirect_on_post(self):
         request = APIRequestFactory().post(
