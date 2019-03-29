@@ -1,13 +1,30 @@
-table {
-  margin-left:auto;
-  margin-right:auto;
+body{
+    background-color: #f2f2f2;
+    width:100%;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
 }
 
-th, td.padding {
-  padding: 15px;
+#menu{
+    position: absolute;
+    left: 0;
+    bottom:15%;
+    top: 0;
+    width: 15%;
+    background-color: #2c77bc;
 }
 
-div {
-  text-align: center;
-  margin-bottom: 0;
+#logo-menu{
+ position: absolute;
+    left: 0;
+    bottom:0;
+    top: 85%;
+    width: 15%;
+    background-color: #e9efff;
+}
+
+#page-content-wrapper{
+    margin-left: auto;
+    margin-right: auto;
+    text-align:center;
 }

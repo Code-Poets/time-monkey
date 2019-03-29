@@ -6,56 +6,62 @@
     {% load rest_framework %}
     {% load user_type_tags %}
 
-    <link rel="stylesheet" type="text/css" href="{% static 'users/center_style.css' %}" />
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'users/center_style.css' %}"/>
+    <!--Fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
 
-  <title>{% block title %}Sheet storm{% endblock %}</title>
+    <title>{% block title %}Sheet storm{% endblock %}</title>
 
 </head>
 <body>
-  <header>
+<div id="menu">
     {% if user.is_authenticated %}
-      {% get_admin_user_type as admin %}
-      {% get_manager_user_type as manager %}
-      <table>
-        <tr><br /></tr>
-        <tr>
-          <td class="padding"><a href="{% url 'home' %}">{% trans 'Home' %}</a></td>
-          <td class="padding"><a href="{% url 'custom-user-update' user.id %}">{% trans 'Account' %}</a></td>
-            {% if user.user_type == admin %}
-          <td class="padding"><a href="{% url 'custom-users-list' %}">{% trans 'Employees' %}</a></td>
-          <td class="padding"><a href="{% url 'custom-projects-list' %}">{% trans 'Projects list' %}</a></td>
-            {% endif %}
-            {% if user.user_type == manager %}
-          <td class="padding"><a href="{% url 'custom-projects-list' %}">{% trans 'Projects list' %}</a></td>
-            {% endif %}
-          <td class="padding"><a href="{% url 'custom-report-list' %}">{% trans 'Reports' %}</a></td>
-          <td class="padding"><a href="{% url 'logout' %}">{% trans 'Logout' %}</a></td>
-        </tr>
-      </table>
+    {% get_admin_user_type as admin %}
+    {% get_manager_user_type as manager %}
+    <div>Logo-img</div>
+    <div>{{ user.user_type }}</div>
+    <div id="img-menu">
+        <div><a href="{% url 'home' %}"><img/></a></div>
+        <div><a href="{% url 'custom-user-update' user.id %}"><img/>}</a></div>
+        {% if user.user_type == admin %}
+        <div><a href="{% url 'custom-users-list' %}"><img/></a></div>
+        <div><a href="{% url 'custom-projects-list' %}"><img/></a></div>
+        {% endif %}
+        {% if user.user_type == manager %}
+        <div><a href="{% url 'custom-projects-list' %}"><img/></a></div>
+        {% endif %}
+        <div><a href="{% url 'custom-report-list' %}"><img/></a></div>
+        <div><a href="{% url 'logout' %}"><img/></a></div>
+    </div>
 
-    {% else %}
+    <div id="text-menu">
+        <div><a href="{% url 'home' %}">{% trans 'Home' %}</a></div>
+        <div><a href="{% url 'custom-user-update' user.id %}">{% trans 'Account' %}</a></div>
+        {% if user.user_type == admin %}
+        <div><a href="{% url 'custom-users-list' %}">{% trans 'Employees' %}</a></div>
+        <div><a href="{% url 'custom-projects-list' %}">{% trans 'Projects list' %}</a></div>
+        {% endif %}
+        {% if user.user_type == manager %}
+        <div><a href="{% url 'custom-projects-list' %}">{% trans 'Projects list' %}</a></div>
+        {% endif %}
+        <div><a href="{% url 'custom-report-list' %}">{% trans 'Reports' %}</a></div>
+        <div><a href="{% url 'logout' %}">{% trans 'Logout' %}</a></div>
+        {% endif %}
+    </div>
+</div>
+<div id="logo-menu">
 
-      <table>
-        <tr><br /></tr>
-        <tr>
-        </tr>
-      </table>
-
-    {% endif %}
-
-  </header>
-  <hr>
-  <main>
-<div>
+</div>
+<div id="page-content-wrapper">
     {% block content %}
     {% endblock %}
 </div>
-  </main>
 </body>
 </html>
