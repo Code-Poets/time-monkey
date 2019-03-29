@@ -9,6 +9,7 @@ from rest_framework.test import APIRequestFactory
 from employees.common.strings import ProjectReportListStrings
 from employees.models import Report
 from employees.views import delete_report
+from employees.views import query_as_dict
 from employees.views import ProjectReportList
 from employees.views import ReportDetail
 from employees.views import ReportList
@@ -558,11 +559,13 @@ class ProjectReportListTests(TestCase):
         )
         self.report.full_clean()
         self.report.save()
+        self.year = datetime.datetime.now().date().year
+        self.month = datetime.datetime.now().date().month
 
     def test_project_report_list_view_should_display_projects_report_list_on_get(self):
-        request = APIRequestFactory().get(path=reverse('project-report-list', args=(self.project.pk,)))
+        request = APIRequestFactory().get(path=reverse('project-report-list', args=(self.project.pk, self.year, self.month)))
         request.user = self.user
-        response = ProjectReportList.as_view()(request, pk=self.project.pk)
+        response = ProjectReportList.as_view()(request, pk=self.project.pk, year=self.year, month=self.month)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.report.description)
         dictionary = response.data['reports_dict']
@@ -570,15 +573,15 @@ class ProjectReportListTests(TestCase):
         self.assertTrue(self.report in reports)
 
     def test_project_report_list_view_should_not_be_accessible_for_unauthenticated_user(self):
-        request = APIRequestFactory().get(path=reverse('project-report-list', args=(self.project.pk,)))
+        request = APIRequestFactory().get(path=reverse('project-report-list', args=(self.project.pk, self.year, self.month)))
         request.user = AnonymousUser()
-        response = ProjectReportList.as_view()(request, pk=self.project.pk)
+        response = ProjectReportList.as_view()(request, pk=self.project.pk, year=self.year, month=self.month)
         self.assertEqual(response.status_code, 403)
 
     def test_project_report_list_view_should_not_display_non_existing_projects_reports(self):
-        request = APIRequestFactory().get(path=reverse('project-report-list', args=(999,)))
+        request = APIRequestFactory().get(path=reverse('project-report-list', args=(999, self.year, self.month)))
         request.user = self.user
-        response = ProjectReportList.as_view()(request, 999)
+        response = ProjectReportList.as_view()(request, 999, year=self.year, month=self.month)
         self.assertEqual(response.status_code, 404)
 
     def test_project_report_list_view_should_not_display_other_projects_reports(self):
@@ -599,9 +602,9 @@ class ProjectReportListTests(TestCase):
         other_report.full_clean()
         other_report.save()
 
-        request = APIRequestFactory().get(path=reverse('project-report-list', args=(self.project.pk,)))
+        request = APIRequestFactory().get(path=reverse('project-report-list', args=(self.project.pk, self.year, self.month)))
         request.user = self.user
-        response = ProjectReportList.as_view()(request, pk=self.project.pk)
+        response = ProjectReportList.as_view()(request, pk=self.project.pk, year=self.year, month=self.month)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, other_report.description)
 
@@ -612,9 +615,9 @@ class ProjectReportListTests(TestCase):
         )
         other_project.full_clean()
         other_project.save()
-        request = APIRequestFactory().get(path=reverse('project-report-list', args=(other_project.pk,)))
+        request = APIRequestFactory().get(path=reverse('project-report-list', args=(other_project.pk, self.year, self.month)))
         request.user = self.user
-        response = ProjectReportList.as_view()(request, pk=other_project.pk)
+        response = ProjectReportList.as_view()(request, pk=other_project.pk, year=self.year, month=self.month)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, ProjectReportListStrings.NO_REPORTS_MESSAGE.value)
 
@@ -669,16 +672,14 @@ class ProjectReportListTests(TestCase):
         other_report_2.full_clean()
         other_report_2.save()
 
-        request = APIRequestFactory().get(path=reverse('project-report-list', args=(self.project.pk,)))
+        request = APIRequestFactory().get(path=reverse('project-report-list', args=(self.project.pk, self.year, self.month)))
         request.user = self.user
         view = ProjectReportList()
         view.request = request
-        queryset = view.get_queryset(project_pk=self.project.pk, author_pk=self.user)
+        queryset = view.get_queryset(project_pk=self.project.pk, author_pk=self.user, year=self.year, month=self.month)
         self.assertIsNotNone(queryset)
-        self.assertEqual(len(queryset), 2)
-        self.assertFalse(other_project_report in queryset)
+        self.assertEqual(len(queryset), 1)
         self.assertEqual(queryset[0], self.report)
-        self.assertEqual(queryset[1], other_report_2)
 
     def test_project_report_list_include_users_in_reports_dict_method_should_return_dictionary_where_project_reports_are_grouped_by_members_and_dates(
             self):
@@ -732,16 +733,27 @@ class ProjectReportListTests(TestCase):
         other_report_2.full_clean()
         other_report_2.save()
 
-        request = APIRequestFactory().get(path=reverse('project-report-list', args=(self.project.pk,)))
+        request = APIRequestFactory().get(path=reverse('project-report-list', args=(self.project.pk, self.year, self.month)))
         request.user = self.user
         view = ProjectReportList()
         view.request = request
-        dictionary = view.include_users_in_reports_dict(self.project)
+        dictionary = view.include_users_in_reports_dict(self.project, year=self.year, month=self.month)
+        user_queryset = view.get_queryset(project_pk=self.project.pk, author_pk=self.user, year=self.year, month=self.month)
+        other_user_queryset = view.get_queryset(project_pk=self.project.pk, author_pk=other_user, year=self.year, month=self.month)
         self.assertEqual(len(dictionary.items()), 2)
-        self.assertEqual(len(list(dictionary.values())[0]), 2)
-        self.assertEqual(len(list(dictionary.values())[1]), 1)
-        self.assertTrue(isinstance(list(dictionary.keys())[0], str))
-        self.assertTrue(isinstance(list(dictionary.keys())[1], str))
-        self.assertTrue(isinstance(list(dictionary[self.user.email].values())[0][0], Report))
-        self.assertTrue(isinstance(list(dictionary[self.user.email].values())[1][0], Report))
-        self.assertTrue(isinstance(list(dictionary[other_user.email].values())[0][0], Report))
+        self.assertEqual(list(dictionary.keys())[0], self.user.email)
+        self.assertEqual(list(dictionary.keys())[1], other_user.email)
+        self.assertEqual(dictionary[self.user.email], query_as_dict(user_queryset))
+        self.assertEqual(dictionary[other_user.email], query_as_dict(other_user_queryset))
+
+    def test_project_report_list_view_should_redirect_on_post(self):
+        request = APIRequestFactory().post(
+            path=reverse('project-report-list', args=(self.project.pk, self.year, self.month)),
+            data={
+                'year': 2018,
+                'month': 9,
+            }
+        )
+        request.user = self.user
+        response = ProjectReportList.as_view()(request, pk=self.project.pk, year=self.year, month=self.month)
+        self.assertEqual(response.status_code, 302)
