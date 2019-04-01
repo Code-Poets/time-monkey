@@ -27,38 +27,69 @@
     {% get_manager_user_type as manager %}
     <div>Logo-img</div>
     <div>{{ user.user_type }}</div>
-    <div id="img-menu">
-        <div><a href="{% url 'home' %}"><img/></a></div>
-        <div><a href="{% url 'custom-user-update' user.id %}"><img/>}</a></div>
-        {% if user.user_type == admin %}
-        <div><a href="{% url 'custom-users-list' %}"><img/></a></div>
-        <div><a href="{% url 'custom-projects-list' %}"><img/></a></div>
-        {% endif %}
-        {% if user.user_type == manager %}
-        <div><a href="{% url 'custom-projects-list' %}"><img/></a></div>
-        {% endif %}
-        <div><a href="{% url 'custom-report-list' %}"><img/></a></div>
-        <div><a href="{% url 'logout' %}"><img/></a></div>
+    <div class="href-blocks">
+        <a href="{% url 'home' %}">
+            <div class="img"><img src="{% static 'users/images/grey/ico-02.png' %}"></div>
+            <div class="text">{% trans 'Home' %}</div>
+        </a>
+        <div style="clear:both;"></div>
     </div>
-
-    <div id="text-menu">
-        <div><a href="{% url 'home' %}">{% trans 'Home' %}</a></div>
-        <div><a href="{% url 'custom-user-update' user.id %}">{% trans 'Account' %}</a></div>
-        {% if user.user_type == admin %}
-        <div><a href="{% url 'custom-users-list' %}">{% trans 'Employees' %}</a></div>
-        <div><a href="{% url 'custom-projects-list' %}">{% trans 'Projects list' %}</a></div>
-        {% endif %}
-        {% if user.user_type == manager %}
-        <div><a href="{% url 'custom-projects-list' %}">{% trans 'Projects list' %}</a></div>
-        {% endif %}
-        <div><a href="{% url 'custom-report-list' %}">{% trans 'Reports' %}</a></div>
-        <div><a href="{% url 'logout' %}">{% trans 'Logout' %}</a></div>
-        {% endif %}
+    <div class="href-blocks">
+        <a href="{% url 'custom-user-update' user.id %}">
+            <div class="img"><img
+                    src="{% static 'users/images/grey/ico-01.png' %}"></div>
+            <div class="text">{% trans 'Account' %}</div>
+        </a>
+        <div style="clear:both;"></div>
+    </div>
+    {% if user.user_type == admin %}
+    <div class="href-blocks">
+        <a href="{% url 'custom-users-list' %}">
+        <div class="img"><img src="{% static 'users/images/grey/ico-03.png' %}">
+        </div>
+        <div class="text">{% trans 'Employees' %}</div></a>
+        <div style="clear:both;"></div>
+    </div>
+    <div class="href-blocks">
+        <a href="{% url 'custom-projects-list' %}">
+            <div class="img"><img
+                    src="{% static 'users/images/grey/ico-04.png' %}"></div>
+            <div class="text">{% trans 'Projects list' %}</div>
+        </a>
+        <div style="clear:both;"></div>
+    </div>
+    {% endif %}
+    {% if user.user_type == manager %}
+    <div class="href-blocks">
+        <a href="{% url 'custom-projects-list' %}">
+            <div class="img"><img
+                    src="{% static 'users/images/grey/ico-04.png' %}"></div>
+            <div class="text">{% trans 'Projects list' %}</div>
+        </a>
+        <div style="clear:both;"></div>
+    </div>
+    {% endif %}
+    <div class="href-blocks">
+        <a href="{% url 'custom-report-list' %}">
+        <div class="img"><img
+                src="{% static 'users/images/grey/ico-05.png' %}"></div>
+        <div class="text">{% trans 'Reports' %}</div></a>
+        <div style="clear:both;"></div>
+    </div>
+    <div class="href-blocks">
+        <a href="{% url 'logout' %}">
+        <div class="img" id="logout"><img
+                src="{% static 'users/images/grey/ico-23.png' %}"></div>
+    <div class="text" id="logout-text">
+        {% trans 'Logout' %}</div></a>
+    <div style="clear:both;"></div>
     </div>
 </div>
+
 <div id="logo-menu">
 
 </div>
+{% endif %}
 <div id="page-content-wrapper">
     {% block content %}
     {% endblock %}
