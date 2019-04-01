@@ -43,14 +43,13 @@ body{
     width: 100%;
 }
 
-#logo
-   {
+#logo-menu img{
     width: 55%;
-    margin:0;
     vertical-align: 0;
 }
 #logo-menu input{
-    margin-top: 1rem;
+    margin-top: 2rem;
+    margin-left: 2.1rem;
 }
 
 #page-content-wrapper{
@@ -64,9 +63,6 @@ body{
 .img{
     float:left;
     margin-left: 3.5rem;
-}
-.img{
-    float:left;
 }
 
 .img img{
