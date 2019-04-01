@@ -25,8 +25,8 @@
     {% if user.is_authenticated %}
     {% get_admin_user_type as admin %}
     {% get_manager_user_type as manager %}
-    <div>Logo-img</div>
-    <div>{{ user.user_type }}</div>
+    <div id="avatar"><img src="{% static 'users/images/white/iko-33.png' %}"/></div>
+    <div id="user-type">{{ user.user_type }}</div>
     <div class="href-blocks">
         <a href="{% url 'home' %}">
             <div class="img"><img src="{% static 'users/images/grey/ico-02.png' %}"></div>
@@ -45,16 +45,17 @@
     {% if user.user_type == admin %}
     <div class="href-blocks">
         <a href="{% url 'custom-users-list' %}">
-        <div class="img"><img src="{% static 'users/images/grey/ico-03.png' %}">
-        </div>
-        <div class="text">{% trans 'Employees' %}</div></a>
+            <div class="img"><img src="{% static 'users/images/grey/ico-03.png' %}">
+            </div>
+            <div class="text">{% trans 'Employees' %}</div>
+        </a>
         <div style="clear:both;"></div>
     </div>
     <div class="href-blocks">
         <a href="{% url 'custom-projects-list' %}">
             <div class="img"><img
                     src="{% static 'users/images/grey/ico-04.png' %}"></div>
-            <div class="text">{% trans 'Projects list' %}</div>
+            <div class="text">{% trans 'Projects' %}</div>
         </a>
         <div style="clear:both;"></div>
     </div>
@@ -64,30 +65,35 @@
         <a href="{% url 'custom-projects-list' %}">
             <div class="img"><img
                     src="{% static 'users/images/grey/ico-04.png' %}"></div>
-            <div class="text">{% trans 'Projects list' %}</div>
+            <div class="text">{% trans 'Projects' %}</div>
         </a>
         <div style="clear:both;"></div>
     </div>
     {% endif %}
     <div class="href-blocks">
         <a href="{% url 'custom-report-list' %}">
-        <div class="img"><img
-                src="{% static 'users/images/grey/ico-05.png' %}"></div>
-        <div class="text">{% trans 'Reports' %}</div></a>
+            <div class="img"><img
+                    src="{% static 'users/images/grey/ico-05.png' %}"></div>
+            <div class="text">{% trans 'My reports' %}</div>
+        </a>
         <div style="clear:both;"></div>
     </div>
-    <div class="href-blocks">
+    <div class="href-blocks" id="logout">
         <a href="{% url 'logout' %}">
-        <div class="img" id="logout"><img
-                src="{% static 'users/images/grey/ico-23.png' %}"></div>
-    <div class="text" id="logout-text">
-        {% trans 'Logout' %}</div></a>
-    <div style="clear:both;"></div>
+            <div class="img"><img
+                    src="{% static 'users/images/grey/ico-23.png' %}"></div>
+            <div class="text">
+                {% trans 'Logout' %}
+            </div>
+        </a>
+        <div style="clear:both;"></div>
+    </div>
+<div id="logo-menu">
+    <div id="logo">
+        <span></span><img src="{% static 'users/images/logo.png' %}"/>
+        <img src="{% static 'users/images/ico-32.png' %}"/></span>
     </div>
 </div>
-
-<div id="logo-menu">
-
 </div>
 {% endif %}
 <div id="page-content-wrapper">
