@@ -25,56 +25,81 @@
     {% if user.is_authenticated %}
     {% get_admin_user_type as admin %}
     {% get_manager_user_type as manager %}
+    {% url 'home' as home_url %}
+    {% url 'custom-user-update' user.id as account_url %}
+    {% url 'custom-users-list' as custom_users_list_url %}
+    {% url 'custom-projects-list' as custom_projects_list_url %}
+    {% url 'custom-report-list' as custom_report_list_url %}
     <div id="avatar"><img src="{% static 'users/images/white/iko-33.png' %}"/></div>
     <div id="user-type">{{ user.user_type }}</div>
     <div class="href-blocks">
-        <a href="{% url 'home' %}">
+        <a href={{ home_url }}>
+            {% if request.path == home_url %}
+            <div class="img"><img src="{% static 'users/images/white/iko-02.png' %}"></div>
+            <div class="text" style="color:white;">{% trans 'Home' %}</div>
+            {% else %}
             <div class="img"><img src="{% static 'users/images/grey/ico-02.png' %}"></div>
             <div class="text">{% trans 'Home' %}</div>
+            {% endif %}
         </a>
         <div style="clear:both;"></div>
     </div>
     <div class="href-blocks">
-        <a href="{% url 'custom-user-update' user.id %}">
+        <a href="{{ account_url }}">
+            {% if request.path == account_url %}
+            <div class="img"><img
+                    src="{% static 'users/images/white/iko-01.png' %}"></div>
+            <div class="text" style="color:white;">{% trans 'Account' %}</div>
+            {% else %}
             <div class="img"><img
                     src="{% static 'users/images/grey/ico-01.png' %}"></div>
             <div class="text">{% trans 'Account' %}</div>
+            {% endif %}
         </a>
         <div style="clear:both;"></div>
     </div>
     {% if user.user_type == admin %}
     <div class="href-blocks">
-        <a href="{% url 'custom-users-list' %}">
+        <a href="{{ custom_users_list_url }}">
+            {% if request.path == custom_users_list_url %}
+            <div class="img"><img src="{% static 'users/images/white/iko-03.png' %}">
+            </div>
+            <div class="text" style="color:white;">{% trans 'Employees' %}</div>
+            {% else %}
             <div class="img"><img src="{% static 'users/images/grey/ico-03.png' %}">
             </div>
             <div class="text">{% trans 'Employees' %}</div>
-        </a>
-        <div style="clear:both;"></div>
-    </div>
-    <div class="href-blocks">
-        <a href="{% url 'custom-projects-list' %}">
-            <div class="img"><img
-                    src="{% static 'users/images/grey/ico-04.png' %}"></div>
-            <div class="text">{% trans 'Projects' %}</div>
+            {% endif %}
         </a>
         <div style="clear:both;"></div>
     </div>
     {% endif %}
-    {% if user.user_type == manager %}
+    {% if user.user_type == manager or user.user_type == admin %}
     <div class="href-blocks">
-        <a href="{% url 'custom-projects-list' %}">
+        <a href={{ custom_projects_list_url }}>
+            {% if request.path == custom_projects_list_url %}
+            <div class="img"><img src="{% static 'users/images/white/iko-04.png' %}"></div>
+            <div class="text" style="color:white;">{% trans 'Projects' %}</div>
+            {% else %}
             <div class="img"><img
                     src="{% static 'users/images/grey/ico-04.png' %}"></div>
             <div class="text">{% trans 'Projects' %}</div>
+            {% endif %}
         </a>
         <div style="clear:both;"></div>
     </div>
     {% endif %}
     <div class="href-blocks">
-        <a href="{% url 'custom-report-list' %}">
+        <a href="{{ custom_report_list_url }}">
+            {% if request.path == custom_report_list_url %}
+            <div class="img"><img
+                    src="{% static 'users/images/white/iko-05.png' %}"></div>
+            <div class="text" style="color: white;">{% trans 'My reports' %}</div>
+            {% else %}
             <div class="img"><img
                     src="{% static 'users/images/grey/ico-05.png' %}"></div>
             <div class="text">{% trans 'My reports' %}</div>
+            {% endif %}
         </a>
         <div style="clear:both;"></div>
     </div>
@@ -126,6 +151,8 @@ if (menu_styles.width == "15%" || menu_styles.width == "") {
     }
   }
 }
+
+
 
 </script>
 </body>
