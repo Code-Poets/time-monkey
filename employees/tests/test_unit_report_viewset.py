@@ -1,6 +1,7 @@
 import datetime
 from decimal import Decimal
 
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 from rest_framework.reverse import reverse
@@ -757,3 +758,33 @@ class ProjectReportListTests(TestCase):
         request.user = self.user
         response = ProjectReportList.as_view()(request, pk=self.project.pk, year=self.year, month=self.month)
         self.assertEqual(response.status_code, 302)
+
+    def test_project_report_list_view_should_not_display_reports_from_different_month_than_specified(self):
+        current_date = datetime.datetime.now().date()
+        other_report = Report(
+            date=current_date + relativedelta(years=-1),
+            description='Some other description',
+            author=self.user,
+            project=self.project,
+            work_hours=Decimal('8.00'),
+        )
+        other_report.full_clean()
+        other_report.save()
+
+        yet_another_report = Report(
+            date=current_date + relativedelta(years=-1),
+            description='Yet another description',
+            author=self.user,
+            project=self.project,
+            work_hours=Decimal('8.00'),
+        )
+        yet_another_report.full_clean()
+        yet_another_report.save()
+
+        request = APIRequestFactory().get(
+            path=reverse('project-report-list', args=(self.project.pk, self.year, self.month)))
+        request.user = self.user
+        response = ProjectReportList.as_view()(request, pk=self.project.pk, year=self.year, month=self.month)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, other_report.description)
+        self.assertNotContains(response, yet_another_report.description)
