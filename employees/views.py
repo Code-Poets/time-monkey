@@ -2,18 +2,15 @@ from decimal import Decimal
 
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
-from django.urls import reverse
 from rest_framework import permissions
 from rest_framework import renderers
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from employees.common.strings import MonthNavigationText
 from employees.common.strings import ProjectReportListStrings
 from employees.common.strings import ReportDetailStrings
 from employees.common.strings import ReportListStrings
-from employees.forms import MonthSwitchForm
 from employees.forms import ProjectJoinForm
 from employees.models import Report
 from employees.serializers import ReportSerializer
