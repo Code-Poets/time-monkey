@@ -14,8 +14,9 @@ body{
   -o-transition: margin .25s ease-out;
   background-color: #2c77bc;
   position: fixed;
-  transition: 0.5s;
+  top:0;
   color: white;
+  transition: 0.5s;
 
   -webkit-box-shadow: 2px 0px 5px 0px rgba(0,0,0,0.77);
   -moz-box-shadow: 2px 0px 5px 0px rgba(0,0,0,0.77);
@@ -32,6 +33,7 @@ body{
 #user-type{
     text-align: center;
     font-size: 150%;
+    visibility: visible;
 }
 
 #logo-menu{
@@ -96,3 +98,4 @@ body{
     margin-left: -35rem;
   }
 }
+
