@@ -1,11 +1,11 @@
-body{
+body {
     background-color: #f2f2f2;
     width:100%;
     font-family: 'Roboto', sans-serif;
     margin: 0;
 }
 
-#menu{
+#menu {
   margin-left: -15rem;
   width: 15%;
   height: 100%;
@@ -54,7 +54,7 @@ body{
     margin-left: 2.1rem;
 }
 
-#page-content-wrapper{
+#page-content-wrapper {
     margin-left: auto;
     margin-right: auto;
     text-align: center;
