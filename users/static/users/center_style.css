@@ -22,7 +22,7 @@ body {
   -moz-box-shadow: 2px 0px 5px 0px rgba(0,0,0,0.77);
    box-shadow: 2px 0px 5px 0px rgba(0,0,0,0.77);
  }
-#menu a{
+#menu a {
     text-decoration: none;
     color: white;
     font-size: 150%;
@@ -62,7 +62,7 @@ body {
 .href-blocks{
     margin-top: 35px;
 }
-.img{
+.img {
     float:left;
     margin-left: 3.5rem;
 }
@@ -71,8 +71,8 @@ body {
     width: 50%;
 }
 
-.text{
-    float:left;
+.text {
+    float: left;
     color: #a3afd3;
 }
 
