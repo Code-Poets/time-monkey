@@ -22,8 +22,8 @@
 
 </head>
 <body>
-<div id="menu">
     {% if user.is_authenticated %}
+<div id="menu">
     {% get_admin_user_type as admin %}
     {% get_manager_user_type as manager %}
     {% url 'home' as home_url %}
