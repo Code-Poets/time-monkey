@@ -15,8 +15,12 @@
     <form action="{% url 'project-report-detail' pk=report.pk %}" method="POST">
         {% csrf_token %}
         {{ form|crispy }}
-        <input type="submit" value="{{ UI_text.UPDATE_REPORT_BUTTON.value }}">
-        <input type="submit" name="discard" value="{{ UI_text.DISCARD_CHANGES_BUTTON.value }}">
+        <button type="submit" class="btn btn-success">
+            <span class="glyphicon glyphicon-ok"></span> {{ UI_text.UPDATE_REPORT_BUTTON.value }}
+        </button>
+        <a href="{% url 'project-report-list' pk=report.project.pk %}" class="btn btn btn-default">
+            <span class="glyphicon glyphicon-repeat"></span> {{ UI_text.DISCARD_CHANGES_BUTTON.value }}
+        </a>
     </form>
 </div>
 {% endblock %}
