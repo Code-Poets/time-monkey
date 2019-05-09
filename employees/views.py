@@ -12,6 +12,7 @@ from django.shortcuts import redirect
 from django.shortcuts import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView
+from django.views.generic import ListView
 from django.views.generic import UpdateView
 from rest_framework import permissions
 from rest_framework import renderers
@@ -223,20 +224,19 @@ class AdminReportView(UpdateView):
         return super().form_valid(form)
 
 
-class ProjectReportList(APIView):
-    renderer_classes = [renderers.TemplateHTMLRenderer]
+@method_decorator(login_required, name="dispatch")
+class ProjectReportList(ListView):
     template_name = "employees/project_report_list.html"
-    user_interface_text = ProjectReportListStrings
-    permission_classes = (permissions.IsAuthenticated,)
+    model = Report
 
-    @classmethod
-    def get_queryset(cls, pk: int) -> QuerySet:
-        return Report.objects.filter(project=pk).order_by("-date")
+    def get_queryset(self) -> QuerySet:
+        return Report.objects.filter(project__id=self.kwargs["pk"]).order_by("-date", "project__name")
 
-    def get(self, _request: HttpRequest, pk: int) -> Response:
-        project = get_object_or_404(Project, pk=pk)
-        queryset = self.get_queryset(project.pk)
-        reports_dict = query_as_dict(queryset)
-        return Response(
-            {"project_name": project.name, "reports_dict": reports_dict, "UI_text": self.user_interface_text}
-        )
+    def get_context_data(self, **kwargs: Any) -> dict:
+        context = super().get_context_data(**kwargs)
+        context["UI_text"] = ProjectReportListStrings
+        context["project_name"] = get_object_or_404(Project, pk=self.kwargs["pk"])
+        return context
+
+    def get_success_url(self) -> str:
+        return reverse("project-report-list", kwargs={"pk": self.object.project.id})
