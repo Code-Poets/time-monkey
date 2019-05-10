@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
+
 {% load i18n %}
-{% block content %}
 {% load rest_framework %}
 {% load static %}
 
+{% block extra_head %}
 <link rel="stylesheet" type="text/css" href="{% static 'employees/style.css' %}">
+{% endblock %}
 
+{% block content %}
 <h1>{{ project_name }}{{ UI_text.PAGE_TITLE.value }}</h1>
 <div class="container">
     <div class="table-responsive">
@@ -13,17 +16,19 @@
         {% for author in reports_by_author %}
         <h4><strong>{{ author.grouper.email }}<strong></h4>
         <table class="table">
-            <tr>
-                <th class="project-reports-date-header">{{ UI_text.DATE_COLUMN_HEADER.value }}</th>
-                <th class="project-reports-project-header">{{ UI_text.PROJECT_COLUMN_HEADER.value }}</th>
-                <th class="project-reports-task-activity-header">{{ UI_text.TASK_ACTIVITY_HEADER.value }}</th>
-                <th class="project-reports-work-hours-header">{{ UI_text.WORK_HOURS_COLUMN_HEADER.value }}</th>
-                <th class="project-reports-description-header">{{ UI_text.DESCRIPTION_COLUMN_HEADER.value }}</th>
-                <th class="project-reports-creation-date-header">{{ UI_text.CREATION_DATE_COLUMN_HEADER.value }}</th>
-                <th class="project-reports-last-update-header">{{ UI_text.LAST_UPDATE_COLUMN_HEADER.value }}</th>
-                <th class="project-reports-editable-header">{{ UI_text.EDITED_COLUMN_HEADER.value }}</th>
-                <td class="project-reports-edit-button-header Invisible"></td>
-            </tr>
+            <thead>
+                <tr>
+                    <th class="project-reports-date-header">{{ UI_text.DATE_COLUMN_HEADER.value }}</th>
+                    <th class="project-reports-project-header">{{ UI_text.PROJECT_COLUMN_HEADER.value }}</th>
+                    <th class="project-reports-task-activity-header">{{ UI_text.TASK_ACTIVITY_HEADER.value }}</th>
+                    <th class="project-reports-work-hours-header">{{ UI_text.WORK_HOURS_COLUMN_HEADER.value }}</th>
+                    <th class="project-reports-description-header">{{ UI_text.DESCRIPTION_COLUMN_HEADER.value }}</th>
+                    <th class="project-reports-creation-date-header">{{ UI_text.CREATION_DATE_COLUMN_HEADER.value }}</th>
+                    <th class="project-reports-last-update-header">{{ UI_text.LAST_UPDATE_COLUMN_HEADER.value }}</th>
+                    <th class="project-reports-editable-header">{{ UI_text.EDITED_COLUMN_HEADER.value }}</th>
+                    <td class="project-reports-edit-button-header Invisible"></td>
+                </tr>
+            </thead>
             <tbody>
                 {% regroup author.list by date as reports_by_date %}
                 {% for date in reports_by_date %}
