@@ -91,15 +91,15 @@ class ProjectReportDetailTests(TestCase):
         self.assertEqual(response.context_data["form"].instance, self.report)
 
     def test_project_report_detail_view_should_update_report_on_post(self):
-        self.data['description'] = "Some other description"
+        self.data["description"] = "Some other description"
         response = self.client.post(path=self.url, data=self.data)
         self.report.refresh_from_db()
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(self.report.description, self.data['description'])
+        self.assertEqual(self.report.description, self.data["description"])
         self.assertTrue(self.report.editable)
 
     def test_project_report_detail_view_should_not_update_report_on_post_if_form_is_invalid(self):
-        self.data['description'] = ''
+        self.data["description"] = ""
         response = self.client.post(path=self.url, data=self.data)
         self.report.refresh_from_db()
         self.assertEqual(response.status_code, 200)
