@@ -230,7 +230,11 @@ class ProjectReportList(ListView):
     model = Report
 
     def get_queryset(self) -> QuerySet:
-        return Report.objects.filter(project__id=self.kwargs["pk"]).order_by("author__email", "-date")
+        return (
+            Report.objects.select_related("author")
+            .filter(project__id=self.kwargs["pk"])
+            .order_by("author__email", "-date")
+        )
 
     def get_context_data(self, **kwargs: Any) -> dict:
         context = super().get_context_data(**kwargs)

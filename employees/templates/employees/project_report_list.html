@@ -11,8 +11,8 @@
     <div class="table-responsive">
         {% regroup object_list by author as reports_by_author %}
         {% for author in reports_by_author %}
+        <h4><strong>{{ author.grouper.email }}<strong></h4>
         <table class="table">
-            <tr><th>{{ author.grouper.email }}</th></tr>
             <tr>
                 <th class="project-reports-date-header">{{ UI_text.DATE_COLUMN_HEADER.value }}</th>
                 <th class="project-reports-project-header">{{ UI_text.PROJECT_COLUMN_HEADER.value }}</th>
