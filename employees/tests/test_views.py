@@ -90,6 +90,11 @@ class ProjectReportDetailTests(TestCase):
         self.assertContains(response, self.report.description)
         self.assertEqual(response.context_data["form"].instance, self.report)
 
+    def test_project_report_list_view_should_not_be_accessible_for_unauthenticated_user(self):
+        self.client.logout()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+
     def test_project_report_detail_view_should_update_report_on_post(self):
         self.data["description"] = "Some other description"
         response = self.client.post(path=self.url, data=self.data)
