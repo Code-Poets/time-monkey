@@ -149,7 +149,7 @@ class ReportDetailView(UserIsManagerOfCurrentReportProjectMixin, UserIsAuthorOfC
         instance.save()
         return super().form_valid(form)
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.object.author
         return kwargs
@@ -210,7 +210,7 @@ class AdminReportView(UpdateView):
         self.object.save()
         return super().form_valid(form)
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.object.author
         return kwargs
@@ -257,7 +257,7 @@ class ProjectReportDetail(UserIsManagerOfCurrentReportProjectMixin, UpdateView):
         self.object.save()
         return super().form_valid(form)
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.object.author
         return kwargs
