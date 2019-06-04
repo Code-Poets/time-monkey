@@ -20,12 +20,16 @@ class ProjectJoinForm(forms.Form):
     def __init__(self, queryset: QuerySet, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         assert isinstance(queryset, QuerySet)
+        self.fields["projects"].queryset = queryset
         self.fields["projects"].choices = [(project.id, project.name) for project in queryset]
 
 
 class DurationInput(TextInput):
     def format_value(self, value: str) -> str:
-        return timedelta_to_string(parse_duration(value))
+        if value is not None:
+            return timedelta_to_string(parse_duration(value))
+        else:
+            return ""
 
 
 class DurationFieldForm(forms.DurationField):
@@ -46,6 +50,8 @@ class ReportForm(forms.ModelForm):
         fields = ("date", "description", "task_activities", "project", "work_hours")
         widgets = {"date": DatePickerInput(format="%Y-%m-%d")}
 
-    def __init__(self, *args: Any, **kwargs: Any):
-        super(ReportForm, self).__init__(*args, **kwargs)
-        self.fields["project"].queryset = kwargs["instance"].author.projects.all()
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+        self.fields["project"].queryset = user.projects.all()
+        self.fields["project"].choices = [(project.id, project.name) for project in user.projects.all()]
