@@ -5,20 +5,17 @@ from typing import Any
 from django.contrib.auth.decorators import login_required
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
-from django.http import QueryDict
 from django.http.response import HttpResponse
+from django.http.response import HttpResponseRedirect
 from django.http.response import HttpResponseRedirectBase
-from django.shortcuts import redirect
 from django.shortcuts import reverse
 from django.utils.decorators import method_decorator
+from django.views.generic import CreateView
 from django.views.generic import DeleteView
 from django.views.generic import DetailView
 from django.views.generic import UpdateView
 from rest_framework import permissions
-from rest_framework import renderers
 from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from employees.common.constants import ExcelGeneratorSettingsConstants
 from employees.common.exports import generate_xlsx_for_project
@@ -32,7 +29,6 @@ from employees.common.strings import ReportListStrings
 from employees.forms import ProjectJoinForm
 from employees.forms import ReportForm
 from employees.models import Report
-from employees.models import TaskActivityType
 from employees.serializers import ReportSerializer
 from managers.models import Project
 from users.models import CustomUser
@@ -67,108 +63,60 @@ class ReportViewSet(viewsets.ModelViewSet):
     ),
     name="dispatch",
 )
-class ReportList(UserIsManagerOfCurrentReportProjectMixin, UserIsAuthorOfCurrentReportMixin, APIView):
-    serializer_class = ReportSerializer
-    renderer_classes = [renderers.TemplateHTMLRenderer]
+class ReportCreateView(CreateView):
+    model = Report
+    form_class = ReportForm
     template_name = "employees/report_list.html"
-    reports = None  # type: QuerySet
-    permission_classes = (permissions.IsAuthenticated,)
-    hide_join = False
-    daily_hours_sum = None  # type: QuerySet
-    monthly_hours_sum = None  # type: QuerySet
+    extra_context = {"UI_text": ReportListStrings}
 
-    def get_queryset(self) -> QuerySet:
-        logger.info(f"User with id: {self.request.user.pk} get reports queryset")
-        return Report.objects.filter(author=self.request.user).order_by("-date", "project__name", "-creation_date")
-
-    def _add_project(self, project: Project) -> None:
-        logger.info(f"Add project method for user with id: {self.request.user.pk} to project with id {project.pk}")
-        project.members.add(self.request.user)
-        project.full_clean()
-        project.save()
-
-    def _create_serializer(self, data: QueryDict = None) -> ReportSerializer:
-        logger.info(f"Create serializer for user with id: {self.request.user.pk}")
-        if data is not None:
-            reports_serializer = ReportSerializer(data=data, context={"request": self.request})
-            reports_serializer.is_valid()
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        user_joined_to_project = "join" in request.POST
+        if user_joined_to_project:
+            form = ProjectJoinForm(
+                queryset=Project.objects.exclude(members__id=self.request.user.id).order_by("name"), data=request.POST
+            )
+            if form.is_valid():
+                project = Project.objects.get(id=int(self.request.POST["projects"]))
+                project.members.add(self.request.user)
+                project.full_clean()
+                project.save()
+                return self.form_valid_for_join_project()
+            else:
+                return self.form_invalid_for_join_project(form)
         else:
-            reports_serializer = ReportSerializer(context={"request": self.request})
-            reports_serializer.fields["date"].initial = str(datetime.datetime.now().date())
-        reports_serializer.fields["project"].queryset = Project.objects.filter(
-            members__id=self.request.user.id
-        ).order_by("name")
-        reports_serializer.fields["task_activities"].queryset = TaskActivityType.objects.order_by("name")
-        return reports_serializer
+            return super().post(request, *args, **kwargs)
 
-    def _create_project_join_form(self) -> ProjectJoinForm:
-        project_form_queryset = Project.objects.exclude(members__id=self.request.user.id).order_by("name")
-        self.hide_join = not project_form_queryset.exists()
-        return ProjectJoinForm(queryset=project_form_queryset)
+    def get_form_kwargs(self) -> dict:
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
-    def initial(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
-        logger.info(f"Initial method for user with id: {self.request.user.pk} in ReportList view")
-        super().initial(request, *args, **kwargs)
-        self.reports = self.get_queryset()
-        self.daily_hours_sum = self.reports.order_by().get_work_hours_sum_for_all_dates()
-        self.monthly_hours_sum = self.reports.order_by().get_work_hours_sum_for_all_authors()
-
-    def get(self, _request: HttpRequest) -> Response:
-        logger.info(f"User with id: {self.request.user.pk} get to the ReportList view")
-        return Response(
-            {
-                "serializer": self._create_serializer(),
-                "object_list": self.reports,
-                "daily_hours_sum": self.daily_hours_sum,
-                "monthly_hours_sum": self.monthly_hours_sum,
-                "UI_text": ReportListStrings,
-                "project_form": self._create_project_join_form(),
-                "hide_join": self.hide_join,
-            }
+    def get_context_data(self, **kwargs: Any) -> dict:
+        context_data = super().get_context_data(**kwargs)
+        context_data["object_list"] = (
+            super().get_queryset().filter(author=self.request.user).order_by("-date", "project__name", "-creation_date")
         )
+        context_data["daily_hours_sum"] = context_data["object_list"].order_by().get_work_hours_sum_for_all_dates()
+        context_data["monthly_hours_sum"] = context_data["object_list"].order_by().get_work_hours_sum_for_all_authors()
+        context_data["project_form"] = ProjectJoinForm(
+            queryset=Project.objects.exclude(members__id=self.request.user.id).order_by("name")
+        )
+        context_data["hide_join"] = not Project.objects.exclude(members__id=self.request.user.id).exists()
+        return context_data
 
-    def post(self, request: HttpRequest) -> Response:
-        logger.info(f"User with id: {request.user.pk} sent post to the ReportList view")
-        reports_serializer = self._create_serializer(data=request.data)
-        if "join" in request.POST:
-            if "projects" in request.POST.keys():
-                project_id = request.POST["projects"]
-                project = Project.objects.get(id=int(project_id))
-                logger.debug(f"User with id: {request.user.pk} join to the project with id: {project.pk}")
-                self._add_project(project=project)
-                reports_serializer = self._create_serializer()
-                reports_serializer.fields["project"].initial = project
-            return Response(
-                {
-                    "serializer": reports_serializer,
-                    "object_list": self.reports,
-                    "daily_hours_sum": self.daily_hours_sum,
-                    "monthly_hours_sum": self.monthly_hours_sum,
-                    "UI_text": ReportListStrings,
-                    "project_form": self._create_project_join_form(),
-                    "hide_join": self.hide_join,
-                }
-            )
+    def form_valid_for_join_project(self) -> HttpResponseRedirect:
+        return HttpResponseRedirect(self.get_success_url())
 
-        elif not reports_serializer.is_valid():
-            logger.warning(
-                f"Serializer sent by user with id: {self.request.user.pk} is not valid with those errors: {reports_serializer.errors}"
-            )
-            return Response(
-                {
-                    "serializer": reports_serializer,
-                    "object_list": self.reports,
-                    "errors": reports_serializer.errors,
-                    "daily_hours_sum": self.daily_hours_sum,
-                    "monthly_hours_sum": self.monthly_hours_sum,
-                    "UI_text": ReportListStrings,
-                    "project_form": self._create_project_join_form(),
-                    "hide_join": self.hide_join,
-                }
-            )
-        report = reports_serializer.save(author=self.request.user)
-        logger.info(f"User with id: {self.request.user.pk} created new report with id: {report.pk}")
-        return redirect("custom-report-list")
+    def form_invalid_for_join_project(self, form: ProjectJoinForm) -> HttpResponse:
+        return self.render_to_response(context={"form": form})
+
+    def form_valid(self, form: ReportForm) -> ReportForm:
+        self.object = form.save(commit=False)  # pylint: disable=attribute-defined-outside-init
+        self.object.author = self.request.user
+        return super(ReportCreateView, self).form_valid(form)
+
+    def get_success_url(self) -> HttpResponseRedirect:
+        return reverse("custom-report-list")
 
 
 @method_decorator(login_required, name="dispatch")
@@ -200,6 +148,11 @@ class ReportDetailView(UserIsManagerOfCurrentReportProjectMixin, UserIsAuthorOfC
         instance.editable = True
         instance.save()
         return super().form_valid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.object.author
+        return kwargs
 
 
 @method_decorator(login_required, name="dispatch")
@@ -257,6 +210,11 @@ class AdminReportView(UpdateView):
         self.object.save()
         return super().form_valid(form)
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.object.author
+        return kwargs
+
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(
@@ -298,6 +256,11 @@ class ProjectReportDetail(UserIsManagerOfCurrentReportProjectMixin, UpdateView):
         self.object.editable = True
         self.object.save()
         return super().form_valid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.object.author
+        return kwargs
 
 
 @method_decorator(login_required, name="dispatch")

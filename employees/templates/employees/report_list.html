@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% load i18n %}
-{% load rest_framework %}
+{% load crispy_forms_tags %}
 {% load static %}
 
 {% load data_display_filters %}
@@ -23,14 +23,14 @@
     {% endfor %}
     <form action="{% url 'custom-report-list' %}" method="POST">
         {% csrf_token %}
-        {% render_form serializer template_pack='rest_framework/vertical' %}
+        {{ form|crispy }}
         <a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Markdown is supported</a><br/>
        <input type="submit" value="{{ UI_text.CREATE_REPORT_BUTTON.value }}">
     </form>
 </div>
 
 <div class="hidden-print" id="dialog" style="display: none" title="{{ UI_text.JOIN_POPUP_HEADER.value }}" align="center">
-    <form action="{% url 'custom-report-list' %}" id="join_form" method="POST">
+    <form class="form-horizonal" action="{% url 'custom-report-list' %}" id="join_form" method="POST">
         {% csrf_token %}
         {{ project_form }}
         <input type="submit" name="join" value="{{ UI_text.JOIN_POPUP_YES.value }}">
@@ -96,6 +96,7 @@
 {% endblock %}
 
 {% block extra_script %}
+    {{ form.media }}
     <script src="//code.jquery.com/jquery-1.12.4.js"></script>
     <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script type="text/javascript">
