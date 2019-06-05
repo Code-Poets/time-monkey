@@ -134,14 +134,11 @@ class ProjectReportDetailTests(InitTaskTypeTestCase):
 class ReportDetailViewTests(TestCase):
     def setUp(self):
         super().setUp()
-        self.task_type = TaskActivityType(pk=1, name="Other")
-        self.task_type.full_clean()
-        self.task_type.save()
         self.user = UserFactory()
         self.project = ProjectFactory()
         self.project.members.add(self.user)
         self.client.force_login(self.user)
-        self.report = ReportFactory(author=self.user, project=self.project, task_activities=self.task_type)
+        self.report = ReportFactory(author=self.user, project=self.project)
         self.url = reverse("custom-report-detail", args=(self.report.pk,))
         self.data = {
             "date": self.report.date,
@@ -219,22 +216,12 @@ class ReportDeleteViewTests(TestCase):
 
 class ReportCustomListTests(TestCase):
     def setUp(self):
-        task_type = TaskActivityType(pk=1, name="Other")
-        task_type.full_clean()
-        task_type.save()
         self.user = UserFactory()
 
         self.project = ProjectFactory()
         self.project.members.add(self.user)
 
-        self.report = Report(
-            date=datetime.datetime.now().date(),
-            description="Some description",
-            author=self.user,
-            project=self.project,
-            work_hours=datetime.timedelta(hours=8),
-            task_activities=TaskActivityType.objects.get(name="Other"),
-        )
+        self.report = ReportFactory(author=self.user, project=self.project)
         self.report.full_clean()
         self.report.save()
         self.url = reverse("custom-report-list")
@@ -255,14 +242,7 @@ class ReportCustomListTests(TestCase):
 
     def test_custom_list_view_should_not_display_other_users_reports(self):
         other_user = UserFactory()
-        other_report = Report(
-            date=datetime.datetime.now().date(),
-            description="Some other description",
-            author=other_user,
-            project=self.project,
-            work_hours=datetime.timedelta(hours=8),
-            task_activities=TaskActivityType.objects.get(name="Other"),
-        )
+        other_report = ReportFactory()
         other_report.full_clean()
         other_report.save()
         self.client.force_login(other_user)
@@ -278,7 +258,7 @@ class ReportCustomListTests(TestCase):
                 "description": "Some description",
                 "project": self.project.pk,
                 "work_hours": "8:00",
-                "task_activities": TaskActivityType.objects.get(name="Other").pk,
+                "task_activities": self.report.task_activities.pk,
             },
         )
         self.assertEqual(response.status_code, 302)
@@ -324,7 +304,7 @@ class ReportCustomListTests(TestCase):
                 "description": "Some description",
                 "project": self.project.pk,
                 "work_hours": "8:00",
-                "task_activities": TaskActivityType.objects.get(name="Other").pk,
+                "task_activities": self.report.task_activities.pk,
                 "projects": self.new_project.pk,
             },
         )
