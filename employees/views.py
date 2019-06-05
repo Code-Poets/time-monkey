@@ -86,10 +86,10 @@ class ReportCreateView(CreateView):
         else:
             return super().post(request, *args, **kwargs)
 
-    def get_form_kwargs(self) -> dict:
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
+    def get_form(self, form_class: ReportForm = None) -> ReportForm:
+        if form_class is None:
+            form_class = super().get_form_class()
+        return form_class(user=self.request.user, **super().get_form_kwargs())
 
     def get_context_data(self, **kwargs: Any) -> dict:
         context_data = super().get_context_data(**kwargs)
@@ -113,7 +113,7 @@ class ReportCreateView(CreateView):
     def form_valid(self, form: ReportForm) -> ReportForm:
         self.object = form.save(commit=False)  # pylint: disable=attribute-defined-outside-init
         self.object.author = self.request.user
-        return super(ReportCreateView, self).form_valid(form)
+        return super().form_valid(form)
 
     def get_success_url(self) -> HttpResponseRedirect:
         return reverse("custom-report-list")
@@ -149,10 +149,10 @@ class ReportDetailView(UserIsManagerOfCurrentReportProjectMixin, UserIsAuthorOfC
         instance.save()
         return super().form_valid(form)
 
-    def get_form_kwargs(self) -> dict:
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.object.author
-        return kwargs
+    def get_form(self, form_class: ReportForm = None) -> ReportForm:
+        if form_class is None:
+            form_class = super().get_form_class()
+        return form_class(user=self.object.author, **super().get_form_kwargs())
 
 
 @method_decorator(login_required, name="dispatch")
@@ -210,10 +210,10 @@ class AdminReportView(UpdateView):
         self.object.save()
         return super().form_valid(form)
 
-    def get_form_kwargs(self) -> dict:
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.object.author
-        return kwargs
+    def get_form(self, form_class: ReportForm = None) -> ReportForm:
+        if form_class is None:
+            form_class = super().get_form_class()
+        return form_class(user=self.object.author, **super().get_form_kwargs())
 
 
 @method_decorator(login_required, name="dispatch")
@@ -257,10 +257,10 @@ class ProjectReportDetail(UserIsManagerOfCurrentReportProjectMixin, UpdateView):
         self.object.save()
         return super().form_valid(form)
 
-    def get_form_kwargs(self) -> dict:
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.object.author
-        return kwargs
+    def get_form(self, form_class: ReportForm = None) -> ReportForm:
+        if form_class is None:
+            form_class = super().get_form_class()
+        return form_class(user=self.object.author, **super().get_form_kwargs())
 
 
 @method_decorator(login_required, name="dispatch")
