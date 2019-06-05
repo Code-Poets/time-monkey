@@ -11,6 +11,7 @@ from common.convert import convert_string_work_hours_field_to_hour_and_minutes
 from common.convert import timedelta_to_string
 from employees.common.strings import ReportValidationStrings
 from employees.models import Report
+from users.models import CustomUser
 
 
 class ProjectJoinForm(forms.Form):
@@ -50,8 +51,7 @@ class ReportForm(forms.ModelForm):
         fields = ("date", "description", "task_activities", "project", "work_hours")
         widgets = {"date": DatePickerInput(format="%Y-%m-%d")}
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        user = kwargs.pop("user", None)
+    def __init__(self, user: CustomUser, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.fields["project"].queryset = user.projects.all()
         self.fields["project"].choices = [(project.id, project.name) for project in user.projects.all()]
