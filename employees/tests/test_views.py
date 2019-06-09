@@ -360,3 +360,33 @@ class ReportCustomListTests(TestCase):
         project_field_choices = get_response.context_data["form"].fields["project"].choices
         self.assertTrue((new_project.pk, new_project.name) not in project_field_choices)
         self.assertTrue((self.project.pk, self.project.name) in project_field_choices)
+
+    def test_create_report_view_should_not_fail_when_there_are_two_projects_with_identical_names(self):
+        report_count = Report.objects.count()
+        project_copy = ProjectFactory(name=self.project.name)
+        project_copy.members.add(self.user)
+        response = self.client.post(
+            path=self.url,
+            data={
+                "date": datetime.datetime.now().date(),
+                "description": "Some description",
+                "project": self.project.pk,
+                "work_hours": "8:00",
+                "task_activities": self.report.task_activities.pk,
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Report.objects.count(), report_count + 1)
+
+        response = self.client.post(
+            path=self.url,
+            data={
+                "date": datetime.datetime.now().date(),
+                "description": "Some description",
+                "project": project_copy.pk,
+                "work_hours": "8:00",
+                "task_activities": self.report.task_activities.pk,
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Report.objects.count(), report_count + 2)
