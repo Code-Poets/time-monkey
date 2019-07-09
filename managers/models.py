@@ -36,6 +36,7 @@ class Project(models.Model):
     members = models.ManyToManyField(
         CustomUser, related_name="projects", help_text=_("How to add more employees? Select by CTRL + click")
     )
+    is_enabled_notifications = models.BooleanField(default=True)
 
     objects = ProjectQuerySet.as_manager()
 
