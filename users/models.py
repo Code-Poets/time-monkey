@@ -119,6 +119,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(
         max_length=128, error_messages={"null": ValidationErrorText.VALIDATION_ERROR_PASSWORD_MESSAGE}
     )
+    reporting_managers = models.ManyToManyField("self", symmetrical=True, default=None)
+    expected_weekly_hours = models.DurationField(default="00:00:00")
+    is_enabled_notifications = models.BooleanField(default=True)
     objects = CustomUserManager()
 
     USERNAME_FIELD = "email"
