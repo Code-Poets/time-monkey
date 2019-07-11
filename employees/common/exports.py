@@ -127,7 +127,6 @@ class ReportExtractor:
         }
         self._fill_current_report_data(storage_data)
         self._set_row_height(str(storage_data[constants.DESCRIPTION_HEADER_STR.value]))
-
         self._current_row += 1
 
     def _prepare_worksheet(self, employee_name: str) -> None:
@@ -239,13 +238,15 @@ class ReportExtractor:
         splitted_description = description.split("\n")
         rows_in_xlsx = 0
 
-        for row in splitted_description:
-            length_of_row = len(row)
-            rows_in_xlsx = int(length_of_row / 100)
+        if len(splitted_description) == 1:
+            rows_in_xlsx = int(len(splitted_description[0]) / 100)
+        else:
+            for row in splitted_description:
+                rows_in_xlsx = rows_in_xlsx + int(len(row) / 100)
 
         row_height = (
             constants.DEFAULT_ROW_HEIGHT.value * (1 + new_lines_in_description + rows_in_xlsx)
-            if new_lines_in_description > 0
+            if new_lines_in_description > 0 or rows_in_xlsx > 0
             else constants.DEFAULT_ROW_HEIGHT.value
         )
         self._workbook.get_active_sheet().row_dimensions[self._current_row].height = row_height
