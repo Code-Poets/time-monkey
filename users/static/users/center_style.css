@@ -533,6 +533,15 @@ span {
     font-size: 130%;
 }
 
+.change-password > div > input, .form-row.row.change-password  > div > a > input {
+    margin-top: 10%;
+    width: 80%;
+}
+
+#div_id_old_password > div > input, #div_id_new_password1> div > input, #div_id_new_password2 > div > input {
+    text-align: center;
+}
+
 #update-user-account > .row, #update-user-account > .form-actions, #update-user-account > #div_id_user_type {
     font-size: 130%;
 }
@@ -547,6 +556,11 @@ span {
     -webkit-box-shadow: 0 0 10px grey;
     -moz-box-shadow: 0 0 10px grey;
     box-shadow: 0 0 10px grey;
+    min-width: 250px;
+}
+
+.main-white-container.change-password {
+    width: 70%;
 }
 
 #modal-dialog-update-user-account {
@@ -565,6 +579,9 @@ span {
 
 ul.messages {
     list-style-type: none;
+}
+
+ul.messages.succes {
     color: green;
     padding-inline-start: 0px;
 }
@@ -578,7 +595,38 @@ ul.messages {
 }
 
 .discard-button {
-    background-color: #DDDDDD; !important;
+    background-color: #DDDDDD;
+!important;
+}
+
+ul.messages.info {
+    color: grey;
+}
+
+/*This style is created because crispy library rendered help_text as default under input*/
+#hint_id_new_password1 > ul {
+  display: None;
+}
+
+.new-password1 {
+  position: relative;
+  display: inline-block;
+}
+
+.new-password1 .tooltiptext {
+  visibility: hidden;
+  width: 250px;
+  background-color: #2C77BC;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 10px 0;
+  position: absolute;
+  z-index: 1;
+}
+
+.new-password1:hover .tooltiptext {
+  visibility: visible;
 }
 
 .invalid-feedback {
