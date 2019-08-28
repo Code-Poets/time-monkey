@@ -70,4 +70,4 @@
             virtualenv: "{{ sheetstorm_virtualenv_dir }}"
           with_items:
             - "{{ django_fixtures_dir }}/site.yaml"
-            - "{{ sheetstorm_dir }}/employees/fixtures/task_activities.yaml"
+            - "{{ sheetstorm_dir }}/employees/fixtures/activities.yaml"

@@ -4,7 +4,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from employees.factories import ReportFactory
-from employees.models import TaskActivityType
+from employees.models import ActivityType
 from managers.factories import ProjectFactory
 from managers.models import Project
 from users.factories import UserFactory
@@ -126,13 +126,13 @@ class Command(BaseCommand):
         self._add_member_to_project_if_not_added_yet(project_suspended, user_manager_2)
 
         #
-        # Task activities
+        # Activities
         #
 
-        task_activity_review, _ = TaskActivityType.objects.get_or_create(name="Review")
-        task_activity_backend_development, _ = TaskActivityType.objects.get_or_create(name="Backend Development")
-        task_activity_frontend_development, _ = TaskActivityType.objects.get_or_create(name="Frontend Development")
-        task_activity_meeting, _ = TaskActivityType.objects.get_or_create(name="Meeting")
+        activity_review, _ = ActivityType.objects.get_or_create(name="Review")
+        activity_backend_development, _ = ActivityType.objects.get_or_create(name="Backend Development")
+        activity_frontend_development, _ = ActivityType.objects.get_or_create(name="Frontend Development")
+        activity_meeting, _ = ActivityType.objects.get_or_create(name="Meeting")
 
         #
         # Reports
@@ -145,7 +145,7 @@ class Command(BaseCommand):
             project=project_pending,
             work_hours=timezone.timedelta(hours=8),
             editable=True,
-            task_activities=task_activity_review,
+            activities=activity_review,
         )
 
         ReportFactory(
@@ -155,7 +155,7 @@ class Command(BaseCommand):
             project=project_pending,
             work_hours=timezone.timedelta(hours=4),
             editable=True,
-            task_activities=task_activity_review,
+            activities=activity_review,
         )
 
         ReportFactory(
@@ -165,7 +165,7 @@ class Command(BaseCommand):
             project=project_stopped,
             work_hours=timezone.timedelta(hours=4),
             editable=True,
-            task_activities=task_activity_review,
+            activities=activity_review,
         )
 
         ReportFactory(
@@ -175,7 +175,7 @@ class Command(BaseCommand):
             project=project_pending,
             work_hours=timezone.timedelta(hours=6),
             editable=True,
-            task_activities=task_activity_review,
+            activities=activity_review,
         )
 
         ReportFactory(
@@ -185,7 +185,7 @@ class Command(BaseCommand):
             project=project_suspended,
             work_hours=timezone.timedelta(hours=8, minutes=30),
             editable=True,
-            task_activities=task_activity_backend_development,
+            activities=activity_backend_development,
         )
 
         ReportFactory(
@@ -195,7 +195,7 @@ class Command(BaseCommand):
             project=project_pending,
             work_hours=timezone.timedelta(hours=7, minutes=59),
             editable=True,
-            task_activities=task_activity_backend_development,
+            activities=activity_backend_development,
         )
 
         ReportFactory(
@@ -205,7 +205,7 @@ class Command(BaseCommand):
             project=project_pending,
             work_hours=timezone.timedelta(hours=2),
             editable=True,
-            task_activities=task_activity_backend_development,
+            activities=activity_backend_development,
         )
 
         ReportFactory(
@@ -215,7 +215,7 @@ class Command(BaseCommand):
             project=project_stopped,
             work_hours=timezone.timedelta(hours=7, minutes=1),
             editable=True,
-            task_activities=task_activity_frontend_development,
+            activities=activity_frontend_development,
         )
 
         ReportFactory(
@@ -225,7 +225,7 @@ class Command(BaseCommand):
             project=project_suspended,
             work_hours=timezone.timedelta(hours=8),
             editable=True,
-            task_activities=task_activity_frontend_development,
+            activities=activity_frontend_development,
         )
 
         ReportFactory(
@@ -235,7 +235,7 @@ class Command(BaseCommand):
             project=project_stopped,
             work_hours=timezone.timedelta(hours=2),
             editable=True,
-            task_activities=task_activity_frontend_development,
+            activities=activity_frontend_development,
         )
 
         ReportFactory(
@@ -245,7 +245,7 @@ class Command(BaseCommand):
             project=project_suspended,
             work_hours=timezone.timedelta(hours=4),
             editable=True,
-            task_activities=task_activity_meeting,
+            activities=activity_meeting,
         )
 
         ReportFactory(
@@ -255,7 +255,7 @@ class Command(BaseCommand):
             project=project_suspended,
             work_hours=timezone.timedelta(hours=8),
             editable=True,
-            task_activities=task_activity_meeting,
+            activities=activity_meeting,
         )
 
     @staticmethod

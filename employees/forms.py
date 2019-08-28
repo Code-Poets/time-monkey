@@ -17,8 +17,8 @@ from django.utils.duration import duration_string
 from common.convert import convert_string_work_hours_field_to_hour_and_minutes
 from common.convert import timedelta_to_string
 from employees.common.constants import MonthNavigationConstants
+from employees.models import ActivityType
 from employees.models import Report
-from employees.models import TaskActivityType
 from managers.models import Project
 from users.models import CustomUser
 
@@ -62,7 +62,7 @@ class ReportForm(forms.ModelForm):
 
     class Meta:
         model = Report
-        fields = ("date", "author", "description", "project", "task_activities", "work_hours")
+        fields = ("date", "author", "description", "project", "activities", "work_hours")
         widgets = {"date": DatePickerInput(format="%Y-%m-%d"), "author": HiddenInput}
 
     def __init__(self, *args: Any, **kwargs: Any):
@@ -71,21 +71,19 @@ class ReportForm(forms.ModelForm):
         self.fields["project"].queryset = (
             Project.objects.filter_active().filter(Q(members=author) | Q(managers=author)).distinct()
         )
-        self._filter_task_activities_per_project()
+        self._filter_activities_per_project()
         if "data" not in kwargs:
             self._set_last_choices_in_report_form(author)
 
-    def _filter_task_activities_per_project(self) -> None:
+    def _filter_activities_per_project(self) -> None:
         if "project" in self.data:
             with suppress(ValueError, TypeError):
                 project_id = int(self.data.get("project"))
-                self.fields["task_activities"].queryset = TaskActivityType.objects.filter(projects=project_id).order_by(
-                    "name"
-                )
+                self.fields["activities"].queryset = ActivityType.objects.filter(projects=project_id).order_by("name")
         elif self.instance.pk:
-            self.fields["task_activities"].queryset = (
+            self.fields["activities"].queryset = (
                 self.instance.project.project_activities.order_by("name")
-                | TaskActivityType.objects.filter(pk=self.instance.task_activities.pk)
+                | ActivityType.objects.filter(pk=self.instance.activities.pk)
             ).distinct()
 
     def _set_last_choices_in_report_form(self, author: CustomUser) -> None:
@@ -95,13 +93,13 @@ class ReportForm(forms.ModelForm):
                 author in last_report.project.members.all() or author in last_report.project.managers.all()
             ):
                 self.initial["project"] = last_report.project
-                self.fields["task_activities"].queryset = last_report.project.project_activities.all()
-                self.initial["task_activities"] = last_report.task_activities
+                self.fields["activities"].queryset = last_report.project.project_activities.all()
+                self.initial["activities"] = last_report.activities
             elif self.fields["project"].queryset.exists():
                 self.initial["project"] = self.fields["project"].queryset.first()
-                self.fields["task_activities"].queryset = self.initial["project"].project_activities.all()
+                self.fields["activities"].queryset = self.initial["project"].project_activities.all()
             else:
-                self.fields["task_activities"].queryset = TaskActivityType.objects.none()
+                self.fields["activities"].queryset = ActivityType.objects.none()
         else:
             self.fields["project"].queryset = (
                 self.fields["project"].queryset | Project.objects.filter(pk=self.instance.project.pk).distinct()
@@ -152,7 +150,7 @@ class MonthSwitchForm(forms.Form):
         return True
 
 
-class TaskActivityForm(forms.ModelForm):
+class ActivityForm(forms.ModelForm):
     class Meta:
-        model = TaskActivityType
+        model = ActivityType
         fields = ["name"]

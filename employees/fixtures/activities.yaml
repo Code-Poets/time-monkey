@@ -1,70 +1,70 @@
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 1
   fields:
     name: Other
     is_default: True
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 2
   fields:
     name: Project Management
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 3
   fields:
     name: Meeting
     is_default: True
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 4
   fields:
     name: Spec & Docs
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 5
   fields:
     name: Design & Research
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 6
   fields:
     name: Frontend Development
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 7
   fields:
     name: Backend Development
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 8
   fields:
     name: Quality Assurance / Testing
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 9
   fields:
     name: Travel
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 10
   fields:
     name: DevOps
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 11
   fields:
     name: Review
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 12
   fields:
     name: Conference
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 13
   fields:
     name: Administrative
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 14
   fields:
     name: Marketing
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 15
   fields:
     name: Training
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 16
   fields:
     name: Mentorship
-- model: employees.TaskActivityType
+- model: employees.ActivityType
   pk: 17
   fields:
     name: Graphic design

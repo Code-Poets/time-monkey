@@ -40,8 +40,8 @@ from employees.common.strings import ReportListStrings
 from employees.forms import MonthSwitchForm
 from employees.forms import ProjectJoinForm
 from employees.forms import ReportForm
+from employees.models import ActivityType
 from employees.models import Report
-from employees.models import TaskActivityType
 from managers.models import Project
 from users.models import CustomUser
 from utils.decorators import check_permissions
@@ -584,8 +584,8 @@ class ExportAuthorReportProjectView(UserIsManagerOfCurrentProjectMixin, DetailVi
 
 
 @method_decorator(login_required, name="dispatch")
-class LoadTaskActivitiesInProjectView(TemplateView):
-    template_name = "employees/partial/task_activity_list.html"
+class LoadActivitiesInProjectView(TemplateView):
+    template_name = "employees/partial/activity_list.html"
 
     def get_context_data(self, **kwargs: Any) -> dict:
         context = super().get_context_data(**kwargs)
@@ -593,7 +593,5 @@ class LoadTaskActivitiesInProjectView(TemplateView):
             int(self.request.GET["project"])
         except (ValueError, KeyError):
             raise Http404
-        context["task_activities"] = TaskActivityType.objects.filter(projects=self.request.GET.get("project")).order_by(
-            "name"
-        )
+        context["activities"] = ActivityType.objects.filter(projects=self.request.GET.get("project")).order_by("name")
         return context

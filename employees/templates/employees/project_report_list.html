@@ -56,7 +56,7 @@
             <thead>
                 <tr>
                     <th class="project-reports-date-header">{{ UI_text.DATE_COLUMN_HEADER.value }}</th>
-                    <th class="project-reports-task-activity-header">{{ UI_text.TASK_ACTIVITY_HEADER.value }}</th>
+                    <th class="project-reports-activity-header">{{ UI_text.ACTIVITY_HEADER.value }}</th>
                     <th class="project-reports-work-hours-header">{{ UI_text.WORK_HOURS_COLUMN_HEADER.value }}</th>
                     <th class="project-reports-description-header">{{ UI_text.DESCRIPTION_COLUMN_HEADER.value }}</th>
                     <th class="project-reports-creation-date-header hidden-print">{{ UI_text.CREATION_DATE_COLUMN_HEADER.value }}</th>
@@ -76,7 +76,7 @@
                     {% else %}
                     <tr>
                     {% endif %}
-                    <td class="project-reports-task-activity-column">{{ report.task_activities }}</td>
+                    <td class="project-reports-activity-column">{{ report.activities }}</td>
                     <td class="project-reports-work-hours-column">{{ report.work_hours_str }}</td>
                     <td class="project-reports-description-column">{{ report.description|safe|urlize|annotate_no_follow_link_with_css_class:"pagelink" }}</td>
                     <td class="project-reports-creation-date-column hidden-print">{{ report.creation_date }}</td>

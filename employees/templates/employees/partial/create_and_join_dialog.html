@@ -6,7 +6,7 @@
       <p class="p-non-field-errors"><small>{{ error }}</small></p>
     </div>
   {% endfor %}
-  <form action="{{ path }}" method="POST" id="reportForm" data-task-activities-url="{% url 'ajax-load-task-activities' %}">
+  <form action="{{ path }}" method="POST" id="reportForm" data-activities-url="{% url 'ajax-load-activities' %}">
     {% csrf_token %}
     <div class="row">
       <div class="col-md-8">
@@ -27,7 +27,7 @@
     <div class="row">
       <div class="col-md-8">
         <div class="col-md-10">
-          {{ form.task_activities|as_crispy_field }}
+          {{ form.activities|as_crispy_field }}
         </div>
       </div>
       <div class="col-md-4">

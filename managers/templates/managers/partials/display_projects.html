@@ -44,7 +44,7 @@
                         <a href="{% url 'project-report-list' pk=project.pk year=year_for_urls month=month_for_urls %}" title="{% trans 'Check project reports' %}">
                             <i class="fas fa-clipboard-list fa-lg"></i>
                         </a>
-                        <a href="{% url 'project-task-activities' pk=project.pk %}" title="{% trans 'Check project task activities' %}">
+                        <a href="{% url 'project-activities' pk=project.pk %}" title="{% trans 'Check project activities' %}">
                             <i class="fas fa-cog fa-lg"></i>
                         </a>
                     </div>
