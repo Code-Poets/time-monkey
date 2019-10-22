@@ -18,8 +18,8 @@ class ReportModelConstants(Enum):
     MIN_WORK_HOURS = timedelta(minutes=15)
 
 
-class TaskActivityTypeConstans(Enum):
-    TASK_ACTIVITIES_MAX_LENGTH = 30
+class ActivityTypeConstans(Enum):
+    ACTIVITIES_MAX_LENGTH = 30
 
 
 class ColumnSettings(NamedTuple):
@@ -41,21 +41,21 @@ class ExcelGeneratorSettingsConstants(Enum):
 
     DATE_HEADER_STR = "Date"
     PROJECT_HEADER_STR = "Project"
-    TASK_ACTIVITY_HEADER_STR = "Task activity"
+    ACTIVITY_HEADER_STR = "Activity"
     HOURS_HEADER_STR = "Hours"
     DESCRIPTION_HEADER_STR = "Description"
 
     HEADERS_TO_COLUMNS_SETTINGS_FOR_SINGLE_USER = {
         DATE_HEADER_STR: ColumnSettings(position=1, width=12),
         PROJECT_HEADER_STR: ColumnSettings(position=2, width=20),
-        TASK_ACTIVITY_HEADER_STR: ColumnSettings(position=3, width=30),
+        ACTIVITY_HEADER_STR: ColumnSettings(position=3, width=30),
         HOURS_HEADER_STR: ColumnSettings(position=4, width=6),
         DESCRIPTION_HEADER_STR: ColumnSettings(position=5, width=100),
     }
 
     HEADERS_TO_COLUMNS_SETTINGS_FOR_USER_IN_PROJECT = {
         DATE_HEADER_STR: ColumnSettings(position=1, width=12),
-        TASK_ACTIVITY_HEADER_STR: ColumnSettings(position=2, width=30),
+        ACTIVITY_HEADER_STR: ColumnSettings(position=2, width=30),
         HOURS_HEADER_STR: ColumnSettings(position=3, width=6),
         DESCRIPTION_HEADER_STR: ColumnSettings(position=4, width=100),
     }

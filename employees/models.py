@@ -8,24 +8,24 @@ from django.db.models import QuerySet
 from django.db.models.functions import Coalesce
 
 from common.convert import timedelta_to_string
+from employees.common.constants import ActivityTypeConstans
 from employees.common.constants import ReportModelConstants
-from employees.common.constants import TaskActivityTypeConstans
 from employees.common.strings import ReportValidationStrings
 from managers.models import Project
 from users.models import CustomUser
 
 
-class TaskActivityTypeQuerySet(models.QuerySet):
+class ActivityTypeQuerySet(models.QuerySet):
     def get_defaults(self) -> QuerySet:
         return self.filter(is_default=True)
 
 
-class TaskActivityType(models.Model):
-    name = models.CharField(max_length=TaskActivityTypeConstans.TASK_ACTIVITIES_MAX_LENGTH.value)
+class ActivityType(models.Model):
+    name = models.CharField(max_length=ActivityTypeConstans.ACTIVITIES_MAX_LENGTH.value)
     is_default = models.BooleanField(default=False)
     projects = models.ManyToManyField(Project, related_name="project_activities")
 
-    objects = TaskActivityTypeQuerySet().as_manager()
+    objects = ActivityTypeQuerySet().as_manager()
 
     def __str__(self) -> str:
         return self.name
@@ -68,7 +68,7 @@ class Report(models.Model):
 
     date = models.DateField()
     description = models.TextField(max_length=ReportModelConstants.MAX_DESCRIPTION_LENGTH.value)
-    task_activities = models.ForeignKey(TaskActivityType, on_delete=models.DO_NOTHING, default=1)
+    activities = models.ForeignKey(ActivityType, on_delete=models.DO_NOTHING, default=1)
     creation_date = models.DateTimeField(auto_now_add=True)
     last_update = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(CustomUser, on_delete=models.PROTECT)

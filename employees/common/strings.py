@@ -17,7 +17,7 @@ class ReportListStrings(NotCallableMixin, Enum):
     DATE_COLUMN_HEADER = _("Date")
     PROJECT_COLUMN_HEADER = _("Project")
     WORK_HOURS_COLUMN_HEADER = _("Work hours")
-    TASK_ACTIVITIES_COLUMN_HEADER = _("Task Activity")
+    ACTIVITIES_COLUMN_HEADER = _("Activity")
     DESCRIPTION_COLUMN_HEADER = _("Description")
     HOURS_PER_DAY_LABEL = _("Daily hours")
     HOURS_PER_MONTH_LABEL = _("Monthly hours")
@@ -38,7 +38,7 @@ class ReportDetailStrings(NotCallableMixin, Enum):
     DELETE_POPUP_NO = _("No")
 
 
-class TaskActivitiesStrings(Enum):
+class ActivitiesStrings(Enum):
     PROJECT_MANAGEMENT = _("Project Management")
     MEETING = _("Meeting")
     SPEC_AND_DOCS = _("Spec & Docs")
@@ -67,7 +67,7 @@ class AuthorReportListStrings(NotCallableMixin, Enum):
     CREATION_DATE_COLUMN_HEADER = _("Created")
     LAST_UPDATE_COLUMN_HEADER = _("Last update")
     EDITED_COLUMN_HEADER = _("Edited")
-    TASK_ACTIVITIES_COLUMN_HEADER = _("Task Activity")
+    ACTIVITIES_COLUMN_HEADER = _("Activity")
     HOURS_PER_DAY_LABEL = _("Daily hours")
     HOURS_PER_MONTH_LABEL = _("Monthly hours")
     NO_REPORTS_MESSAGE = _("This employee has no reports to display.")
@@ -85,7 +85,7 @@ class ProjectReportListStrings(NotCallableMixin, Enum):
     CREATION_DATE_COLUMN_HEADER = _("Created")
     LAST_UPDATE_COLUMN_HEADER = _("Last update")
     EDITED_COLUMN_HEADER = _("Edited")
-    TASK_ACTIVITY_HEADER = _("Task Activity")
+    ACTIVITY_HEADER = _("Activity")
     HOURS_PER_MONTH_LABEL = _("Monthly hours")
     NO_REPORTS_MESSAGE = _("There are no reports for this project to display.")
 
@@ -107,7 +107,7 @@ class ReportValidationStrings(NotCallableMixin, Enum):
     WORK_HOURS_FIELD_NOT_TIMEDELTA_INSTANCE = _("Work hours field must be instance of timedelta")
     WORK_HOURS_WRONG_FORMAT = _("Acceptable format for work hours field is: HH:MM and HH")
     USER_NOT_IN_PROJECT_MESSAGE = _("You are not a part of this project ")
-    TASK_ACTIVITY_NOT_RELATED_TO_PROJECT = _("Select a valid choice. That choice is not one of the available choices.")
+    ACTIVITY_NOT_RELATED_TO_PROJECT = _("Select a valid choice. That choice is not one of the available choices.")
 
 
 class MonthNavigationText(NotCallableMixin, Enum):

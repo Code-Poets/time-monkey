@@ -42,9 +42,5 @@ urlpatterns = [
         views.ExportAuthorReportProjectView.as_view(),
         name="export-project-author-reports",
     ),
-    url(
-        r"^ajax/load-task-activities/",
-        views.LoadTaskActivitiesInProjectView.as_view(),
-        name="ajax-load-task-activities",
-    ),
+    url(r"^ajax/load-activities/", views.LoadActivitiesInProjectView.as_view(), name="ajax-load-activities"),
 ]

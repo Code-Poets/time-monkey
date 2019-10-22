@@ -50,7 +50,7 @@ class Project(models.Model):
         return self.name
 
     def get_report_ordered(self) -> QuerySet:
-        return self.report_set.select_related("task_activities").order_by("author__email", "-date", "-creation_date")
+        return self.report_set.select_related("activities").order_by("author__email", "-date", "-creation_date")
 
     def clean(self) -> None:
         super().clean()
@@ -82,14 +82,14 @@ def change_user_type_to_employee(pk_set: Set) -> None:
 
 
 @receiver(post_save, sender=Project)
-def add_default_task_activities(sender: Project, **kwargs: Any) -> None:
-    from employees.models import TaskActivityType
+def add_default_activities(sender: Project, **kwargs: Any) -> None:
+    from employees.models import ActivityType
 
     assert sender == Project
     if kwargs["created"]:
         project = kwargs["instance"]
 
-        project.project_activities.set(TaskActivityType.objects.get_defaults())
+        project.project_activities.set(ActivityType.objects.get_defaults())
 
 
 @receiver(post_save, sender=Project)

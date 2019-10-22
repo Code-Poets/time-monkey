@@ -1,5 +1,5 @@
 $("#id_project").change(function () {
-    var url = $("#reportForm").attr("data-task-activities-url");
+    var url = $("#reportForm").attr("data-activities-url");
     var projectId = $(this).val();
     $.ajax({
         url: url,
@@ -7,7 +7,7 @@ $("#id_project").change(function () {
             'project': projectId
         },
         success: function (data) {
-            $("#id_task_activities").html(data);
+            $("#id_activities").html(data);
         }
     });
 });

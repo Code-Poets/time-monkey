@@ -130,7 +130,7 @@ class ReportExtractor:
         storage_data = {
             constants.DATE_HEADER_STR.value: report_date,
             constants.PROJECT_HEADER_STR.value: report.project.name,
-            constants.TASK_ACTIVITY_HEADER_STR.value: report.task_activities.name,
+            constants.ACTIVITY_HEADER_STR.value: report.activities.name,
             constants.HOURS_HEADER_STR.value: report.work_hours,
             constants.DESCRIPTION_HEADER_STR.value: report.description,
         }

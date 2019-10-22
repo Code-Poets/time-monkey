@@ -1,13 +1,13 @@
 from django.contrib import admin
 
+from employees.models import ActivityType
 from employees.models import Report
-from employees.models import TaskActivityType
 
 admin.site.register(Report)
 
 
-class TaskActivities(admin.ModelAdmin):
+class Activities(admin.ModelAdmin):
     list_display = ("name",)
 
 
-admin.site.register(TaskActivityType, TaskActivities)
+admin.site.register(ActivityType, Activities)
