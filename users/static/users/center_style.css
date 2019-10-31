@@ -585,3 +585,15 @@ ul.messages {
     color: red;
     font-size: 70%;
 }
+
+.modal_dialog_display {
+  display: none;
+}
+
+.margin {
+  margin: 0;
+}
+
+.margin-first {
+  margin-top: 10px;
+}
