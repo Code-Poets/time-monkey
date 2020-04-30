@@ -561,6 +561,7 @@ span {
 
 .main-white-container.change-password {
     width: 70%;
+    margin: auto;
 }
 
 #modal-dialog-update-user-account {
