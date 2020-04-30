@@ -584,7 +584,7 @@ ul.messages {
     margin-left: 10%;
 }
 
-ul.messages.succes {
+ul.messages.success {
     color: green;
     padding-inline-start: 0px;
 }
