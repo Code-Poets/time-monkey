@@ -535,7 +535,7 @@ span {
 
 .change-password > div > input, .form-row.row.change-password  > div > a > input {
     margin-top: 10%;
-    width: 80%;
+    width: 85%;
 }
 
 #div_id_old_password > div > input, #div_id_new_password1> div > input, #div_id_new_password2 > div > input {
