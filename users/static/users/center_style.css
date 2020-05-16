@@ -566,6 +566,7 @@ span {
 ul.messages {
     list-style-type: none;
     color: green;
+    padding-inline-start: 0px;
 }
 
 #change-password {
