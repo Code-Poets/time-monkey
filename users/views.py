@@ -105,6 +105,11 @@ class UserUpdate(UpdateView):
     def get_object(self, queryset: Optional[QuerySet] = None) -> CustomUser:
         return self.request.user
 
+    def get_form_class(self) -> Any:
+        if self.get_object().user_type == CustomUser.UserType.ADMIN.name:
+            return AdminUserChangeForm
+        return self.form_class
+
     def get_success_url(self) -> str:
         return reverse("custom-user-update")
 
