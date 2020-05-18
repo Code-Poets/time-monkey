@@ -3,6 +3,9 @@
 
 <div class="container narrower-container">
     <div class="table-responsive">
+        {% if reports %}
+            {% include "employees/partial/display_reports/../projects_work_percentage.html" %}
+        {% endif %}
         <table class="table table-responsive-sm">
             <thead>
                 <tr>
@@ -43,6 +46,5 @@
         {% if not reports %}
             <strong>{{ UI_text.NO_REPORTS_MESSAGE.value }}</strong>
         {% endif %}
-        {% include "employees/partial/display_reports/../projects_work_percentage.html" %}
     </div>
 </div>
