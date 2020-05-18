@@ -26,7 +26,6 @@ from users.common.strings import CustomUserUserTypeText
 from users.common.strings import ValidationErrorText
 from users.validators import UserEmailValidation
 from users.validators import UserNameValidatior
-from utils.helpers import format_timedelta_to_hours_and_minutes_only
 
 logger = logging.getLogger(__name__)
 
@@ -206,7 +205,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return {
             project: (
                 [
-                    format_timedelta_to_hours_and_minutes_only(project.work_hours_sum),
+                    project.work_hours_sum,
                     (project.work_hours_sum / work_hours_sum) * 100,
                 ]
                 if work_hours_sum.total_seconds() > 0
