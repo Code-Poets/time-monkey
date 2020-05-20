@@ -204,10 +204,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     ) -> dict:
         return {
             project: (
-                [
-                    project.work_hours_sum,
-                    (project.work_hours_sum / work_hours_sum) * 100,
-                ]
+                [project.work_hours_sum, (project.work_hours_sum / work_hours_sum) * 100]
                 if work_hours_sum.total_seconds() > 0
                 else 0
             )

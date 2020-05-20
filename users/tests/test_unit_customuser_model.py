@@ -103,9 +103,12 @@ class TestCustomUserModelMethods(TestCase):
         manager_user = ManagerUserFactory()
         member_project = ProjectFactory()
         manager_project = ProjectFactory()
+
         member_project.members.add(manager_user)
         manager_project.managers.add(manager_user)
+
         queryset = manager_user.all_projects
+
         self.assertEqual(len(queryset), 2)
         self.assertTrue(member_project in queryset)
         self.assertTrue(manager_project in queryset)
@@ -114,9 +117,12 @@ class TestCustomUserModelMethods(TestCase):
         manager_user = ManagerUserFactory()
         member_project = ProjectFactory()
         manager_project = ProjectFactory()
+
         member_project.members.add(manager_user)
         manager_project.members.add(manager_user)
+
         queryset = manager_user.all_projects
+
         self.assertEqual(len(queryset), 2)
         self.assertTrue(member_project in queryset)
         self.assertTrue(manager_project in queryset)
@@ -125,9 +131,12 @@ class TestCustomUserModelMethods(TestCase):
         manager_user = ManagerUserFactory()
         member_project = ProjectFactory()
         manager_project = ProjectFactory()
+
         member_project.managers.add(manager_user)
         manager_project.managers.add(manager_user)
+
         queryset = manager_user.all_projects
+
         self.assertEqual(len(queryset), 2)
         self.assertTrue(member_project in queryset)
         self.assertTrue(manager_project in queryset)
