@@ -538,7 +538,7 @@ span {
 }
 
 .form-group > label {
-    font-weight: 400; !important;
+    font-weight: 400;
 }
 
 .main-white-container {
@@ -570,7 +570,7 @@ ul.messages {
 }
 
 #change-password {
-    width: 100%; !important;
+    width: 100%;
 }
 
 #change-password > span {
@@ -578,7 +578,7 @@ ul.messages {
 }
 
 .discard-button {
-    background-color: #DDDDDD; !important;
+    background-color: #DDDDDD;
 }
 
 .invalid-feedback {
