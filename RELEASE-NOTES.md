@@ -3,6 +3,8 @@
 ##### Bugfixes
 
 - Bugfix default date on report creation ([#563](https://github.com/Code-Poets/sheetstorm/pull/563))
+- Bugfix bad padding in report form ([#564](https://github.com/Code-Poets/sheetstorm/pull/564))
+
 
 
 ### v0.12.1
