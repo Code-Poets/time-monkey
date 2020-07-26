@@ -20,7 +20,15 @@
 }
 
 .table {
-    table-layout: fixed;
+    text-align: left;
+}
+
+.table-title {
+    display: flex;
+    justify-content: space-between;
+}
+
+.table-title .title-field {
     text-align: left;
 }
 
@@ -28,32 +36,56 @@
     margin-bottom: 0;
 }
 
+.monthly-stats {
+    margin: auto;
+    width: 40%;
+    min-width: 300px;
+}
+
 .date-header {
-    width: 16.23%;
+    width: 125px;
 }
 
 .project-header {
-    width: 10.18%;
+    width: 15%;
+    min-width: 93px;
 }
 
 .task-activities-header {
-    width: 10.18%;
+    width: 15%;
+    min-width: 106px;
+}
+
+.description-header {
+    min-width: 200px;
 }
 
 .work-hours-header {
-    width: 8.16%;
+    width: 58px;
 }
 
 .edit-button-header {
-    width: 8.77%;
+    width: 38px;
+}
+
+.date-column {
+    text-align: end;
 }
 
 .description-column {
-    word-wrap: break-word;
+    word-break: break-word;
 }
 
 .edit-button-column {
     text-align: right;
+}
+
+.edit-button-column .btn {
+    padding: 0;
+}
+
+.work-hours-column {
+    text-align: center;
 }
 
 textarea.form-control, #id_description {
@@ -131,13 +163,8 @@ a.pagelink:hover {
     border: none;
 }
 
-table.table {
-    min-width: 500px;
-}
-
 .table-responsive > .table > tbody > tr > td {
     white-space: normal;
-!important;
     overflow: hidden;
 }
 
@@ -146,8 +173,8 @@ table.table {
     overflow: hidden;
 }
 
-.td-text-align-left {
-    text-align: left;
+.td-text-align-right {
+    text-align: right;
 }
 
 .hr-blue-line {
@@ -184,6 +211,7 @@ table.table {
 
 .margin-create-button {
     margin-top: 0.8em;
+    float: right;
 }
 
 .row.double-space-margin-bottom > div > a {
