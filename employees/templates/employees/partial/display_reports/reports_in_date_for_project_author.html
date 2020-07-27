@@ -6,7 +6,7 @@
         {% if forloop.first %}
             <tr class="tr-next-day-separator">
                 <td class="date-column" rowspan={{ date.list|length }}>
-                    <strong>{{ report.date }}</strong>
+                    <strong>{{ report.date|date:"D, d.m.Y" }}</strong>
                 </td>
         {% else %}
             <tr>
