@@ -2,27 +2,27 @@
 {% load data_structure_element_selectors %}
 
 <div class="container narrower-container">
+    {% if reports %}
+        {% include "employees/partial/display_reports/../projects_work_percentage.html" %}
+    {% endif %}
+    <div class="table-title">
+        <div class="title-field">
+            <h4 title="{{ user.get_full_name }}">
+                <b>{{ user.get_full_name }}</b>
+            </h4>
+        </div>
+        <div class="hidden-print-line">
+            <hr class="hr-blue-line">
+        </div>
+    </div>
     <div class="table-responsive">
-        {% if reports %}
-            {% include "employees/partial/display_reports/../projects_work_percentage.html" %}
-        {% endif %}
-        <table class="table table-responsive-sm">
+        <table class="table">
             <thead>
-                <tr>
-                    <td class="td-text-align-left-name" colspan="1">
-                        <h4 title="{{ user.get_full_name }}">
-                            <b>{{ user.get_full_name }}</b>
-                        </h4>
-                    </td>
-                    <td class="hidden-print-line" colspan="5">
-                        <hr class="hr-blue-line">
-                    </td>
-                </tr>
                 <tr class="bottom-separator">
                     <th class="date-header th-blue-border-first-cell">{{ UI_text.DATE_COLUMN_HEADER.value }}</th>
                     <th class="project-header th-blue-border">{{ UI_text.PROJECT_COLUMN_HEADER.value }}</th>
                     <th class="task-activities-header th-blue-border">{{ UI_text.TASK_ACTIVITIES_COLUMN_HEADER.value }}</th>
-                    <th class="th-blue-border">{{ UI_text.DESCRIPTION_COLUMN_HEADER.value }}</th>
+                    <th class="description-header th-blue-border">{{ UI_text.DESCRIPTION_COLUMN_HEADER.value }}</th>
                     <td class="edit-button-header Invisible hidden-print"></td>
                     <th class="work-hours-header th-blue-border">{{ UI_text.WORK_HOURS_COLUMN_HEADER.value }}</th>
                 </tr>
@@ -33,7 +33,7 @@
 
             <tr class="tr-next-day-separator">
                 {% if not date|length == 0 %}
-                    <td class="td-text-align-left"><strong>{{ UI_text.HOURS_PER_MONTH_LABEL.value }}</strong></td>
+                    <td class="td-text-align-right"><strong>{{ UI_text.HOURS_PER_MONTH_LABEL.value }}</strong></td>
                     <td colspan="3"></td>
                     <td class="hidden-print"></td>
                     <td class="work-hours-column">
@@ -43,12 +43,12 @@
             </tr>
             </tbody>
         </table>
-        {% if not reports %}
-            <span class="no-reports-message">
-                <strong>{{ UI_text.NO_REPORTS_MESSAGE.value }}</strong>
-            </span>
-        {% else %}
-            {% include "employees/partial/export_functionality.html" with object=request.user %}
-        {% endif %}
     </div>
+    {% if not reports %}
+        <span class="no-reports-message">
+            <strong>{{ UI_text.NO_REPORTS_MESSAGE.value }}</strong>
+        </span>
+    {% else %}
+        {% include "employees/partial/export_functionality.html" with object=request.user %}
+    {% endif %}
 </div>
