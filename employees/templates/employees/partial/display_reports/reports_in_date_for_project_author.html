@@ -8,19 +8,32 @@
                 <td class="date-column" rowspan={{ date.list|length }}>
                     <strong>{{ report.date }}</strong>
                 </td>
+                <td class="expand-report-list-column" rowspan={{ date.list|length }}>
+                    {% if not forloop.last %}
+                        <div class="expand-reports-icon" onclick="expandReportList(this,{{ date.list|length }})" title="Expand report list">
+                            <div class="blue-dot-expand-icon">
+                                <div class="blue-dot"></div>
+                            </div>
+                            <div class="report-list-vl"></div>
+                            <div class="rotated-tip">
+                                <div class="custom-tip"></div>
+                            </div>
+                        </div>
+                    {%  endif %}
+                </td>
         {% else %}
-            <tr>
+            <tr class="hidden-report-row">
         {% endif %}
             <td class="activities-column">{{ report.task_activities }}</td>
+            <td class="work-hours-column">{{ report.work_hours_str }}</td>
             <td class="description-column">
                 {{ report.description|safe|urlize|annotate_no_follow_link_with_css_class:"pagelink" }}
             </td>
             <td class="edit-button-column Invisible hidden-print">
-                <a href="{% url 'project-report-detail' pk=report.id %}" class="btn btn-light hidden-print">
-                    <span class="glyphicon glyphicon-edit span-edit-report hidden-print"></span>
+                 <button data-form-url="{% url 'project-report-detail' report.id %}" class="bs-modal  hidden-print no-background">
+                    <span class="glyphicon glyphicon-edit span-edit-report hidden-print"></span></button>
                 </a>
             </td>
-            <td class="work-hours-column">{{ report.work_hours_str }}</td>
         </tr>
     {% endfor %}
 {% endfor %}
