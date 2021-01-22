@@ -308,7 +308,7 @@ table.table {
     text-align: left;
     font-size: 17px;
     margin-top: -15px;
-    margin-left: 45px;
+    margin-left: 50px;
 }
 
 .add-report-form-title {
@@ -324,6 +324,12 @@ table.table {
 
 .add-report-form-header-icon {
     margin-top: -10px;
+}
+
+.join-project-form-header-icon{
+    margin-top: -10px;
+    height: 40px;
+    width: 40px;
 }
 
 .header-label-row {
@@ -344,10 +350,10 @@ table.table {
 }
 
 .pointer-left {
-    margin-left: -19px;
+    margin-left: -15px;
 }
 .pointer-right {
-    margin-right: -20px;
+    margin-right: -15px;
     float: right;
 }
 .add-report-form-button {
@@ -358,15 +364,15 @@ table.table {
 .work-hours-add-report-field-label {
     font-size: 17px;
     margin-top: -12px;
-    margin-right: 14px;
+    margin-right: 15px;
 }
 
 .add-report-form-field-left {
-    margin-left: 45px;
+    margin-left: 50px;
 }
 
 .add-report-form-field-right {
-    margin-right: 45px;
+    margin-right: 50px;
 }
 
 .add-report-form-description-field {
@@ -378,9 +384,27 @@ table.table {
         margin-left: 20px;
     }
 
+.no-background {
+    background:none;
+    border: none;
+}
+
+.modal-button {
+    height: 35px;
+    width: 70px;
+    margin-bottom: 8px;
+}
+
+
 @media (max-width: 995px) {
     .export-csv, .export-xlsx {
         text-align: center;
+    }
+}
+@media (max-width: 769px) {
+    .add-report-form-join-project-field {
+        margin-left: 50px;
+
     }
 }
 
@@ -411,19 +435,15 @@ table.table {
     }
 
     .pointer-left {
-        margin-left: -29px;
+        margin-left: -15px;
     }
 
     .pointer-right {
-        margin-right: -29px;
+        margin-right: -15px;
     }
 
     .work-hours-add-report-field-label {
-        margin-right: 24px;
+        margin-right: 15px;
     }
 
-    .add-report-form-join-project-field {
-        margin-left: 45px;
-
-    }
 }
