@@ -4,11 +4,13 @@ from typing import Any
 from typing import Optional
 
 from bootstrap_datepicker_plus import DatePickerInput
+from bootstrap_modal_forms.forms import BSModalForm
+from bootstrap_modal_forms.forms import BSModalModelForm
+from crispy_forms.helper import FormHelper
 from django import forms
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db.models import Q
-from django.db.models import QuerySet
 from django.forms import HiddenInput
 from django.forms import TextInput
 from django.utils.dateparse import parse_duration
@@ -17,19 +19,25 @@ from django.utils.duration import duration_string
 from common.convert import convert_string_work_hours_field_to_hour_and_minutes
 from common.convert import timedelta_to_string
 from employees.common.constants import MonthNavigationConstants
+from employees.common.strings import ReportListStrings
 from employees.models import Report
 from employees.models import TaskActivityType
 from managers.models import Project
 from users.models import CustomUser
 
 
-class ProjectJoinForm(forms.Form):
+class ProjectJoinForm(BSModalForm):
 
-    projects = forms.ChoiceField(choices=[])
+    projects = forms.ChoiceField(choices=[], label=ReportListStrings.PROJECT_COLUMN_HEADER.value)
 
-    def __init__(self, queryset: QuerySet, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        assert isinstance(queryset, QuerySet)
+        self.helper = FormHelper()
+        self.helper.form_show_labels = False
+
+        author = kwargs["initial"]["author"]
+        queryset = Project.objects.filter_active().exclude(members__id=author.id).order_by("name")
+
         self.fields["projects"].choices = [(project.id, project.name) for project in queryset]
 
 
@@ -56,17 +64,27 @@ class DurationFieldForm(forms.DurationField):
             return f"{value}:00"
 
 
-class ReportForm(forms.ModelForm):
-    work_hours = DurationFieldForm()
-    project = forms.ModelChoiceField(queryset=Project.objects, empty_label=None)
+class ReportForm(BSModalModelForm):
+    work_hours = DurationFieldForm(label=ReportListStrings.WORK_HOURS_COLUMN_HEADER.value)
+    project = forms.ModelChoiceField(
+        queryset=Project.objects, empty_label=None, label=ReportListStrings.PROJECT_COLUMN_HEADER.value
+    )
 
     class Meta:
         model = Report
         fields = ("date", "author", "description", "project", "task_activities", "work_hours")
         widgets = {"date": DatePickerInput(format="%Y-%m-%d"), "author": HiddenInput}
+        labels = {
+            "date": ReportListStrings.DATE_COLUMN_HEADER.value,
+            "description": ReportListStrings.DESCRIPTION_COLUMN_HEADER.value,
+            "task_activities": ReportListStrings.TASK_ACTIVITIES_COLUMN_HEADER.value,
+        }
 
     def __init__(self, *args: Any, **kwargs: Any):
-        super(ReportForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_show_labels = False
+
         author = kwargs["initial"]["author"]
         self.fields["project"].queryset = (
             Project.objects.filter_active().filter(Q(members=author) | Q(managers=author)).distinct()
