@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'raven.contrib.django.raven_compat',
     'django_select2',
     'staticinline.apps.StaticInlineAppConfig',
+    'bootstrap_modal_forms',
     # SheetStorm
     'managers.apps.ManagersConfig',
     'employees.apps.EmployeesConfig',
