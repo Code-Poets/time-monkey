@@ -1,10 +1,11 @@
 import factory
 import factory.fuzzy
+from factory.django import DjangoModelFactory
 
 from managers.models import Project
 
 
-class ProjectFactory(factory.DjangoModelFactory):
+class ProjectFactory(DjangoModelFactory):
     class Meta:
         model = Project
 

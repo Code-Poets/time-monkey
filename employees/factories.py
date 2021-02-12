@@ -2,12 +2,13 @@ import datetime
 
 import factory
 import factory.fuzzy
+from factory.django import DjangoModelFactory
 
 from employees.models import Report
 from employees.models import TaskActivityType
 
 
-class ReportFactory(factory.DjangoModelFactory):
+class ReportFactory(DjangoModelFactory):
     class Meta:
         model = Report
 
@@ -19,7 +20,7 @@ class ReportFactory(factory.DjangoModelFactory):
     task_activities = factory.SubFactory("employees.factories.TaskActivityTypeFactory")
 
 
-class TaskActivityTypeFactory(factory.DjangoModelFactory):
+class TaskActivityTypeFactory(DjangoModelFactory):
     class Meta:
         model = TaskActivityType
 

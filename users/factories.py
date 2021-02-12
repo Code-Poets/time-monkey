@@ -1,10 +1,11 @@
 import factory
 import factory.fuzzy
+from factory.django import DjangoModelFactory
 
 from users.models import CustomUser
 
 
-class UserFactory(factory.DjangoModelFactory):
+class UserFactory(DjangoModelFactory):
     class Meta:
         model = CustomUser
 
