@@ -1,9 +1,11 @@
+# pylint: disable=C0302
 import datetime
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.shortcuts import reverse
 from django.template.defaultfilters import date
+from django.template.response import TemplateResponse
 from django.test import TestCase
 from django.utils import timezone
 from freezegun import freeze_time
@@ -200,34 +202,6 @@ class ReportCustomListTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, self.report)
 
-    def test_custom_report_list_view_should_add_new_report_on_post(self):
-        response = self.client.post(self.url, self.data)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(Report.objects.all().count(), 2)
-
-    def test_custom_report_list_view_should_add_user_to_project_selected_in_project_join_form_on_join(self):
-        new_project = ProjectFactory(name="New Project", start_date=datetime.datetime.now())
-        response = self.client.post(path=self.url, data={"projects": new_project.id, "join": "join"})
-        self.assertEqual(response.status_code, 302)
-        self.assertTrue(self.user in new_project.members.all())
-
-    def test_custom_report_list_view_should_not_add_user_to_project_selected_in_project_join_form_on_post(self):
-        new_project = ProjectFactory(name="New Project", start_date=datetime.datetime.now())
-        response = self.client.post(path=self.url, data={"projects": new_project.id})
-        self.assertEqual(response.status_code, 200)
-        self.assertFalse(self.user in new_project.members.all())
-
-    def test_custom_report_list_view_should_handle_no_project_being_selected_in_project_form_on_post(self):
-        new_project = ProjectFactory(name="New Project", start_date=datetime.datetime.now())
-        response = self.client.post(path=self.url, data={"join": "join"})
-        self.assertEqual(response.status_code, 200)
-        self.assertFalse(self.user in new_project.members.all())
-
-    def test_custom_report_list_view_should_dipslay_message_if_there_are_no_projects_available_to_join_to(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, str(ReportListStrings.NO_PROJECTS_TO_JOIN.value))
-
     def test_custom_report_list_view_should_redirect_to_another_month_if_month_switch_was_called_on_post(self):
         response = self.client.post(self.url, data={"date": "09-2020", "month-switch": "month-switch"})
         self.assertEqual(response.status_code, 302)
@@ -245,80 +219,6 @@ class ReportCustomListTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, other_report.description)
         self.assertNotContains(response, yet_another_report.description)
-
-    def test_custom_report_list_view_form_should_have_latest_report_data_set(self):
-        latest_activity = TaskActivityTypeFactory(name="Some other task activity")
-        latest_report = ReportFactory(author=self.user, task_activities=latest_activity)
-        latest_report.project.members.add(self.user)
-        response = self.client.get(self.url)
-        self.assertEqual(response.context_data["form"].initial["task_activities"].pk, latest_activity.pk)
-        self.assertEqual(response.context_data["form"].initial["project"].pk, latest_report.project.pk)
-
-    @parameterized.expand([(2019, 5, 1), (2019, 12, 31), (2020, 2, 29)])
-    def test_report_create_form_default_date_should_be_today(self, year, month, day):
-        with freeze_time("{:d}-{:02d}-{:02d}".format(year, month, day)):
-            response = self.client.get(reverse("custom-report-list", kwargs={"year": year, "month": month}))
-        self.assertEqual(
-            response.context_data["form"].initial["date"], timezone.datetime(year=year, month=month, day=day)
-        )
-
-    def test_custom_report_list_view_task_activities_should_contain_only_task_activities_related_to_project(self):
-        not_default_task_activity = TaskActivityTypeFactory()
-        self.assertNotIn(not_default_task_activity, self.report.project.project_activities.all())
-
-        response = self.client.get(self.url, data={"project": self.report.project.pk})
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["form"].initial["project"], self.report.project)
-        self.assertIn(self.task_activity, response.context["form"].fields["task_activities"].queryset)
-        self.assertNotIn(not_default_task_activity, response.context["form"].fields["task_activities"].queryset)
-
-    def test_custom_report_list_view_should_not_add_report_on_post_when_task_activity_is_not_related_not_project(self):
-        not_related_to_project_task_activity = TaskActivityTypeFactory()
-        author_reports_before_post = self.user.report_set.all()
-
-        self.data["task_activities"] = not_related_to_project_task_activity.pk
-
-        response = self.client.post(self.url, self.data)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            response.context_data["form"].errors["task_activities"][0],
-            ReportValidationStrings.TASK_ACTIVITY_NOT_RELATED_TO_PROJECT.value,
-        )
-        self.assertCountEqual(author_reports_before_post, self.user.report_set.all())
-
-    def test_custom_report_list_should_contains_in_form_only_active_projects_related_to_user(self):
-        other_project = ProjectFactory()
-
-        response = self.client.get(self.url)
-        project_choices = response.context["form"].fields["project"].queryset
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(self.report.project, project_choices)
-        self.assertNotIn(other_project, project_choices)
-        self.assertIn(self.report.project, Project.objects.filter_active())
-
-    def test_custom_report_list_should_have_empty_queryset_for_project_and_task_activities_when_he_is_not_in_any_active_project(
-        self
-    ):
-        self.user.projects.remove(self.report.project)
-
-        response = self.client.get(self.url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.context["form"].fields["project"].queryset), 0)
-        self.assertEqual(len(response.context["form"].fields["task_activities"].queryset), 0)
-
-    def test_custom_report_list_manager_should_have_displayed_projects_to_choose_where_he_is_only_a_manager(self):
-        manager = ManagerUserFactory()
-        self.client.force_login(manager)
-        self.report.project.managers.add(manager)
-
-        response = self.client.get(self.url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(self.report.project, response.context["form"].fields["project"].queryset)
 
     def test_custom_report_list_view_should_display_monthly_hour_sum_in_hour_format(self):
         report_date = timezone.datetime(year=timezone.now().year, month=timezone.now().month, day=1)
@@ -939,3 +839,183 @@ class ReportSummaryTests(TestCase):
                     }
                 )
         return dict(sorted(hours_and_percentage_per_project.items()))
+
+
+class CreateReportViewTests(TestCase):
+    def setUp(self):
+        self.user = UserFactory()
+        self.client.force_login(self.user)
+        self.task_activity = TaskActivityTypeFactory(is_default=True)
+        self.report = ReportFactory(
+            author=self.user,
+            date=datetime.datetime.now().date(),
+            task_activities=self.task_activity,
+            work_hours=datetime.timedelta(hours=8),
+        )
+        self.report.project.members.add(self.user)
+        self.url = reverse(
+            "create-report",
+            kwargs={"year": datetime.datetime.now().date().year, "month": datetime.datetime.now().date().month},
+        )
+        self.success_url = reverse(
+            "custom-report-list",
+            kwargs={"year": datetime.datetime.now().date().year, "month": datetime.datetime.now().date().month},
+        )
+        self.data = {
+            "date": datetime.datetime.now().date(),
+            "description": "Some description",
+            "project": self.report.project.pk,
+            "author": self.user.pk,
+            "work_hours": "8:00",
+            "task_activities": self.task_activity.pk,
+        }
+        self.invalid_data = {
+            "date": datetime.datetime.now().date(),
+            "description": "",
+            "project": self.report.project.pk,
+            "author": self.user.pk,
+            "work_hours": "8:00",
+            "task_activities": self.task_activity.pk,
+        }
+
+    def test_create_report_view_should_add_new_report_on_post_when_form_is_valid(self):
+        self.assertEqual(Report.objects.all().count(), 1)
+
+        response = self.client.post(self.url, self.data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Report.objects.all().count(), 2)
+        self.assertEqual(response.url, self.success_url)
+
+    def test_create_report_view_should_redirect_to_report_list_on_post_when_form_is_valid(self):
+        response = self.client.post(self.url, self.data, follow=True)
+
+        self.assertIsInstance(response, TemplateResponse)
+        self.assertEqual(response.status_code, 200)
+
+    def test_create_report_view_should_not_redirect_and_create_report_on_submit_when_form_is_invalid(self):
+        invalid_description_field_indicator = 'class="textarea form-control is-invalid" required id="id_description">'
+
+        self.assertEqual(Report.objects.all().count(), 1)
+
+        response = self.client.post(self.url, self.invalid_data)
+
+        self.assertEqual(Report.objects.all().count(), 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response, TemplateResponse)
+        self.assertTrue(invalid_description_field_indicator in str(response.context["form"]))
+
+    @parameterized.expand([(2019, 5, 1), (2019, 12, 31), (2020, 2, 29)])
+    def test_create_report_form_default_date_should_be_current_date(self, year, month, day):
+        with freeze_time("{:d}-{:02d}-{:02d}".format(year, month, day)):
+            response = self.client.get(reverse("create-report", kwargs={"year": year, "month": month}))
+        self.assertEqual(
+            response.context_data["form"].initial["date"], timezone.datetime(year=year, month=month, day=day)
+        )
+
+    def test_create_report_form_task_activities_choice_should_be_list_of_activities_specified_for_project(self):
+        not_default_task_activity = TaskActivityTypeFactory()
+        self.assertNotIn(not_default_task_activity, self.report.project.project_activities.all())
+
+        response = self.client.get(self.url, data={"project": self.report.project.pk})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["form"].initial["project"], self.report.project)
+        self.assertIn(self.task_activity, response.context["form"].fields["task_activities"].queryset)
+        self.assertNotIn(not_default_task_activity, response.context["form"].fields["task_activities"].queryset)
+
+    def test_create_report_form_view_should_not_add_report_when_task_activity_is_not_related_to_project(self):
+        not_related_to_project_task_activity = TaskActivityTypeFactory()
+        author_reports_before_post = self.user.report_set.all()
+
+        self.data["task_activities"] = not_related_to_project_task_activity.pk
+
+        response = self.client.post(self.url, self.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.context_data["form"].errors["task_activities"][0],
+            ReportValidationStrings.TASK_ACTIVITY_NOT_RELATED_TO_PROJECT.value,
+        )
+        self.assertCountEqual(author_reports_before_post, self.user.report_set.all())
+
+    def test_create_report_form_view_should_contain_only_active_projects_related_to_user(self):
+        other_project = ProjectFactory()
+
+        response = self.client.get(self.url)
+        project_choices = response.context["form"].fields["project"].queryset
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.report.project, project_choices)
+        self.assertNotIn(other_project, project_choices)
+        self.assertIn(self.report.project, Project.objects.filter_active())
+
+    def test_create_report_form_should_have_empty_project_and_activities_fields_if_user_is_not_in_any_active_project(
+        self
+    ):
+        self.user.projects.remove(self.report.project)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["form"].fields["project"].queryset), 0)
+        self.assertEqual(len(response.context["form"].fields["task_activities"].queryset), 0)
+
+    def test_create_report_form_projects_field_for_manager_should_contain_only_projects_where_he_is_manager(self):
+        manager = ManagerUserFactory()
+        self.client.force_login(manager)
+        self.report.project.managers.add(manager)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.report.project, response.context["form"].fields["project"].queryset)
+
+
+class JoinProjectViewTests(TestCase):
+    def setUp(self):
+        self.user = UserFactory()
+        self.client.force_login(self.user)
+        self.task_activity = TaskActivityTypeFactory(is_default=True)
+        self.report = ReportFactory(
+            author=self.user,
+            date=datetime.datetime.now().date(),
+            task_activities=self.task_activity,
+            work_hours=datetime.timedelta(hours=8),
+        )
+        self.report.project.members.add(self.user)
+        self.url = reverse(
+            "join-project",
+            kwargs={"year": datetime.datetime.now().date().year, "month": datetime.datetime.now().date().month},
+        )
+        self.success_url = reverse(
+            "custom-report-list",
+            kwargs={"year": datetime.datetime.now().date().year, "month": datetime.datetime.now().date().month},
+        )
+        self.new_project = ProjectFactory(name="New Project", start_date=datetime.datetime.now())
+
+    def test_join_project_view_should_add_user_to_project_selected_in_project_join_form_on_post(self):
+        self.assertNotIn(self.user, self.new_project.members.all())
+
+        response = self.client.post(path=self.url, data={"projects": self.new_project.id})
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(self.user, self.new_project.members.all())
+
+    def test_join_project_view_should_redirect_to_report_list_after_successful_request_on_post(self):
+        response = self.client.post(path=self.url, data={"projects": self.new_project.id}, follow=True)
+
+        self.assertIsInstance(response, TemplateResponse)
+        self.assertEqual(response.status_code, 200)
+
+    def test_join_project_view_view_should_not_join_to_any_project_when_not_selected(self):
+        self.client.post(path=self.url)
+
+        self.assertNotIn(self.user, self.new_project.members.all())
+
+    def test_join_project_view_should_display_message_if_there_are_no_projects_available_to_join_to(self):
+        self.new_project.delete()
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, str(ReportListStrings.NO_PROJECTS_TO_JOIN.value))
