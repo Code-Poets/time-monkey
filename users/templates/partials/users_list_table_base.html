@@ -1,0 +1,74 @@
+<table class="table table-responsive-sm">
+    <thead>
+    <tr class="bottom-separator">
+        <th class="id-header"><div class="th-blue-border"><div class="header-text">{{ UI_text.USER_NUMBER_HEADER.value }}</div></div></th>
+        <th class="email-header "><div class="th-blue-border"><div class="header-text">{{ UI_text.EMAIL_FIELD_LABEL.value }}</div></div></th>
+        <th class="type-name-header "><div class="th-blue-border"><div class="header-text">{{ UI_text.USER_TYPE_HEADER.value }}</div></div></th>
+        <th class="type-name-header "><div class="th-blue-border"><div class="header-text">{{ UI_text.FIRST_NAME_FIELD_LABEL.value }}</div></div></th>
+        <th class="type-name-header "><div class="th-blue-border"><div class="header-text">{{ UI_text.LAST_NAME_FIELD_LABEL.value }}</div></div></th>
+        <th class="projects-header "><div class="th-blue-border"><div class="header-text">{{ UI_text.PROJECTS_HEADER.value }}</div></div></th>
+        <th class="edit-button-header Invisible hidden-print"></th>
+        <th class="edit-button-header Invisible hidden-print"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for user in users_list %}
+        <tr class="tr-next-user-separator">
+            <td><div class="td-cell-value">{{ forloop.counter }}</div></td>
+            <td><div class="td-cell-value">{{ user.email }}</div></td>
+            <td><div class="td-cell-value">{{ user.get_user_type_display }}</div></td>
+            <td><div class="td-cell-value">{{ user.first_name }}</div></td>
+            <td><div class="td-cell-value">{{ user.last_name }}</div></td>
+            <td>
+                <div class="td-cell-value td-projects-cell">
+                    {% for project in user.projects.all %}
+                        {% if not forloop.last %}
+                            {{ project.name }}{% if user in project.managers.all %}[M]{% endif %},
+                        {% else %}
+                            {{ project.name }}{% if user in project.managers.all %}[M]{% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    {% for manager_project in user.manager_projects.all %}
+                        {% if user not in manager_project.members.all %}
+                            {% if not forloop.last %}
+                                {{ manager_project.name }}[M],
+                            {% else %}
+                                {{ manager_project.name }}[M]
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </td>
+            <td class="edit-button-column Invisible hidden-print">
+                <button data-form-url="{% url 'custom-user-update-by-admin' pk=user.id %}" class="bs-modal  hidden-print no-background">
+                    <a class="glyphicon glyphicon-edit span-edit hidden-print"></a>
+                </button>
+            </td>
+            <td class="edit-button-column Invisible hidden-print">
+                {% if user.is_superuser == False  and user != request.user %}
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <label class="switch">
+                            <input type="checkbox"
+                                   {% if user_status == "disable" %}checked {% endif %}
+                                   onChange="this.form.submit()">
+                            <span class="slider round"></span>
+                        </label>
+                        <input type="hidden" name={{ user_status }} value="{{ user.id }}">
+                    </form>
+                {% endif %}
+            </td>
+            <td class="edit-button-column Invisible hidden-print">
+                <a href="{% url 'author-report-list' pk=user.id year=year month=month %}" class="hidden-print no-background">
+                    <div class="glyphicon glyphicon-list-alt span-edit hidden-print"></div>
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% if users_list|length == 0 %}
+    <p><strong>{{ no_records_info }}</strong></p>
+{% endif %}
