@@ -1,0 +1,95 @@
+{% load crispy_forms_tags %}
+{% load static %}
+
+<form method="post" action="">
+    {% csrf_token %}
+    <div class="modal-header margin-top-space">
+        <img class="form-header-icon modal-title" alt="user icon" src="{% static 'users/images/grey/ico-01.png' %}"/>
+        <span class="form-title roboto-text modal-title"> {% if is_create_user_form %}{{ UI_text.CREATE_USER_HEADER.value }}{% else %}{{ UI_text.UPDATE_USER_HEADER.value }}{% endif %}</span>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    <p class="p-non-field-errors"> {{ error }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="{% if form.errors %}invalid{% endif %} mb-2">
+            {% for field in form.errors %}
+            {% endfor %}
+        </div>
+
+        <div class="row header-label-row roboto-text">
+            <div class="col-md-6 col-xs-6">
+                <div class="hr-blue-pointer pointer-left"></div>
+                <p class="form-field-label float-left">{{ UI_text_common.FIRST_NAME_FIELD_LABEL.value }}</p>
+            </div>
+            <div class="col-md-6 col-xs-6">
+                <div class="hr-blue-pointer pointer-right"></div>
+                <p class="is_active-field-label float-right">{{ UI_text_common.LAST_NAME_FIELD_LABEL.value }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-xs-5 float-left form-field-left">
+                {{ form.first_name|as_crispy_field }}
+            </div>
+            <div class="col-md-4 col-xs-3 float-right form-field-right float-right">
+                {{ form.last_name|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row header-label-row roboto-text">
+            <div class="col-md-6 col-xs-6">
+                <div class="hr-blue-pointer pointer-left"></div>
+                <p class="form-field-label float-left">{{ UI_text_common.EMAIL_FIELD_LABEL.value }}</p>
+            </div>
+            <div class="col-md-6 col-xs-6">
+                <div class="hr-blue-pointer pointer-right"></div>
+                <p class="is_active-field-label float-right">{{ UI_text_common.USER_TYPE_HEADER.value }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-xs-5 float-left form-field-left">
+                {{ form.email|as_crispy_field }}
+            </div>
+            <div class="col-md-4 col-xs-3 float-right form-field-right float-right">
+                {{ form.user_type|as_crispy_field }}
+            </div>
+        </div>
+
+        {% if is_create_user_form %}
+            <div class="row header-label-row roboto-text">
+                <div class="col-md-12">
+                    <div class="hr-blue-pointer pointer-left"></div>
+                    <p class="form-field-label ">Password</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 col-xs-10 form-field-left">
+                    {{ form.password1|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 col-xs-10 form-field-left">
+                    {{ form.password2|as_crispy_field }}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-6 add-report-form-button">
+                <button type="button" class="btn btn-default modal-button" data-dismiss="modal">{{ UI_text.CLOSE_BUTTON.value }}</button>
+            </div>
+            <div class="col-md-6 add-report-form-button">
+                <button type="button" class="submit-btn btn btn-primary modal-button">{% if is_create_user_form %}{{ UI_text.CREATE_BUTTON.value }}{% else %}{{ UI_text.UPDATE_BUTTON.value }}{% endif %}</button>
+        </div>
+    </div>
+    </div>
+</form>
