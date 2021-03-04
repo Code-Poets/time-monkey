@@ -22,15 +22,22 @@
 
 {% block content %}
 <div class="container main-white-container margin-top-space scalable-padding-container">
-    <div class="container narrower-container scalable-padding-container">
-        <div class="table">
+    <div class="container narrower-container">
+        <hr class="hr-blue-line">
+        <div class="blue-dot-hr">
+            <div class="blue-dot"></div>
+            <div class="custom-tip-hr">
+                <div class="custom-tip"></div>
+            </div>
+        </div>
+        <div class="table-responsive">
             {% if users_days_without_report %}
-                <table class="table double-space-margin-top">
+                <table class="table table-responsive-sm">
                     <thead>
-                        <tr>
-                            <th class="no-header th-blue-border">{% trans 'No' %}</th>
-                            <th class="email-header th-blue-border">{% trans 'Email' %}</th>
-                            <th class="days-without-report-header th-blue-border">{% trans 'Days without Report' %}</th>
+                        <tr class="bottom-separator">
+                            <th><div class="th-blue-border"><div class="header-text">No.</div></div></th>
+                            <th><div class="th-blue-border"><div class="header-text">Email</div></div></th>
+                            <th><div class="th-blue-border"><div class="header-text">Days without Report</div></div></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,9 +47,9 @@
                             {% else %}
                                 <tr>
                             {% endif %}
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ user }}</td>
-                                <td>{{ users_days_without_report|get_key_value:user }}</td>
+                                <td><div class="td-cell-value">{{ forloop.counter }}</div></td>
+                                <td><div class="td-cell-value">{{ user }}</div></td>
+                                <td><div class="td-cell-value">{{ users_days_without_report|get_key_value:user }}</div></td>
                             </tr>
                         {% endfor %}
                     </tbody>
