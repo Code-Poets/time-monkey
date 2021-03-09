@@ -1,6 +1,8 @@
 from typing import Any
 from typing import Dict
 
+from bootstrap_modal_forms.forms import BSModalModelForm
+from bootstrap_modal_forms.mixins import CreateUpdateAjaxMixin
 from captcha.fields import CaptchaField
 from captcha.fields import CaptchaTextInput
 from django import forms
@@ -13,15 +15,26 @@ from users.common.constants import UserConstants
 from users.models import CustomUser
 
 
-class CustomUserCreationForm(UserCreationForm):
-    """
-    A form that creates a user, without privileges,
-    from given email and password.
-    """
+class CustomUserCreationForm(UserCreationForm, BSModalModelForm, CreateUpdateAjaxMixin):
+    password1 = forms.CharField(label="", widget=forms.PasswordInput)
+    password2 = forms.CharField(
+        label="", widget=forms.PasswordInput, help_text="Enter the same password as above, for verification."
+    )
 
     class Meta:
         model = CustomUser
-        fields = ("email",)
+        fields = ("email", "first_name", "last_name", "user_type")
+        labels = {"email": "", "first_name": "", "last_name": "", "user_type": ""}
+
+    def save(self, commit: bool = False) -> object:
+        # pylint: disable=E1003
+        if not self.request.is_ajax():
+            instance = super(CreateUpdateAjaxMixin, self).save(commit=commit)
+            instance.save()
+        else:
+            instance = super(CreateUpdateAjaxMixin, self).save(commit=False)
+
+        return instance
 
 
 class SimpleUserChangeForm(ModelForm):
@@ -34,7 +47,7 @@ class SimpleUserChangeForm(ModelForm):
         fields = ("first_name", "last_name")
 
 
-class AdminUserChangeForm(ModelForm):
+class AdminUserChangeForm(BSModalModelForm):
     """
     A form for updating users by ADMIN users. Includes more fields than `SimpleUserChangeForm`.
     """
@@ -42,6 +55,7 @@ class AdminUserChangeForm(ModelForm):
     class Meta:
         model = CustomUser
         fields = ("email", "first_name", "last_name", "user_type")
+        labels = {"email": "", "first_name": "", "last_name": "", "user_type": ""}
 
 
 class CustomUserChangeForm(UserChangeForm):

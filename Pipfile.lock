@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9e6efa1b300991d7dce3e6704b3f8809bbdac323c32197f7804d59b5e3c483eb"
+            "sha256": "4bdb7102527df9466f2232dde4adec4b6c8e829a71e2da9236b9a898de14a457"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -45,6 +45,13 @@
             ],
             "index": "pypi",
             "version": "==3.0.5"
+        },
+        "django-bootstrap-modal-forms": {
+            "hashes": [
+                "sha256:efb26223d64143edb1af6b8156c8a4a708d6341f54108a7bece612db02edaf86"
+            ],
+            "index": "pypi",
+            "version": "==2.0.1"
         },
         "django-countries": {
             "hashes": [
@@ -459,6 +466,13 @@
             "markers": "python_version < '3.8'",
             "version": "==1.6.1"
         },
+        "iniconfig": {
+            "hashes": [
+                "sha256:011e24c64b7f47f6ebd835bb12a743f2fbe9a26d4cecaa7f53bc4f35ee9da8b3",
+                "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"
+            ],
+            "version": "==1.1.1"
+        },
         "ipdb": {
             "hashes": [
                 "sha256:77fb1c2a6fccdfee0136078c9ed6fe547ab00db00bebff181f1e8c9e13418d49"
@@ -802,7 +816,7 @@
                 "sha256:fc0fea399acb12edbf8a628ba8d2312f583bdbdb3335635db062fa98cf71fca4",
                 "sha256:fe460b922ec15dd205595c9b5b99e2f056fd98ae8f9f56b888e7a17dc2b757e7"
             ],
-            "markers": "implementation_name == 'cpython' and python_version < '3.8'",
+            "markers": "python_version < '3.8' and implementation_name == 'cpython'",
             "version": "==1.4.1"
         },
         "typing-extensions": {

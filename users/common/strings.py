@@ -81,3 +81,26 @@ class AccountConfirmationText(NotCallableMixin, Enum):
 
 class UserNotificationsText(NotCallableMixin, Enum):
     NO_MORE_NOTIFICATIONS = _("No new notifications about employees in your projects.")
+
+
+class UsersListText(NotCallableMixin, Enum):
+    ACTIVE_USERS_TAB = _("Active users")
+    DISABLED_USERS_TAB = _("Inactive users")
+    ADD_NEW_USER_BUTTON = _("Add new user")
+    USER_NUMBER_HEADER = _("No.")
+    EMAIL_FIELD_LABEL = _("Email")
+    USER_TYPE_HEADER = _("Type")
+    FIRST_NAME_FIELD_LABEL = _("First Name")
+    LAST_NAME_FIELD_LABEL = _("Last Name")
+    PROJECTS_HEADER = _("Projects")
+    NO_DISABLED_USERS = _("There are no inactive users to display")
+    NO_ACTIVE_USERS = _("There are no active users to display")
+
+
+class UserModalText(NotCallableMixin, Enum):
+    CREATE_USER_HEADER = _("Create User")
+    UPDATE_USER_HEADER = _("Update User")
+    CLOSE_BUTTON = _("Close")
+    UPDATE_BUTTON = _("Update")
+    CREATE_BUTTON = _("Create")
+    IS_ACTIVE_CHECKBOX_LABEL = _("Is Active")

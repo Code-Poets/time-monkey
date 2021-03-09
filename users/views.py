@@ -6,6 +6,8 @@ from typing import Optional
 from typing import Type
 from typing import Union
 
+from bootstrap_modal_forms.generic import BSModalCreateView
+from bootstrap_modal_forms.generic import BSModalUpdateView
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -28,7 +30,6 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
-from django.views.generic import CreateView
 from django.views.generic import FormView
 from django.views.generic import ListView
 from django.views.generic import TemplateView
@@ -39,7 +40,9 @@ from common.utils import send_email
 from users.common.strings import AccountConfirmationText
 from users.common.strings import ConfirmationMessages
 from users.common.strings import SuccessInfoAfterRegistrationText
+from users.common.strings import UserModalText
 from users.common.strings import UserNotificationsText
+from users.common.strings import UsersListText
 from users.common.utils import count_workdays
 from users.forms import AdminUserChangeForm
 from users.forms import CustomUserCreationForm
@@ -80,9 +83,16 @@ class UserSignUpSuccess(TemplateView):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(check_permissions(allowed_user_types=[CustomUser.UserType.ADMIN.name]), name="dispatch")
-class UserCreate(CreateView):
-    template_name = "user_create.html"
+class UserCreate(BSModalCreateView):
+    template_name = "modals/create_and_update_user.html"
     form_class = CustomUserCreationForm
+
+    def get_context_data(self, *, _object_list: Any = None, **kwargs: Any) -> dict:
+        context_data = super().get_context_data(**kwargs)
+        context_data["UI_text"] = UserModalText
+        context_data["UI_text_common"] = UsersListText
+        context_data["is_create_user_form"] = True
+        return context_data
 
     def get_success_url(self) -> str:
         return reverse("custom-users-list")
@@ -125,14 +135,14 @@ class UserUpdate(UpdateView):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(check_permissions(allowed_user_types=[CustomUser.UserType.ADMIN.name]), name="dispatch")
-class UserUpdateByAdmin(UpdateView):
-    template_name = "user_update.html"
+class UserUpdateByAdmin(BSModalUpdateView):
+    template_name = "modals/create_and_update_user.html"
     form_class = AdminUserChangeForm
     context_object_name = "user_detail"
     model = CustomUser
 
     def get_success_url(self) -> str:
-        return reverse("custom-user-update-by-admin", kwargs={"pk": self.object.pk})
+        return reverse("custom-users-list")
 
     def form_valid(self, form: AdminUserChangeForm) -> HttpResponse:
         super().form_valid(form)
@@ -140,14 +150,26 @@ class UserUpdateByAdmin(UpdateView):
         messages.success(self.request, ConfirmationMessages.SUCCESSFUL_UPDATE_USER_MESSAGE)
         return redirect(self.get_success_url())
 
+    def get_context_data(self, *, _object_list: Any = None, **kwargs: Any) -> dict:
+        context_data = super().get_context_data(**kwargs)
+        context_data["UI_text"] = UserModalText
+        context_data["UI_text_common"] = UsersListText
+        context_data["is_create_user_form"] = False
+        return context_data
+
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(check_permissions(allowed_user_types=[CustomUser.UserType.ADMIN.name]), name="dispatch")
 class UserList(ListView):
     template_name = "users_list.html"
     model = CustomUser
-    queryset = (
-        CustomUser.objects.active()
+    queryset_active = (
+        CustomUser.objects.filter(is_active=True)
+        .order_by("user_type", "last_name", "first_name", "email")
+        .prefetch_related("projects")
+    )
+    queryset_disabled = (
+        CustomUser.objects.filter(is_active=False)
         .order_by("user_type", "last_name", "first_name", "email")
         .prefetch_related("projects")
     )
@@ -156,17 +178,43 @@ class UserList(ListView):
         context_data = super().get_context_data(**kwargs)
         context_data["year"] = datetime.datetime.now().year
         context_data["month"] = datetime.datetime.now().month
-        context_data["ordered_object_list"] = self._get_ordered_list_of_users()
+        context_data["active_users_list"] = self._get_ordered_list_of_users(self.queryset_active)
+        context_data["disabled_users_list"] = self._get_ordered_list_of_users(self.queryset_disabled)
+        context_data["UI_text"] = UsersListText
         return context_data
 
-    def _get_users_by_user_type(self, user_type: str) -> QuerySet:
-        return self.queryset.filter(user_type=user_type)
-
-    def _get_ordered_list_of_users(self) -> List[CustomUser]:
-        admins = self._get_users_by_user_type(CustomUser.UserType.ADMIN.name)
-        managers = self._get_users_by_user_type(CustomUser.UserType.MANAGER.name)
-        employees = self._get_users_by_user_type(CustomUser.UserType.EMPLOYEE.name)
+    def _get_ordered_list_of_users(self, queryset: QuerySet) -> List[CustomUser]:
+        admins = self._get_users_by_user_type(CustomUser.UserType.ADMIN.name, queryset)
+        managers = self._get_users_by_user_type(CustomUser.UserType.MANAGER.name, queryset)
+        employees = self._get_users_by_user_type(CustomUser.UserType.EMPLOYEE.name, queryset)
         return list(admins) + list(managers) + list(employees)
+
+    @staticmethod
+    def _get_users_by_user_type(user_type: str, queryset: QuerySet) -> QuerySet:
+        return queryset.filter(user_type=user_type)
+
+    def post(self, _request: HttpRequest) -> HttpResponseRedirectBase:
+        user_id_to_disable = self.request.POST.get("disable")
+        user_id_to_activate = self.request.POST.get("activate")
+
+        if user_id_to_disable is not None:
+            self._manage_user_status(user_id_to_disable)
+        elif user_id_to_activate is not None:
+            self._manage_user_status(user_id_to_activate)
+
+        return redirect("custom-users-list")
+
+    def _manage_user_status(self, user_id: int) -> None:
+        self._reverse_user_status(CustomUser.objects.get(id=user_id))
+
+    @staticmethod
+    def _reverse_user_status(user: CustomUser) -> CustomUser:
+        user_status = user.is_active
+
+        user.is_active = not user_status
+        user.save()
+
+        return user
 
 
 class CustomPasswordChangeView(PasswordChangeView):

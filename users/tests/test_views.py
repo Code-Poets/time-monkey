@@ -75,6 +75,7 @@ class UserListTests(TestCase):
         self.user_manager.full_clean()
         self.user_manager.save()
         self.url = reverse("custom-users-list")
+        self.queryset_active = CustomUser.objects.filter(is_active=True)
 
     def test_user_list_view_should_display_users_list_on_get(self):
         self.client.force_login(self.user_admin)
@@ -101,16 +102,16 @@ class UserListTests(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
 
-    def test_inactive_user_should_not_be_listed(self):
+    def test_inactive_user_should_be_listed(self):
         inactive_user = UserFactory(is_active=False)
         self.client.force_login(self.user_admin)
 
         response = self.client.get(self.url)
 
-        self.assertNotContains(response, inactive_user.email)
+        self.assertContains(response, inactive_user.email)
 
     def test_get_users_by_user_type_method_should_filter_queryset_by_user_type(self):
-        queryset = UserList()._get_users_by_user_type(CustomUser.UserType.EMPLOYEE.name)
+        queryset = UserList()._get_users_by_user_type(CustomUser.UserType.EMPLOYEE.name, self.queryset_active)
 
         self.assertEqual(len(queryset), 1)
         self.assertTrue(self.user_employee in queryset)
@@ -118,12 +119,42 @@ class UserListTests(TestCase):
         self.assertFalse(self.user_manager in queryset)
 
     def test_get_ordered_list_of_users_should_order_users_by_hierarchy(self):
-        ordered_list = UserList()._get_ordered_list_of_users()
+        ordered_list = UserList()._get_ordered_list_of_users(self.queryset_active)
 
         self.assertEqual(len(ordered_list), 3)
         self.assertEqual(ordered_list[0], self.user_admin)
         self.assertEqual(ordered_list[1], self.user_manager)
         self.assertEqual(ordered_list[2], self.user_employee)
+
+    def test_that_user_list_should_redirect_on_post(self):
+        self.client.force_login(self.user_admin)
+
+        response = self.client.post(path=self.url)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, self.url)
+
+    def test_that_active_user_status_should_be_changed_on_post(self):
+        inactive_user = UserFactory(is_active=False)
+
+        self.client.force_login(self.user_admin)
+
+        response = self.client.post(path=self.url, data={"activate": inactive_user.id}, follow=True)
+
+        active_user_input = f'<input type="hidden" name=disable value="{inactive_user.id}">'
+
+        self.assertContains(response, active_user_input)
+        self.assertEqual(response.status_code, 200)
+
+    def test_that_inactive_user_status_should_be_changed_on_post(self):
+        self.client.force_login(self.user_admin)
+
+        response = self.client.post(path=self.url, data={"disable": self.user_employee.id}, follow=True)
+
+        inactive_user_input = f'<input type="hidden" name=activate value="{self.user_employee.id}">'
+
+        self.assertContains(response, inactive_user_input)
+        self.assertEqual(response.status_code, 200)
 
 
 class UserCreateTests(TestCase):
@@ -135,17 +166,20 @@ class UserCreateTests(TestCase):
     def test_user_create_view_should_display_create_user_form_on_get(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Create new employee")
 
     def test_user_create_view_should_add_new_user_on_post(self):
         response = self.client.post(
-            path=reverse("custom-user-create"),
+            path=self.url,
             data={
+                "first_name": "John",
+                "last_name": "Kowalski",
+                "user_type": "EMPLOYEE",
                 "email": "anothertestuser@codepoets.it",
                 "password1": "this_is_a_pass",
                 "password2": "this_is_a_pass",
             },
         )
+
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("custom-users-list"))
         self.assertEqual(CustomUser.objects.all().count(), 2)
@@ -313,6 +347,7 @@ class NotificationsTests(TestCase):
     def _check_response(self, response, status_code, contains):
         self.assertTemplateUsed(response, NotificationUserListView.template_name)
         self.assertEqual(response.status_code, status_code)
+
         for element in contains:
             self.assertContains(response, element)
 
@@ -326,7 +361,13 @@ class NotificationsTests(TestCase):
             response = self.client.get(self.url)
         self._check_response(response, 200, [UserNotificationsText.NO_MORE_NOTIFICATIONS.value])
 
-    @parameterized.expand([("2019-07-10", "<td>1</td>"), ("2019-07-11", "<td>2</td>"), ("2019-07-15", "<td>4</td>")])
+    @parameterized.expand(
+        [
+            ("2019-07-10", '<td><div class="td-cell-value">1</div></td>'),
+            ("2019-07-11", '<td><div class="td-cell-value">2</div></td>'),
+            ("2019-07-15", '<td><div class="td-cell-value">4</div></td>'),
+        ]
+    )
     def test_manager_should_get_notification_about_missing_reports(self, test_date, missing_reports):
         with freeze_time("2019-07-08"):
             ReportFactory(author=self.employee, project=self.project, date="2019-07-08")
