@@ -43,7 +43,7 @@ from employees.forms import ReportForm
 from employees.models import Report
 from employees.models import TaskActivityType
 from managers.models import Project
-from users.models import CustomUser
+from users.models import CustomUser, CustomUserPreferences
 from utils.decorators import check_permissions
 from utils.mixins import ProjectsWorkPercentageMixin
 from utils.mixins import UserIsAuthorOfCurrentReportMixin
@@ -176,9 +176,45 @@ class ReportListCreateProjectJoinView(MonthNavigationMixin, ProjectsWorkPercenta
     url_name = "custom-report-list"
     object = None
 
+    def _get_date_for_plus_option(self, preference) -> datetime:
+        month = int(self.kwargs["month"])
+        year = int(self.kwargs["year"])
+        queryset = self.get_queryset().order_by("-creation_date")
+        if not queryset.exists():
+            return timezone.now()
+        last_date_input = queryset.first().date
+        if last_date_input.month == month and last_date_input.year == year:
+            return last_date_input
+        elif preference == CustomUserPreferences.DefaultDateOptions.DAY_AFTER_LAST_PLUS:
+            last_report_date = self._get_date_of_last_report()
+            date = last_report_date + relativedelta(days=+1)
+            if date.month != month:
+                return last_report_date
+            return date
+        return timezone.now().date()
+
+    def _get_date_of_last_report(self) -> datetime:
+        queryset = self.get_queryset().order_by("-date")
+        if queryset.exists():
+            return queryset.first().date
+        return datetime.date(day=1, month=int(self.kwargs["month"]), year=int(self.kwargs["year"]))
+
+    def _get_initial_date(self) -> datetime:
+        today = timezone.now()
+        if self.kwargs["month"] != str(today.month) or self.kwargs["year"] != str(today.year):
+            return self._get_date_of_last_report()
+        plus_options = [
+            CustomUserPreferences.DefaultDateOptions.TODAY_PLUS,
+            CustomUserPreferences.DefaultDateOptions.DAY_AFTER_LAST_PLUS
+        ]
+        preferences = CustomUserPreferences.objects.get(user=self.request.user)
+        if preferences.default_report_date in plus_options:
+            return self._get_date_for_plus_option(preferences.default_report_date)
+        return timezone.now().date()
+
     def get_initial(self) -> dict:
         initial = super().get_initial()
-        initial.update({"date": timezone.now().date(), "author": self.request.user})
+        initial.update({"date": self._get_initial_date(), "author": self.request.user})
         return initial
 
     def get_queryset(self) -> QuerySet:

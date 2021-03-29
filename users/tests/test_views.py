@@ -366,3 +366,29 @@ class NotificationsTests(TestCase):
         with freeze_time("2019-07-15"):
             response = self.client.get(self.url)
         self._check_response(response, 200, [UserNotificationsText.NO_MORE_NOTIFICATIONS.value])
+
+
+class CustomUserPreferencesTests(TestCase):
+    def setUp(self):
+        self.employee = UserFactory()
+        self.url = reverse("custom-user-preferences-update")
+
+    def test_custom_user_preferences_should_display_preferences_form_on_get(self):
+        pass
+
+    def test_custom_user_preferences_should_not_display_for_unauthenticated_user(self):
+        pass
+
+    def test_custom_user_preferences_should_update_preferences_on_post(self):
+        pass
+
+
+class MenuExpansionUpdateTests(TestCase):
+    def setUp(self):
+        pass
+
+    def test_menu_expansion_update_should_not_allow_methods_other_than_post(self):
+        pass
+
+    def test_menu_expansion_update_should_update_menu_expansion_setting_in_user_preferences(self):
+        pass

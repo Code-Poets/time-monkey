@@ -21,6 +21,8 @@ from django.db.models import QuerySet
 from django.db.models.functions import Coalesce
 from django.http import HttpRequest
 from django.http import HttpResponse
+from django.http import HttpResponseForbidden
+from django.http import HttpResponseNotAllowed
 from django.http.response import HttpResponseRedirectBase
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -36,6 +38,7 @@ from django.views.generic import UpdateView
 
 from common.utils import render_confirmation_email
 from common.utils import send_email
+from users.common.model_helpers import activate_user
 from users.common.strings import AccountConfirmationText
 from users.common.strings import ConfirmationMessages
 from users.common.strings import SuccessInfoAfterRegistrationText
@@ -43,9 +46,11 @@ from users.common.strings import UserNotificationsText
 from users.common.utils import count_workdays
 from users.forms import AdminUserChangeForm
 from users.forms import CustomUserCreationForm
+from users.forms import CustomUserPreferencesForm
 from users.forms import CustomUserSignUpForm
 from users.forms import SimpleUserChangeForm
 from users.models import CustomUser
+from users.models import CustomUserPreferences
 from users.tokens import account_activation_token
 from utils.decorators import check_permissions
 
@@ -66,9 +71,7 @@ class SignUp(FormView):
         if settings.EMAIL_SIGNUP_VERIFICATION:
             self._send_activation_email(user)
         else:
-            user.is_active = True
-            user.full_clean()
-            user.save()
+            activate_user(user)
         logger.info(f"New user with id: {user.pk} has been created")
         return redirect("success-signup")
 
@@ -217,9 +220,7 @@ class ActivateAccountView(TemplateView):
             user = CustomUser.objects.get(pk=user_id)
             is_token_correct = account_activation_token.check_token(user, self.kwargs["token"])
             if is_token_correct:
-                user.is_active = True
-                user.full_clean()
-                user.save()
+                activate_user(user)
                 return True
             else:
                 return False
@@ -269,3 +270,26 @@ class NotificationUserListView(ListView):
         context_data["users_days_without_report"] = users_days_without_report_dict
         context_data["UI_text"] = UserNotificationsText
         return context_data
+
+
+@method_decorator(login_required, name="dispatch")
+class UserPreferencesUpdate(UpdateView):
+    template_name = "user_preferences_update.html"
+    form_class = CustomUserPreferencesForm
+    context_object_name = "user_preferences"
+    model = CustomUserPreferences
+    success_url = reverse("custom-user-preferences-update")
+
+    def get_object(self, queryset: Optional[QuerySet] = None) -> CustomUserPreferences:
+        return CustomUserPreferences.objects.get(user=self.request.user)
+
+
+@login_required
+def menu_expansion_update_view(request):
+    if not request.method == "POST":
+        return HttpResponseNotAllowed(["POST"])
+    user_preferences = CustomUserPreferences.objects.get(user=request.user)
+    user_preferences.expanded_menu = not user_preferences.expanded_menu
+    user_preferences.full_clean()
+    user_preferences.save()
+    return HttpResponse(status=200)

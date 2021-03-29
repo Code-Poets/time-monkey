@@ -20,3 +20,9 @@ class ErrorCode(Enum):
     CREATE_USER_EMAIL_DOMAIN = "header.user_email.domain"
     CREATE_USER_EMAIL_SIGN_MISSING = "header.user_email_sign.missing"
     CREATE_USER_PASSWORD_MISSING = "header.user_password.missing"
+
+
+class CustomUserPreferencesConstants(Enum):
+    DAY_AFTER_LAST_PLUS = "Day after last report and last date today"
+    TODAY_PLUS = "Today and last date today"
+    TODAY = "Always today"

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+    <div class="modal-dialog" id="modal-dialog-update-user-preferences">
+        <div class="main-white-container">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <span><img src="{% static 'users/images/grey/ico-01.png' %}"/></span>
+                        <span class="page-title"><b>{% trans 'Preferences' %}</b></span>
+                    </div>
+                </div>
+                {% include 'partials/display_messages.html' with message_type="success" %}
+            </div>
+            <form id="update-user-preferences" action="{% url 'custom-user-preferences-update' %}" method="POST" name="update-user-preferences-form">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="row form-row">
+                    <div class="form-group col-md-12 mb-0">
+                        {{ field|as_crispy_field }}
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="form-group row">
+                    <div class="form-group col-md-6 mb-0">
+                        <input type="submit" id="opener_user_preferences_update" class="btn btn-success" name="update"
+                               value="{% trans 'Update' %}">
+                    </div>
+                    <div class="form-group col-md-6 mb-0">
+                        <input type="button" class="btn btn-secondary discard-button" name="discard" value="{% trans 'Discard' %}"
+                               onclick="location.href='{{ current_view_url }}'">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

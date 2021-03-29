@@ -15,6 +15,7 @@ from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from users.common.constants import CustomUserPreferencesConstants
 from users.common.constants import UserConstants
 from users.common.fields import ChoiceEnum
 from users.common.strings import CustomUserModelText
@@ -164,6 +165,22 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
                 Max("report__creation_date", filter=Q(report__author=self)), Value("1970-01-01 00:00:00")
             )
         ).order_by("-last_report_creation_date")
+
+
+class CustomUserPreferences(models.Model):
+    class DefaultDateOptions(models.TextChoices):
+        DAY_AFTER_LAST_PLUS = (
+            CustomUserPreferencesConstants.DAY_AFTER_LAST_PLUS.name,
+            CustomUserPreferencesConstants.DAY_AFTER_LAST_PLUS.value,
+        )
+        TODAY_PLUS = (CustomUserPreferencesConstants.TODAY_PLUS.name, CustomUserPreferencesConstants.TODAY_PLUS.value)
+        TODAY = (CustomUserPreferencesConstants.TODAY.name, CustomUserPreferencesConstants.TODAY.value)
+
+    default_report_date = models.CharField(
+        max_length=128, choices=DefaultDateOptions.choices, default=DefaultDateOptions.TODAY
+    )
+    expanded_menu = models.BooleanField(default=True)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
 
 
 @receiver(post_save, sender=CustomUser)

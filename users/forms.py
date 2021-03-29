@@ -11,6 +11,7 @@ from django.forms import ModelForm
 from users.common.constants import CaptchaConstants
 from users.common.constants import UserConstants
 from users.models import CustomUser
+from users.models import CustomUserPreferences
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -73,3 +74,13 @@ class CustomUserSignUpForm(UserCreationForm):
     class Meta:
         model = CustomUser
         fields = ("email", "password1", "password2", "captcha")
+
+
+class CustomUserPreferencesForm(ModelForm):
+    """
+    A form for updating user's app preferences.
+    """
+
+    class Meta:
+        model = CustomUserPreferences
+        fields = ("default_report_date",)

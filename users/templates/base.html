@@ -40,6 +40,7 @@
 {% get_manager_user_type as manager %}
 {% url 'home' as home_url %}
 {% url 'custom-user-update' as account_url %}
+{% url 'custom-user-preferences-update' as preferences_url %}
 {% url 'custom-users-list' as custom_users_list_url %}
 {% url 'custom-projects-list' as custom_projects_list_url %}
 {% url 'custom-users-notifications' as custom_users_notifications %}
@@ -51,7 +52,7 @@
 {% url 'password_change' as password_change_url %}
 <div class="wrapper">
     <!-- Sidebar Holder -->
-    <nav id="sidebar" class="hidden-print collapsed">
+    <nav id="sidebar" class="hidden-print {% if not expanded_menu %}collapsed{% endif %}">
         <div class="sidebar-header">
             <nav class="hidden-print">
                 <button id="sidebarCollapse" class="btn">
@@ -74,6 +75,14 @@
                    {% if request.path|startswith:account_url or request.path|startswith:password_change_url %} active{% endif %}">
                     <span class="link-icon"><i class="fa fa-user"></i></span>
                     <span class="link-text">{% trans 'Account' %}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ preferences_url }}"
+                   class="sidebar-link
+                   {% if request.path|startswith:preferences_url %} active{% endif %}">
+                    <span class="link-icon"><i class="fa fa-cog"></i></span>
+                    <span class="link-text">{% trans 'Preferences' %}</span>
                 </a>
             </li>
             {% if user.user_type == admin %}
@@ -152,6 +161,10 @@
     <script
         src="{% static 'users/scripts/float_menu.js' %}"
         integrity="{% staticinline 'users/scripts/float_menu.js' encode="sri" %}"
+        crossorigin="anonymous"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"
+        integrity="sha384-1zKBJ+ETkgnKfwOJYa09nZy8Vob32a+SpgTkXhYFIOr/ktEWvIl+M1ORi33ffRMA"
         crossorigin="anonymous"></script>
     {% block extra_script %}{% endblock %}
 </body>
