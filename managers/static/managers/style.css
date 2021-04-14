@@ -1,3 +1,7 @@
+:root {
+    --cp-blue-color: rgb(44, 119, 188);
+}
+
 .task-activities-column {
     text-align: center;
 }
@@ -7,12 +11,12 @@
 }
 
 .main-white-container {
-    background: #FAFAFA;
-    padding: 5%;
+    background-color: white;
     -webkit-box-shadow: 0 0 10px grey;
     -moz-box-shadow: 0 0 10px grey;
     box-shadow: 0 0 10px grey;
-    min-width: 240px;
+    width: 90%;
+    min-width: 400px;
 }
 
 #modal-dialog-project-list {
@@ -24,9 +28,9 @@
     -moz-box-shadow: 0 0 10px grey;
     box-shadow: 0 0 10px grey;
     background: #FFFFFF;
-    margin: 10px;
+    margin: auto;
     max-width: 230px;
-    padding: 10px 15px 5px 3.5px; !important;
+    min-height: 210px;
     display: block;
 }
 
@@ -37,7 +41,7 @@
 
 .row.project-box > .row {
     text-align: left;
-    margin-left: 4%;
+    /*margin-left: 4%;*/
 }
 
 .row.project-box > .row.project {
@@ -46,7 +50,9 @@
 }
 .row.project {
     border-left: #056DBA solid 4px;
-    margin-bottom: 7px;
+    margin: 10px 0 7px 0;
+    width: 100%;
+    min-height: 80px;
 }
 .project-header {
     float: left;
@@ -62,7 +68,7 @@
 }
 
 .project-reports {
-    float: right;
+    float:right;
     margin-top: 2%;
     margin-right: 4%;
 }
@@ -70,6 +76,7 @@
 .project-managers {
     overflow: hidden;
     white-space: nowrap;
+    /*float: left*/
 }
 
 .filtered-projects {
@@ -79,7 +86,8 @@
 
 .toggled-projects {
     color: #3366FF;
-    font-size: 130%;
+    font-size: 160%;
+    font-weight: 700;
     display: inline-block;
     width: 120px;
 }
@@ -99,30 +107,16 @@
 }
 
 .box-wrapper {
-    margin-bottom: 60px;
+    margin-bottom: 30px;
+    margin-top: 30px;
     min-width: 250px;
     max-width: 80%;
 }
 
-.toggled-projects:active {
-    font-size: 160%;
-    font-weight: 700;
-}
-
-.toggled-projects[aria-expanded="true"] {
-    font-size: 160%;
-    font-weight: 700;
-}
-
 .hr-blue-line {
-    display: inline-block;
-    margin-top: 12px;
-    margin-bottom: 0.5em;
-    border-style: inset;
-    border-width: 0.5px;
-    text-align: right;
-    width: calc(99% - 120px);
-    border-color: #2c77bc;
+    border: 1px solid var(--cp-blue-color);
+    width: 100%;
+    margin-right: -8px;
 }
 
 #modal-dialog-create-project-form {
@@ -188,6 +182,145 @@ span.selection {
     max-width: max-content;
     margin: auto;
 }
+
+.one-manager{
+    margin-top: 30px;
+}
+
+/*START FEATURE STYLES remove comment after work*/
+.span-blue-color {
+    color: var(--cp-blue-color);
+}
+
+.narrower-container {
+    width: 100%;
+}
+
+.double-space-margin-top {
+    margin-top: 2em;
+}
+
+.table-responsive {
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.table-responsive > .table > tbody > tr > td {
+    white-space: normal;
+    padding-left: 13px;
+!important;
+    overflow: hidden;
+    border-color: rgb(180, 180, 180);
+}
+
+.blue-dot-hr{
+    float: left;
+    position: relative;
+    top: -25px;
+    margin-left: -1px;
+}
+
+.custom-tip-hr {
+    float: left;
+    position: relative;
+    top: -24px;
+    margin-left: -10px;
+}
+
+.managers-section{
+    width: 100%;
+    margin: 10px 0 7px 0;
+    position: relative;
+    display: inline-block;
+}
+
+.managers{
+    text-align: left;
+    margin-left: 15px;
+    min-height: 70px;
+}
+
+.employees{
+    text-align: left;
+    margin: 0 0 10px 15px;
+}
+
+.managers-section:hover .hidden-managers-dropdown {
+    display: block;
+    font-size: 14px;
+    text-align: left;
+    margin-left: 15px;
+}
+
+.hidden-managers-dropdown {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0 8px 16px 8px rgba(0,0,0,0.2);
+    margin-top: -10px;
+    z-index: 1;
+}
+
+.action-buttons-section{
+    width: 100%;
+    margin: 10px 0 7px 0;
+    max-height: 20px;
+    position: relative;
+    display: inline-block;
+}
+.action-box{
+    margin: 0 0 5px 8px;
+    display: inline-block;
+    float: left;
+    text-align: left;
+    max-width: 100%;
+}
+
+.action-button{
+    width: 30px;
+    height: 30px;
+    margin-right: 15px;
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline:none;
+}
+
+.edit-project-icon{
+    margin-top: -2px;
+    width: 20px;
+    height:20px
+}
+
+.action-button.suspend {
+    color: orange;
+}
+.action-button.delete {
+    color: red;
+}
+
+.action-button.activate {
+    color: darkblue;
+}
+.custom-modal{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: fit-content;
+    height: fit-content;
+    padding: 0 !important;
+    z-index: 1000;
+	}
+
+.modal-dialog{
+    margin: 0;
+}
+
+/*END FEATURE STYLES*/
 
 @media only screen and (max-width: 400px) {
     .bootstrap-datetimepicker-widget {

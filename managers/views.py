@@ -3,6 +3,8 @@ from typing import Any
 from typing import Type
 from typing import Union
 
+from bootstrap_modal_forms.generic import BSModalCreateView
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.db.models import Q
@@ -15,7 +17,6 @@ from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import CreateView
 from django.views.generic import DeleteView
 from django.views.generic import DetailView
 from django.views.generic import ListView
@@ -90,11 +91,11 @@ class ProjectDetailView(UserIsManagerOfCurrentProjectMixin, DetailView):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(check_permissions(allowed_user_types=[CustomUser.UserType.ADMIN.name]), name="dispatch")
-class ProjectCreateView(CreateView):
+class ProjectCreateView(BSModalCreateView):
     extra_context = {"button_text": _("Create"), "title": _("New project")}
     form_class = ProjectAdminForm
     model = Project
-    template_name = "managers/project_form.html"
+    template_name = "managers/partials/project_create_form.html"
 
     def get_form_kwargs(self) -> dict:
         kwargs = super().get_form_kwargs()
@@ -131,7 +132,7 @@ class ProjectUpdateView(UserIsManagerOfCurrentProjectMixin, UpdateView):
     extra_context = {"button_text": _("Update")}
     form_class = ProjectManagerForm
     model = Project
-    template_name = "managers/project_form.html"
+    template_name = "managers/partials/project_create_form.html"
 
     def get_context_data(self, **kwargs: Any) -> dict:
         context_data = super().get_context_data(**kwargs)

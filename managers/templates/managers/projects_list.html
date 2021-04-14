@@ -19,22 +19,50 @@
     {% trans 'Completed' as completed %}
     {% trans 'All' as all %}
 
-    <div class="modal-dialog" id="modal-dialog-project-list">
-        <div class="main-white-container">
-            <h1>
-                <img src="{% static 'managers/images/ico-04.png' %}"> {% trans 'Projects' %}
+    <div class="container main-white-container margin-top-space">
+        {% include "managers/partials/modal_base.html" %}
+        <ul class="nav nav-tabs nav-justified" role="tablist">
+            <li class="active"><a href="#active-projects" role="tab" data-toggle="tab"><p class="span-blue-color"><strong>Active</strong></p></a></li>
+            <li><a href="#suspended-projects" role="tab" data-toggle="tab"><p class="span-blue-color"><strong>Suspended</strong></p></a></li>
+            <li><a href="#completed-projects" role="tab" data-toggle="tab"><p class="span-blue-color"><strong>Completed</strong></p></a></li>
+            <li><a href="#all-projects" role="tab" data-toggle="tab"><p class="span-blue-color"><strong>All</strong></p></a></li>
+        </ul>
+            <div class="container narrower-container">
                 {% if user.is_admin %}
-                    <a href="{% url 'custom-project-create' %}" title="{% trans 'Create a new project' %}">
+                    <button class="bs-modal" data-form-url="{% url 'custom-project-create' %}">
                         <img src="{% static 'managers/images/ico-07.png' %}">
-                    </a>
+                    </button>
                 {% endif %}
-            </h1>
-
-            {% include "managers/partials/display_projects.html" with filtered_list=object_list.filter_active header=active id="active" %}
-            {% include "managers/partials/display_projects.html" with filtered_list=object_list.filter_suspended header=suspended id="suspended" %}
-            {% include "managers/partials/display_projects.html" with filtered_list=object_list.filter_completed header=completed id="completed" %}
-            {% include "managers/partials/display_projects.html" with filtered_list=object_list header=all id="all" %}
-
-        </div>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane active" id="active-projects">
+                    <div class="table-responsive">
+                        {% include "managers/partials/display_projects.html" with filtered_list=object_list.filter_active header=active id="active" %}
+                    </div>
+                </div>
+                <div class="tab-pane" id="suspended-projects">
+                    <div class="table-responsive">
+                        {% include "managers/partials/display_projects.html" with filtered_list=object_list.filter_suspended header=suspended id="suspended" %}
+                    </div>
+                </div>
+                <div class="tab-pane" id="completed-projects">
+                    <div class="table-responsive">
+                        {% include "managers/partials/display_projects.html" with filtered_list=object_list.filter_completed header=completed id="completed" %}
+                    </div>
+                </div>
+                <div class="tab-pane" id="all-projects">
+                    <div class="table-responsive">
+                        {% include "managers/partials/display_projects.html" with filtered_list=object_list.filter_active header=active id="active" %}
+                        {% include "managers/partials/display_projects.html" with filtered_list=object_list.filter_suspended header=suspended id="suspended" %}
+                        {% include "managers/partials/display_projects.html" with filtered_list=object_list.filter_completed header=completed id="completed" %}
+{#                        {% include "managers/partials/display_projects.html" with filtered_list=object_list header=all id="all" %}#}
+                    </div>
+                </div>
+            </div>
     </div>
+{% endblock %}
+
+{% block extra_script %}
+    <script src="{% static '/js/jquery.bootstrap.modal.forms.js' %}"></script>
+    <script src="{% static 'managers/scripts/modalsFunctionality.js' %}"></script>
 {% endblock %}

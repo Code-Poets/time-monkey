@@ -4,6 +4,8 @@ from bootstrap_datepicker_plus import DatePickerInput
 from django import forms
 from django_select2.forms import Select2MultipleWidget
 
+from bootstrap_modal_forms.forms import BSModalModelForm
+
 from common.constants import CORRECT_DATE_FORMAT
 from employees.models import TaskActivityType
 from managers.models import Project
@@ -22,7 +24,7 @@ class ActivityWidget(forms.ModelMultipleChoiceField):
         )
 
 
-class ProjectAdminForm(forms.ModelForm):
+class ProjectAdminForm(BSModalModelForm):
     activities = ActivityWidget()
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -54,7 +56,7 @@ class ProjectAdminForm(forms.ModelForm):
         return project
 
 
-class ProjectManagerForm(forms.ModelForm):
+class ProjectManagerForm(BSModalModelForm):
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self.fields["members"].queryset = CustomUser.objects.active()
