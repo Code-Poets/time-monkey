@@ -4,6 +4,7 @@ from typing import Type
 from typing import Union
 
 from bootstrap_modal_forms.generic import BSModalCreateView
+from bootstrap_modal_forms.generic import BSModalUpdateView
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
@@ -12,7 +13,9 @@ from django.db.models.query import QuerySet
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.http.response import HttpResponseRedirectBase
 from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
 from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -21,7 +24,6 @@ from django.views.generic import DeleteView
 from django.views.generic import DetailView
 from django.views.generic import ListView
 from django.views.generic import RedirectView
-from django.views.generic import UpdateView
 from django.views.generic.edit import FormView
 from django.views.generic.edit import ModelFormMixin
 
@@ -72,6 +74,27 @@ class ProjectsListView(ListView):
 
         return projects_queryset
 
+    def post(self, _request: HttpRequest) -> HttpResponseRedirectBase:
+        project_id_to_suspend = self.request.POST.get("suspend")
+        project_id_to_activate = self.request.POST.get("activate")
+
+        if project_id_to_suspend is not None:
+            self._manage_project_status(project_id_to_suspend)
+        elif project_id_to_activate is not None:
+            self._manage_project_status(project_id_to_activate)
+
+        return redirect("custom-projects-list")
+
+    @staticmethod
+    def _manage_project_status(project_id: int) -> Project:
+        project = Project.objects.get(id=project_id)
+        project_status = project.suspended
+
+        project.suspended = not project_status
+        project.save()
+
+        return project
+
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(
@@ -95,7 +118,7 @@ class ProjectCreateView(BSModalCreateView):
     extra_context = {"button_text": _("Create"), "title": _("New project")}
     form_class = ProjectAdminForm
     model = Project
-    template_name = "managers/partials/project_create_form.html"
+    template_name = "managers/partials/create_and_update_project.html"
 
     def get_form_kwargs(self) -> dict:
         kwargs = super().get_form_kwargs()
@@ -106,6 +129,7 @@ class ProjectCreateView(BSModalCreateView):
         logger.info(f"User with id: {self.request.user.pk} is in project create view")
         context_data = super().get_context_data(**kwargs)
         context_data["back_url"] = self.get_success_url()
+        context_data["is_create_project_form"] = True
         return context_data
 
     def get_success_url(self) -> str:  # pylint: disable=no-self-use
@@ -128,16 +152,17 @@ class ProjectCreateView(BSModalCreateView):
     check_permissions(allowed_user_types=[CustomUser.UserType.ADMIN.name, CustomUser.UserType.MANAGER.name]),
     name="dispatch",
 )
-class ProjectUpdateView(UserIsManagerOfCurrentProjectMixin, UpdateView):
+class ProjectUpdateView(UserIsManagerOfCurrentProjectMixin, BSModalUpdateView):
     extra_context = {"button_text": _("Update")}
     form_class = ProjectManagerForm
     model = Project
-    template_name = "managers/partials/project_create_form.html"
+    template_name = "managers/partials/create_and_update_project.html"
 
     def get_context_data(self, **kwargs: Any) -> dict:
         context_data = super().get_context_data(**kwargs)
         context_data["title"] = self.object.name
         context_data["back_url"] = self.get_success_url()
+        context_data["is_create_project_form"] = False
         return context_data
 
     def get_success_url(self) -> str:

@@ -26,6 +26,8 @@
                                     </div>
                                 </div>
                             </div>
+                        <form method="post" action="">
+                            {% csrf_token %}
                             <div class="row action-buttons-section">
                                 <div class="action-box">
                                     <a>
@@ -35,14 +37,22 @@
                                     </a>
                                     {% if header != "Completed" %}
                                         {% if header != "Suspended" %}
-                                            <button class="bs-modal glyphicon glyphicon-pause action-button suspend"></button>
+                                            <button class="bs-modal glyphicon glyphicon-pause action-button suspend" onclick="this.form.submit()">
+                                                <input type="hidden" name="suspend" value="{{ project.id }}">
+                                            </button>
+                                            <input type="hidden" name="suspend" value="{{ project.id }}">
                                         {% else %}
-                                            <button class="bs-modal glyphicon glyphicon-play action-button activate"></button>
+                                            <button class="bs-modal glyphicon glyphicon-play action-button activate" onclick="this.form.submit()">
+                                                <input type="hidden" name="activate" value="{{ project.id }}">
+                                            </button>
                                         {% endif %}
                                     {% endif %}
-                                        <button class="bs-modal glyphicon glyphicon-remove-sign action-button delete"></button>
+                                    <button class="bs-modal glyphicon glyphicon-remove-sign action-button delete" onclick="">
+                                        <input type="hidden" name="activate" value="{{ project.id }}">
+                                    </button>
                                 </div>
                             </div>
+                        </form>
                             <div class="row managers-section">
                                 <div class="managers">
                                     {% for user in project.managers.all|slice:":2" %}

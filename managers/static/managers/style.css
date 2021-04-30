@@ -1,3 +1,8 @@
+body {
+    padding: 0 !important;
+    overflow: visible !important;
+}
+
 :root {
     --cp-blue-color: rgb(44, 119, 188);
 }
@@ -320,6 +325,28 @@ span.selection {
     margin: 0;
 }
 
+.no-background{
+    background: none;
+    border: none;
+}
+
+.main-header{
+    font-size: 32px;
+}
+
+.form-header-icon {
+    margin-top: -10px;
+}
+
+.roboto-text{
+    font-family: 'Roboto', sans-serif;
+    font-weight: normal;
+}
+
+.form-title {
+    margin-top: -15px;
+    font-size: 24px;
+}
 /*END FEATURE STYLES*/
 
 @media only screen and (max-width: 400px) {
