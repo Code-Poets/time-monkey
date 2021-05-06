@@ -32,12 +32,15 @@ git clone https://github.com/Code-Poets/sheetstorm.git
     ```
     pip install pipenv
     ```
-
-4. Change directory to the folder containing SheetStorm project and install all dependencies from Pipfile:
+    Remark: pipenv 11.9 does not work, if you encounter a release problem try 2020.8.13
+    
+4. Change directory to the folder containing SheetStorm project, activate virtual environment and install all dependencies from Pipfile:
     
     ```
+    pipenv shell
     pipenv install
     ```
+    Remark: if not all dependaencies are installed try `pipenv install --dev`.
 
 5. Install PostgreSQL:
     ```
