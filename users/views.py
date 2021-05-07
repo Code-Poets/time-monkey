@@ -21,7 +21,6 @@ from django.db.models import QuerySet
 from django.db.models.functions import Coalesce
 from django.http import HttpRequest
 from django.http import HttpResponse
-from django.http import HttpResponseForbidden
 from django.http import HttpResponseNotAllowed
 from django.http.response import HttpResponseRedirectBase
 from django.shortcuts import redirect
@@ -278,18 +277,20 @@ class UserPreferencesUpdate(UpdateView):
     form_class = CustomUserPreferencesForm
     context_object_name = "user_preferences"
     model = CustomUserPreferences
-    success_url = reverse("custom-user-preferences-update")
+    success_url = reverse_lazy("custom-user-preferences-update")
 
     def get_object(self, queryset: Optional[QuerySet] = None) -> CustomUserPreferences:
         return CustomUserPreferences.objects.get(user=self.request.user)
 
 
 @login_required
-def menu_expansion_update_view(request):
+def menu_expansion_update_view(request: HttpRequest) -> HttpResponse:
     if not request.method == "POST":
         return HttpResponseNotAllowed(["POST"])
+
     user_preferences = CustomUserPreferences.objects.get(user=request.user)
     user_preferences.expanded_menu = not user_preferences.expanded_menu
     user_preferences.full_clean()
     user_preferences.save()
+
     return HttpResponse(status=200)

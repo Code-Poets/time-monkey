@@ -43,7 +43,8 @@ from employees.forms import ReportForm
 from employees.models import Report
 from employees.models import TaskActivityType
 from managers.models import Project
-from users.models import CustomUser, CustomUserPreferences
+from users.models import CustomUser
+from users.models import CustomUserPreferences
 from utils.decorators import check_permissions
 from utils.mixins import ProjectsWorkPercentageMixin
 from utils.mixins import UserIsAuthorOfCurrentReportMixin
@@ -176,7 +177,7 @@ class ReportListCreateProjectJoinView(MonthNavigationMixin, ProjectsWorkPercenta
     url_name = "custom-report-list"
     object = None
 
-    def _get_date_for_plus_option(self, preference) -> datetime:
+    def _get_date_for_plus_option(self, preference: str) -> datetime.date:
         month = int(self.kwargs["month"])
         year = int(self.kwargs["year"])
         queryset = self.get_queryset().order_by("-creation_date")
@@ -193,19 +194,19 @@ class ReportListCreateProjectJoinView(MonthNavigationMixin, ProjectsWorkPercenta
             return date
         return timezone.now().date()
 
-    def _get_date_of_last_report(self) -> datetime:
+    def _get_date_of_last_report(self) -> datetime.date:
         queryset = self.get_queryset().order_by("-date")
         if queryset.exists():
             return queryset.first().date
         return datetime.date(day=1, month=int(self.kwargs["month"]), year=int(self.kwargs["year"]))
 
-    def _get_initial_date(self) -> datetime:
+    def _get_initial_date(self) -> datetime.date:
         today = timezone.now()
         if self.kwargs["month"] != str(today.month) or self.kwargs["year"] != str(today.year):
             return self._get_date_of_last_report()
         plus_options = [
             CustomUserPreferences.DefaultDateOptions.TODAY_PLUS,
-            CustomUserPreferences.DefaultDateOptions.DAY_AFTER_LAST_PLUS
+            CustomUserPreferences.DefaultDateOptions.DAY_AFTER_LAST_PLUS,
         ]
         preferences = CustomUserPreferences.objects.get(user=self.request.user)
         if preferences.default_report_date in plus_options:

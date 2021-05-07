@@ -15,6 +15,7 @@ from users.factories import AdminUserFactory
 from users.factories import ManagerUserFactory
 from users.factories import UserFactory
 from users.models import CustomUser
+from users.models import CustomUserPreferences
 
 
 class ProjectBaseTests(TestCase):
@@ -31,6 +32,7 @@ class ProjectBaseTests(TestCase):
         self.user.full_clean()
         self.user.save()
         self.client.force_login(self.user)
+        CustomUserPreferences(user=self.user).save()
 
 
 class ProjectDetailViewTests(ProjectBaseTests):
@@ -60,6 +62,7 @@ class ProjectsListViewTests(ProjectBaseTests):
 
     def test_projects_list_view_for_manager_should_show_only_projects_in_which_he_is_manager(self):
         manager_user = UserFactory(user_type=CustomUser.UserType.MANAGER.name)
+        CustomUserPreferences(user=manager_user).save()
         manager_project = ProjectFactory()
         manager_project.managers.add(manager_user)
         self.client.force_login(manager_user)
@@ -70,6 +73,7 @@ class ProjectsListViewTests(ProjectBaseTests):
 
     def test_projects_list_view_should_not_be_accessible_by_employee(self):
         employee_user = UserFactory(user_type=CustomUser.UserType.EMPLOYEE.name)
+        CustomUserPreferences(user=employee_user).save()
         self.client.force_login(employee_user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
@@ -269,6 +273,7 @@ class ManageTaskActivitiesInProjectViewTests(TestCase):
 
         self.project = ProjectFactory()
         self.url = reverse("project-task-activities", kwargs={"pk": self.project.pk})
+        CustomUserPreferences(user=self.user_admin).save()
 
     def test_manage_task_activities_in_project_view_should_raise_404_for_manager_not_of_current_project(self):
         other_manager = ManagerUserFactory()
@@ -280,6 +285,7 @@ class ManageTaskActivitiesInProjectViewTests(TestCase):
 
     def test_manage_task_activities_in_project_view_should_get_200_when_user_is_manager_of_current_project(self):
         project_manager = ManagerUserFactory()
+        CustomUserPreferences(user=project_manager).save()
         self.project.managers.add(project_manager)
         self.client.force_login(project_manager)
 

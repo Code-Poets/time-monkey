@@ -4,12 +4,14 @@ from django.urls import reverse
 
 from sheetstorm.views import Index
 from users.factories import UserFactory
+from users.models import CustomUserPreferences
 
 
 class IndexPageTests(TestCase):
     def setUp(self):
         self.url = reverse("home")
         self.user = UserFactory()
+        CustomUserPreferences(user=self.user).save()
 
     def test_not_logged_user_got_redirected_to_login_page(self):
         response = self.client.get(self.url)

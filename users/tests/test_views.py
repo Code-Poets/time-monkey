@@ -8,12 +8,14 @@ from parameterized import parameterized
 
 from employees.factories import ReportFactory
 from managers.factories import ProjectFactory
+from users.common.constants import CustomUserPreferencesConstants
 from users.common.strings import UserNotificationsText
 from users.common.strings import ValidationErrorText
 from users.factories import AdminUserFactory
 from users.factories import ManagerUserFactory
 from users.factories import UserFactory
 from users.models import CustomUser
+from users.models import CustomUserPreferences
 from users.tokens import account_activation_token
 from users.views import NotificationUserListView
 from users.views import SignUp
@@ -24,6 +26,7 @@ class ChangePasswordTests(TestCase):
     def setUp(self):
         self.user_password = "password"
         self.user = UserFactory()
+        CustomUserPreferences(user=self.user).save()
 
     def test_change_user_password_view_should_change_user_password_on_post(self):
         data = {"old_password": self.user_password, "new_password1": "newuserpasswd", "new_password2": "newuserpasswd"}
@@ -75,6 +78,7 @@ class UserListTests(TestCase):
         self.user_manager.full_clean()
         self.user_manager.save()
         self.url = reverse("custom-users-list")
+        CustomUserPreferences(user=self.user_admin).save()
 
     def test_user_list_view_should_display_users_list_on_get(self):
         self.client.force_login(self.user_admin)
@@ -131,6 +135,7 @@ class UserCreateTests(TestCase):
         self.user = AdminUserFactory()
         self.url = reverse("custom-user-create")
         self.client.force_login(self.user)
+        CustomUserPreferences(user=self.user).save()
 
     def test_user_create_view_should_display_create_user_form_on_get(self):
         response = self.client.get(self.url)
@@ -164,6 +169,7 @@ class UserUpdateTests(TestCase):
         self.user.full_clean()
         self.user.save()
         self.client.force_login(self.user)
+        CustomUserPreferences(user=self.user).save()
 
     def test_user_update_view_should_display_user_details_on_get(self):
         response = self.client.get(path=reverse("custom-user-update"))
@@ -204,6 +210,7 @@ class UserUpdateByAdminTests(TestCase):
             "user_type": self.user.user_type,
         }
         self.correct_url = reverse("custom-user-update-by-admin", kwargs={"pk": self.user.pk})
+        CustomUserPreferences(user=self.user_admin).save()
 
     def test_user_update_by_admin_view_should_display_user_details_on_get(self):
         response = self.client.get(path=reverse("custom-user-update-by-admin", kwargs={"pk": self.user.pk}))
@@ -309,6 +316,7 @@ class NotificationsTests(TestCase):
         self.project.managers.add(self.manager)
         self.project.members.add(self.employee)
         self.url = reverse("custom-users-notifications")
+        CustomUserPreferences(user=self.manager).save()
 
     def _check_response(self, response, status_code, contains):
         self.assertTemplateUsed(response, NotificationUserListView.template_name)
@@ -372,23 +380,58 @@ class CustomUserPreferencesTests(TestCase):
     def setUp(self):
         self.employee = UserFactory()
         self.url = reverse("custom-user-preferences-update")
+        CustomUserPreferences(user=self.employee).save()
 
     def test_custom_user_preferences_should_display_preferences_form_on_get(self):
-        pass
+        self.client.force_login(self.employee)
+        response = self.client.get(self.url)
+
+        self.assertTrue(response.is_rendered)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("user_preferences_update.html", response.template_name)
 
     def test_custom_user_preferences_should_not_display_for_unauthenticated_user(self):
-        pass
+        response = self.client.get(self.url)
 
-    def test_custom_user_preferences_should_update_preferences_on_post(self):
-        pass
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/users/accounts/login/?next=/users/preferences/")
+
+    @parameterized.expand(
+        [
+            (CustomUserPreferencesConstants.TODAY.name,),
+            (CustomUserPreferencesConstants.TODAY_PLUS.name,),
+            (CustomUserPreferencesConstants.DAY_AFTER_LAST_PLUS.name,),
+        ]
+    )
+    def test_custom_user_preferences_should_update_preferences_on_post(self, date_preference):
+        self.client.force_login(self.employee)
+        data = {"default_report_date": date_preference}
+
+        response = self.client.post(self.url, data)
+
+        user_preferences_after_update = CustomUserPreferences.objects.get(user=self.employee)
+
+        self.assertEqual(user_preferences_after_update.default_report_date, date_preference)
+        self.assertNotEqual(response.status_code, 200)
 
 
 class MenuExpansionUpdateTests(TestCase):
     def setUp(self):
-        pass
+        self.employee = UserFactory()
+        self.url = reverse("custom-user-menu-expansion-update")
 
     def test_menu_expansion_update_should_not_allow_methods_other_than_post(self):
-        pass
+        self.client.force_login(self.employee)
 
-    def test_menu_expansion_update_should_update_menu_expansion_setting_in_user_preferences(self):
-        pass
+        self.assertEqual(self.client.get(self.url).status_code, 405)
+        self.assertEqual(self.client.put(self.url).status_code, 405)
+
+    @parameterized.expand([(True,), (False,)])
+    def test_menu_expansion_update_should_update_menu_expansion_setting_in_user_preferences(self, expanded_menu):
+        self.client.force_login(self.employee)
+        CustomUserPreferences(user=self.employee, expanded_menu=expanded_menu).save()
+
+        self.client.post(self.url)
+
+        user_menu_expansion_setting_after_update = CustomUserPreferences.objects.get(user=self.employee).expanded_menu
+        self.assertEqual(user_menu_expansion_setting_after_update, not expanded_menu)
