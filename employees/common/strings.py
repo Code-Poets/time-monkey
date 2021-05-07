@@ -19,7 +19,7 @@ class ReportListStrings(NotCallableMixin, Enum):
     WORK_HOURS_COLUMN_HEADER = _("Work hours")
     TASK_ACTIVITIES_COLUMN_HEADER = _("Task Activity")
     DESCRIPTION_COLUMN_HEADER = _("Description")
-    HOURS_PER_DAY_LABEL = _("Daily hours")
+    ALL_PROJECTS_LABEL = _("All projects")
     HOURS_PER_MONTH_LABEL = _("Monthly hours")
     EDIT_REPORT_BUTTON = _("Edit")
     NO_PROJECTS_TO_JOIN = _("There are no other projects available.")
@@ -38,6 +38,9 @@ class ReportDetailStrings(NotCallableMixin, Enum):
     DELETE_POPUP_TITLE = _("Delete report")
     DELETE_POPUP_YES = _("Yes")
     DELETE_POPUP_NO = _("No")
+    NEW_REPORT_TITLE = _("New report")
+    UPDATE_REPORT_TITLE = _("Update report")
+    CLOSE_MODAL_BUTTON = _("Close")
 
 
 class TaskActivitiesStrings(Enum):
@@ -70,12 +73,12 @@ class AuthorReportListStrings(NotCallableMixin, Enum):
     LAST_UPDATE_COLUMN_HEADER = _("Last update")
     EDITED_COLUMN_HEADER = _("Edited")
     TASK_ACTIVITIES_COLUMN_HEADER = _("Task Activity")
-    HOURS_PER_DAY_LABEL = _("Daily hours")
+    ALL_PROJECTS_LABEL = _("All projects")
     HOURS_PER_MONTH_LABEL = _("Monthly hours")
     NO_REPORTS_MESSAGE = _("This employee has no reports to display.")
     RETURN_BUTTON_MESSAGE = _("Back to employee list")
     PROJECTS_WORK_PERCENTAGE_HEADER = _("Summary")
-    HOURS_SUM_HEADER = _("Total hours")
+    HOURS_SUM_LABEL = _("Total hours")
     HOURS_PERCENTAGE_HEADER = _("Percentage")
 
 
@@ -94,6 +97,7 @@ class ProjectReportListStrings(NotCallableMixin, Enum):
     NO_REPORTS_MESSAGE = _("There are no reports for this project to display.")
     WORK_HOURS_SUMMARY_HEADER = _("Summary")
     NAME_COLUMN_HEADER = _("Name")
+    HOURS_SUM_LABEL = _("Total hours")
 
 
 class ProjectReportDetailStrings(NotCallableMixin, Enum):

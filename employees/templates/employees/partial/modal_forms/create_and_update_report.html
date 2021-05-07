@@ -1,0 +1,142 @@
+{% load crispy_forms_tags %}
+{% load static %}
+
+<form method="post" action="" data-task-activities-url="{% url 'ajax-load-task-activities' %}" id="reportForm">
+    {% csrf_token %}
+    <div class="modal-header margin-top-space">
+        <img class="add-report-form-header-icon modal-title" alt="report icon" src="{% static 'users/images/grey/ico-05.png' %}"/>
+        {% if is_create_report_form %}
+            <span class="add-report-form-title roboto-text modal-title">{{ UI_text_detail.NEW_REPORT_TITLE.value }}</span>
+        {% else %}
+            <span class="add-report-form-title roboto-text modal-title">{{ UI_text_detail.UPDATE_REPORT_TITLE.value }}</span>
+        {% endif %}
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    <p class="p-non-field-errors"> {{ error }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="{% if form.errors %}invalid{% endif %} mb-2">
+            {% for field in form.errors %}
+            {% endfor %}
+        </div>
+
+        <div class="row header-label-row roboto-text">
+            <div class="col-md-12">
+                <div class="hr-blue-pointer pointer-left"></div>
+                <p class="add-report-form-field-label">{{ form.project.label }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-xs-10 add-report-form-field-left">
+                {{ form.project|as_crispy_field }}
+            </div>
+            <div class="col-md-2 add-report-form-join-project-field">
+                {% if is_create_report_form %}
+                    <button data-form-url="{% url 'join-project' year month %}" class="hidden-print btn btn-sm btn-default" type="button" id="opener_join">
+                        <i class="fa fa-user-plus span-blue-color"></i>
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row header-label-row roboto-text">
+            <div class="col-md-12">
+                <div class="hr-blue-pointer pointer-left"></div>
+                <p class="add-report-form-field-label ">{{ form.task_activities.label }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-xs-10 add-report-form-field-left">
+                {{ form.task_activities|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row header-label-row roboto-text">
+            <div class="col-md-6 col-xs-6">
+                <div class="hr-blue-pointer pointer-left"></div>
+                <p class="add-report-form-field-label float-left">{{ form.date.label }}</p>
+            </div>
+            <div class="col-md-6 col-xs-6">
+                <div class="hr-blue-pointer pointer-right"></div>
+                <p class="work-hours-add-report-field-label float-right">{{ form.work_hours.label }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-xs-5 float-left add-report-form-field-left">
+                {{ form.date|as_crispy_field }}
+            </div>
+            <div class="col-md-4 col-xs-3 float-right add-report-form-field-right">
+                {{ form.work_hours|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row header-label-row roboto-text">
+            <div class="col-md-12">
+                <div class="hr-blue-pointer pointer-left"></div>
+                <p class="add-report-form-field-label">{{ form.description.label }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-xs-9 add-report-form-description-field">
+                {{ form.description|as_crispy_field }}
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                {{ form.author|as_crispy_field }}
+            </div>
+        </div>
+
+        {% if is_admin_update  %}
+            <input type="hidden" name="current-project-pk" value="{{ url_pk }}">
+        {% endif %}
+
+        <div class="row">
+            {% if is_create_report_form %}
+                <div class="col-md-6 add-report-form-button">
+                    <button type="button" class="btn btn-default modal-button" data-dismiss="modal">{{ UI_text_detail.CLOSE_MODAL_BUTTON.value }}</button>
+                </div>
+
+                <div class="col-md-6 add-report-form-button">
+                    <button type="button" class="submit-btn btn btn-primary modal-button">{{ UI_text.CREATE_REPORT_BUTTON.value }}</button>
+                </div>
+            {% else %}
+                <div class="col-md-4 add-report-form-button">
+                    <button type="button" class="btn btn-default modal-button" data-dismiss="modal">{{ UI_text_detail.CLOSE_MODAL_BUTTON.value }}</button>
+                </div>
+
+                {% if not is_admin_update  %}
+                    <div class="col-md-4 add-report-form-button">
+                        <button data-form-url="{% url 'custom-report-delete' report.pk %}" type="button" class="btn btn-danger modal-button" id="delete-report">{{ UI_text_detail.DELETE_REPORT_BUTTON.value }}</button>
+                    </div>
+                {% else %}
+                    <div class="col-md-4"></div>
+                {% endif %}
+
+                <div class="col-md-4 add-report-form-button">
+                    <button type="button" class="submit-btn btn btn-primary modal-button">{{ UI_text_detail.UPDATE_REPORT_BUTTON.value }}</button>
+                </div>
+
+            {% endif %}
+        </div>
+    </div>
+</form>
+
+<script
+        src="{% static 'employees/scripts/openSmallModals.js' %}"
+        integrity="{% staticinline 'employees/scripts/openSmallModals.js' encode="sri" %}"
+        crossorigin="anonymous">
+</script>
+<script src="{% static 'employees/scripts/load_activities_for_project.js' %}" integrity="{% staticinline 'employees/scripts/load_activities_for_project.js' encode='sri' %}" crossorigin="anonymous"></script>
+<script src="{% static '/bootstrap_datepicker_plus/js/datepicker-widget.js' %}"></script>

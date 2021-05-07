@@ -35,6 +35,7 @@ python-dateutil = "*"
 raven = "*"
 pyyaml = "*"
 django-staticinline = "*"
+django-bootstrap-modal-forms = "*"
 
 [requires]
 python_version = "3.7"
